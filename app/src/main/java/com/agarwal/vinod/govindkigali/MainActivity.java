@@ -21,7 +21,7 @@ import com.agarwal.vinod.govindkigali.fragments.PlayerFragment;
 
 import static android.view.View.GONE;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PlayerCommunication {
 
     private Toolbar toolbar;
     SearchView searchView;
@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         iv_up_arrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                toolbar.setVisibility(View.GONE);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.main_layout, fragment)
                         .commit();
@@ -162,7 +163,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
+    @Override
+    public void onClosePlayerFragment() {
+        toolbar.setVisibility(View.VISIBLE);
+    }
 }

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.agarwal.vinod.govindkigali.MainActivity;
+import com.agarwal.vinod.govindkigali.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.R;
 
 /**
@@ -38,6 +39,7 @@ public class PlayerFragment extends Fragment {
         iv_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((PlayerCommunication)getActivity()).onClosePlayerFragment();
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .remove(MainActivity.fragment)
                         .commit();
