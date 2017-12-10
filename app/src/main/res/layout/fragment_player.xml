@@ -90,7 +90,7 @@
     <RelativeLayout
         android:background="@android:color/black"
         android:padding="10dp"
-        android:layout_above="@id/tv_details"
+        android:layout_alignParentBottom="true"
         android:id="@+id/rl_player_options"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -131,15 +131,5 @@
             android:layout_height="wrap_content" />
 
     </RelativeLayout>
-
-    <TextView
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:id="@+id/tv_details"
-        android:layout_alignParentBottom="true"
-        android:text="Song: Tiger Zinda hai"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
 </RelativeLayout>
