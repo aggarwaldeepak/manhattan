@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">गोविंद की गली</string>
+    <string name="title_play">बजाओ</string>
+    <string name="title_thought">विचार</string>
+    <string name="title_upcoming">कार्यक्रम</string>
+    <string name="title_my_music">"मेरे संगीत "</string>
+    <string name="title_settings">सेटिंग्स</string>
+    <string name="action_settings">सेटिंग्स</string>
+    <string name="action_search">खोज</string>
+</resources>
