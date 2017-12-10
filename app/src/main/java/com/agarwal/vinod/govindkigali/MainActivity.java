@@ -69,10 +69,10 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         iv_up_arrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                toolbar.setVisibility(View.GONE);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.main_layout, fragment)
                         .commit();
+                toolbar.setVisibility(View.GONE);
             }
         });
 
