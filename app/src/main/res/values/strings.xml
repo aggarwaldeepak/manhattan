@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Govind ki Gali</string>
-    <string name="title_play">Play Music</string>
-    <string name="title_thought">Thought of the Day</string>
+    <string name="title_play">Play</string>
+    <string name="title_thought">Thought</string>
     <string name="title_upcoming">Upcomings</string>
     <string name="title_my_music">My Music</string>
     <string name="title_settings">Settings</string>
