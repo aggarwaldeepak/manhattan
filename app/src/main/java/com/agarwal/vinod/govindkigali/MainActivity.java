@@ -3,6 +3,7 @@ package com.agarwal.vinod.govindkigali;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -10,15 +11,24 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.agarwal.vinod.govindkigali.Utils.BottomNavigationViewHelper;
+import com.agarwal.vinod.govindkigali.fragments.PlayerFragment;
+
+import static android.view.View.GONE;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView mTextMessage;
     private Toolbar toolbar;
     SearchView searchView;
+    ProgressBar pb_loading, pb_progress;
+    ImageView iv_play_pause, iv_up_arrow;
+    public static Fragment fragment;
+    Boolean f = false;
 
 
 
@@ -29,19 +39,14 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_play:
-                    mTextMessage.setText(R.string.title_play);
                     return true;
                 case R.id.navigation_thought:
-                    mTextMessage.setText(R.string.title_thought);
                     return true;
                 case R.id.navigation_upcoming:
-                    mTextMessage.setText(R.string.title_upcoming);
                     return true;
                 case R.id.navigation_my_music:
-                    mTextMessage.setText(R.string.title_my_music);
                     return true;
                 case R.id.navigation_settings:
-                    mTextMessage.setText(R.string.title_settings);
                     return true;
             }
             return false;
@@ -52,11 +57,52 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mTextMessage = (TextView) findViewById(R.id.message);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        pb_loading = findViewById(R.id.pb_loading);
+        pb_progress = findViewById(R.id.pb_progress);
+        iv_play_pause = findViewById(R.id.iv_play_pause);
+        iv_up_arrow = findViewById(R.id.iv_up_arrow);
+        fragment = new PlayerFragment();
+
+        iv_up_arrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.main_layout, fragment)
+                        .commit();
+            }
+        });
+
+        pb_loading.setVisibility(GONE);
+        pb_progress.setProgress(50);
+
+        iv_play_pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!f) {
+                    f = true;
+                    iv_play_pause.setVisibility(GONE);
+                    pb_loading.setVisibility(View.VISIBLE);
+                } else {
+                    f = false;
+                    iv_play_pause.setImageResource(R.drawable.ic_pause_white_48dp);
+                    iv_play_pause.setVisibility(View.VISIBLE);
+                    pb_loading.setVisibility(GONE);
+                }
+            }
+        });
+
+        pb_loading.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                iv_play_pause.setVisibility(View.VISIBLE);
+                pb_loading.setVisibility(GONE);
+            }
+        });
+
+        BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         BottomNavigationViewHelper.disableShiftMode(navigation);
 
