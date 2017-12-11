@@ -32,17 +32,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/bt_play"
-                android:text="play"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <FrameLayout
-                android:layout_gravity="bottom"
-                android:id="@+id/fg"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_playlist"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="match_parent"
+                tools:listitem="@layout/layout_song"/>
+
+                <FrameLayout
+                    android:layout_gravity="bottom"
+                    android:id="@+id/fg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
         </FrameLayout>
 

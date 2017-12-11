@@ -3,37 +3,40 @@ package com.agarwal.vinod.govindkigali;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.agarwal.vinod.govindkigali.Utils.BottomNavigationViewHelper;
+import com.agarwal.vinod.govindkigali.Utils.MediaPlayBack;
+import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
+import com.agarwal.vinod.govindkigali.api.SongService;
 import com.agarwal.vinod.govindkigali.fragments.PlayerBarFragment;
 import com.agarwal.vinod.govindkigali.fragments.PlayerFragment;
+import com.agarwal.vinod.govindkigali.models.Song;
+
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.view.View.GONE;
 
 public class MainActivity extends AppCompatActivity implements PlayerCommunication {
 
-    public static Toolbar toolbar;
-    Button btPlay;
+    Toolbar toolbar;
+    RecyclerView rvPLayList;
     SearchView searchView;
-//    ProgressBar pb_loading, pb_progress;
-//    ImageView iv_play_pause, iv_up_arrow;
-//    public static Fragment fragment;
-//    Boolean f = false;
-
-
+    public static PlayerFragment fragment;
+    public static MediaPlayBack playBack;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -63,60 +66,30 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        pb_loading = findViewById(R.id.pb_loading);
-//        pb_progress = findViewById(R.id.pb_progress);
-//        iv_play_pause = findViewById(R.id.iv_play_pause);
-//        iv_up_arrow = findViewById(R.id.iv_up_arrow);
-        btPlay = findViewById(R.id.bt_play);
-//        fragment = new PlayerFragment();
 
+        playBack = new MediaPlayBack();
+        playBack.initiate(this);
+        fragment = new PlayerFragment();
 
-        btPlay.setOnClickListener(new View.OnClickListener() {
+        rvPLayList = findViewById(R.id.rv_playlist);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        rvPLayList.setLayoutManager(layoutManager);
+
+        final SongAdapter adapter = new SongAdapter(this, this);
+        rvPLayList.setAdapter(adapter);
+
+        SongService.getSongApi().getTracks().enqueue(new Callback<ArrayList<Song>>() {
             @Override
-            public void onClick(View view) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fg, new PlayerBarFragment())
-                        .commit();
-                toolbar.setVisibility(View.GONE);
+            public void onResponse(Call<ArrayList<Song>> call, Response<ArrayList<Song>> response) {
+                adapter.updateTracks(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Song>> call, Throwable t) {
+
             }
         });
-
-//        iv_up_arrow.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.main_layout, fragment)
-//                        .commit();
-//                toolbar.setVisibility(View.GONE);
-//            }
-//        });
-//
-//        pb_loading.setVisibility(GONE);
-//        pb_progress.setProgress(50);
-//
-//        iv_play_pause.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (!f) {
-//                    f = true;
-//                    iv_play_pause.setVisibility(GONE);
-//                    pb_loading.setVisibility(View.VISIBLE);
-//                } else {
-//                    f = false;
-//                    iv_play_pause.setImageResource(R.drawable.ic_pause_white_48dp);
-//                    iv_play_pause.setVisibility(View.VISIBLE);
-//                    pb_loading.setVisibility(GONE);
-//                }
-//            }
-//        });
-//
-//        pb_loading.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                iv_play_pause.setVisibility(View.VISIBLE);
-//                pb_loading.setVisibility(GONE);
-//            }
-//        });
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -180,11 +153,31 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
     @Override
     public void onClosePlayerFragment() {
+
         toolbar.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction()
+                .remove(fragment)
+                .commit();
     }
 
     @Override
     public void onOpenPlayerFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_layout, fragment)
+                .commit();
         toolbar.setVisibility(GONE);
+    }
+
+    @Override
+    public void playSong(Song song) {
+        PlayerBarFragment fragmentBar = new PlayerBarFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("Title", song.getTitle());
+        bundle.putString("Stream", song.getStream_url());
+        bundle.putInt("Duration", song.getDuration());
+        fragmentBar.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fg, fragmentBar)
+                        .commit();
     }
 }

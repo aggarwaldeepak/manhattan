@@ -28,6 +28,7 @@
             android:id="@+id/tv_song"
             android:layout_gravity="center"
             android:layout_width="0dp"
+            android:maxLines="1"
             android:layout_height="wrap_content" />
 
         <ImageView
