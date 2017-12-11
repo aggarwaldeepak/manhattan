@@ -67,7 +67,6 @@
 
     <it.moondroid.coverflow.components.ui.containers.FeatureCoverFlow
         android:id="@+id/cf_list"
-        android:background="@android:color/white"
         android:layout_above="@id/ll_progress"
         android:layout_below="@id/divider"
         android:layout_width="match_parent"
@@ -76,9 +75,11 @@
         app:coverWidth="140dp"
         app:maxScaleFactor="1.5"
         app:reflectionGap="0px"
+        app:adjustPositionMultiplier="0.5"
         app:rotationThreshold="0.5"
         app:scalingThreshold="0.5"
         app:spacing="0.6"/>
+
 
     <LinearLayout
         android:id="@+id/ll_progress"

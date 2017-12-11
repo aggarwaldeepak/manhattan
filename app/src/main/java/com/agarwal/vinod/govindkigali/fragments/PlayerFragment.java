@@ -20,6 +20,7 @@ import com.agarwal.vinod.govindkigali.models.Song;
 import java.util.ArrayList;
 
 import it.moondroid.coverflow.components.ui.containers.FeatureCoverFlow;
+import me.crosswall.lib.coverflow.CoverFlow;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,10 +28,7 @@ import it.moondroid.coverflow.components.ui.containers.FeatureCoverFlow;
 public class PlayerFragment extends Fragment {
 
     ImageView iv_more, iv_close;
-    private FeatureCoverFlow featureCoverFlow;
     private ArrayList<Song> playList = new ArrayList<>();
-    private PlayListAdapter adapter;
-    private TextSwitcher tvName;
 
     public PlayerFragment() {
         // Required empty public constructor
@@ -46,7 +44,7 @@ public class PlayerFragment extends Fragment {
 
         iv_more = playerFragment.findViewById(R.id.iv_more);
         iv_close = playerFragment.findViewById(R.id.iv_close);
-        tvName = playerFragment.findViewById(R.id.tv_name);
+        TextSwitcher tvName = playerFragment.findViewById(R.id.tv_name);
 
         initData();
 //        tvName.setFactory(new ViewSwitcher.ViewFactory() {
@@ -57,8 +55,9 @@ public class PlayerFragment extends Fragment {
 //            }
 //        });
 
-        adapter = new PlayListAdapter(playList, getContext());
-        featureCoverFlow = playerFragment.findViewById(R.id.cf_list);
+        PlayListAdapter adapter = new PlayListAdapter(playList, getContext());
+        FeatureCoverFlow featureCoverFlow = playerFragment.findViewById(R.id.cf_list);
+
         featureCoverFlow.setAdapter(adapter);
 
 //        featureCoverFlow.setOnScrollPositionListener(new FeatureCoverFlow.OnScrollPositionListener() {
