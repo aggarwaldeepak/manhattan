@@ -9,10 +9,17 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextSwitcher;
+import android.widget.ViewSwitcher;
 
-import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.R;
+import com.agarwal.vinod.govindkigali.adapters.PlayListAdapter;
+import com.agarwal.vinod.govindkigali.models.Song;
+
+import java.util.ArrayList;
+
+import it.moondroid.coverflow.components.ui.containers.FeatureCoverFlow;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,6 +27,10 @@ import com.agarwal.vinod.govindkigali.R;
 public class PlayerFragment extends Fragment {
 
     ImageView iv_more, iv_close;
+    private FeatureCoverFlow featureCoverFlow;
+    private ArrayList<Song> playList = new ArrayList<>();
+    private PlayListAdapter adapter;
+    private TextSwitcher tvName;
 
     public PlayerFragment() {
         // Required empty public constructor
@@ -35,13 +46,40 @@ public class PlayerFragment extends Fragment {
 
         iv_more = playerFragment.findViewById(R.id.iv_more);
         iv_close = playerFragment.findViewById(R.id.iv_close);
+        tvName = playerFragment.findViewById(R.id.tv_name);
+
+        initData();
+//        tvName.setFactory(new ViewSwitcher.ViewFactory() {
+//            @Override
+//            public View makeView() {
+//                LayoutInflater inflater1 = LayoutInflater.from(getContext());
+//
+//            }
+//        });
+
+        adapter = new PlayListAdapter(playList, getContext());
+        featureCoverFlow = playerFragment.findViewById(R.id.cf_list);
+        featureCoverFlow.setAdapter(adapter);
+
+//        featureCoverFlow.setOnScrollPositionListener(new FeatureCoverFlow.OnScrollPositionListener() {
+//            @Override
+//            public void onScrolledToPosition(int position) {
+//
+//            }
+//
+//            @Override
+//            public void onScrolling() {
+//
+//            }
+//        });
+
 
         iv_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((PlayerCommunication)getActivity()).onClosePlayerFragment();
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .remove(MainActivity.fragment)
+                        .remove(PlayerBarFragment.fragment)
                         .commit();
             }
         });
@@ -55,6 +93,13 @@ public class PlayerFragment extends Fragment {
 
 
         return playerFragment;
+    }
+
+    private void initData() {
+        playList.add(new Song("Unravel","https://images.shazam.com/coverart/t321637896-b1123768851_s400.jpg"));
+        playList.add(new Song("Heroes", "https://images.shazam.com/coverart/t377195488-b1291768065_s400.jpg "));
+        playList.add(new Song("Butterfly", "https://images.shazam.com/coverart/t362760493-b1253298937_s400.jpg"));
+        playList.add(new Song("Resonance", "https://images.shazam.com/coverart/t370903022-b1270579223_s400.jpg"));
     }
 
     public void showPopup(View v) {

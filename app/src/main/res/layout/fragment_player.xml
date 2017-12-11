@@ -15,7 +15,8 @@
 
         <ImageView
             android:id="@+id/iv_close"
-            android:paddingEnd="5dp"
+            android:paddingEnd="10dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_close_white_18dp"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
@@ -27,7 +28,8 @@
             android:layout_width="1dp"
             android:layout_height="40dp"/>
 
-        <TextView
+        <TextSwitcher
+            android:id="@+id/tv_name"
             android:text="SWAG se Swagat"
             android:textColor="@android:color/white"
             android:textStyle="bold"
@@ -40,6 +42,7 @@
             android:layout_height="wrap_content" />
 
         <ImageView
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_file_download_white_36dp"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
@@ -47,6 +50,7 @@
 
         <ImageView
             android:id="@+id/iv_more"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_more_vert_white_36dp"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
@@ -55,10 +59,26 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/divider"
         android:background="@android:color/white"
         android:layout_below="@id/ll_head"
         android:layout_width="match_parent"
         android:layout_height="1dp"/>
+
+    <it.moondroid.coverflow.components.ui.containers.FeatureCoverFlow
+        android:id="@+id/cf_list"
+        android:background="@android:color/white"
+        android:layout_above="@id/ll_progress"
+        android:layout_below="@id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:coverHeight="200dp"
+        app:coverWidth="140dp"
+        app:maxScaleFactor="1.5"
+        app:reflectionGap="0px"
+        app:rotationThreshold="0.5"
+        app:scalingThreshold="0.5"
+        app:spacing="0.6"/>
 
     <LinearLayout
         android:id="@+id/ll_progress"
