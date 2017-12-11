@@ -20,7 +20,6 @@ import com.agarwal.vinod.govindkigali.models.Song;
 import java.util.ArrayList;
 
 import it.moondroid.coverflow.components.ui.containers.FeatureCoverFlow;
-import me.crosswall.lib.coverflow.CoverFlow;
 
 /**
  * A simple {@link Fragment} subclass.
