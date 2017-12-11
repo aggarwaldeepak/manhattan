@@ -6,4 +6,5 @@ package com.agarwal.vinod.govindkigali;
 
 public interface PlayerCommunication {
     void onClosePlayerFragment();
+    void onOpenPlayerFragment();
 }

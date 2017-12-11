@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/navigation_download"
-        android:icon="@drawable/ic_file_download_white_36dp"
-        android:title="@string/download"
-        app:showAsAction="always"/>
-
-    <item
         android:id="@+id/navigation_share"
         android:title="@string/share" />
 

@@ -12,23 +12,26 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.agarwal.vinod.govindkigali.Utils.BottomNavigationViewHelper;
+import com.agarwal.vinod.govindkigali.fragments.PlayerBarFragment;
 import com.agarwal.vinod.govindkigali.fragments.PlayerFragment;
 
 import static android.view.View.GONE;
 
 public class MainActivity extends AppCompatActivity implements PlayerCommunication {
 
-    private Toolbar toolbar;
+    public static Toolbar toolbar;
+    Button btPlay;
     SearchView searchView;
-    ProgressBar pb_loading, pb_progress;
-    ImageView iv_play_pause, iv_up_arrow;
-    public static Fragment fragment;
-    Boolean f = false;
+//    ProgressBar pb_loading, pb_progress;
+//    ImageView iv_play_pause, iv_up_arrow;
+//    public static Fragment fragment;
+//    Boolean f = false;
 
 
 
@@ -57,51 +60,63 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        pb_loading = findViewById(R.id.pb_loading);
-        pb_progress = findViewById(R.id.pb_progress);
-        iv_play_pause = findViewById(R.id.iv_play_pause);
-        iv_up_arrow = findViewById(R.id.iv_up_arrow);
-        fragment = new PlayerFragment();
+//        pb_loading = findViewById(R.id.pb_loading);
+//        pb_progress = findViewById(R.id.pb_progress);
+//        iv_play_pause = findViewById(R.id.iv_play_pause);
+//        iv_up_arrow = findViewById(R.id.iv_up_arrow);
+        btPlay = findViewById(R.id.bt_play);
+//        fragment = new PlayerFragment();
 
-        iv_up_arrow.setOnClickListener(new View.OnClickListener() {
+
+        btPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.main_layout, fragment)
+                        .replace(R.id.fg, new PlayerBarFragment())
                         .commit();
                 toolbar.setVisibility(View.GONE);
             }
         });
 
-        pb_loading.setVisibility(GONE);
-        pb_progress.setProgress(50);
-
-        iv_play_pause.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!f) {
-                    f = true;
-                    iv_play_pause.setVisibility(GONE);
-                    pb_loading.setVisibility(View.VISIBLE);
-                } else {
-                    f = false;
-                    iv_play_pause.setImageResource(R.drawable.ic_pause_white_48dp);
-                    iv_play_pause.setVisibility(View.VISIBLE);
-                    pb_loading.setVisibility(GONE);
-                }
-            }
-        });
-
-        pb_loading.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                iv_play_pause.setVisibility(View.VISIBLE);
-                pb_loading.setVisibility(GONE);
-            }
-        });
+//        iv_up_arrow.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                getSupportFragmentManager().beginTransaction()
+//                        .replace(R.id.main_layout, fragment)
+//                        .commit();
+//                toolbar.setVisibility(View.GONE);
+//            }
+//        });
+//
+//        pb_loading.setVisibility(GONE);
+//        pb_progress.setProgress(50);
+//
+//        iv_play_pause.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (!f) {
+//                    f = true;
+//                    iv_play_pause.setVisibility(GONE);
+//                    pb_loading.setVisibility(View.VISIBLE);
+//                } else {
+//                    f = false;
+//                    iv_play_pause.setImageResource(R.drawable.ic_pause_white_48dp);
+//                    iv_play_pause.setVisibility(View.VISIBLE);
+//                    pb_loading.setVisibility(GONE);
+//                }
+//            }
+//        });
+//
+//        pb_loading.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                iv_play_pause.setVisibility(View.VISIBLE);
+//                pb_loading.setVisibility(GONE);
+//            }
+//        });
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -166,5 +181,10 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     @Override
     public void onClosePlayerFragment() {
         toolbar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onOpenPlayerFragment() {
+        toolbar.setVisibility(GONE);
     }
 }
