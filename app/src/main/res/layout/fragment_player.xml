@@ -28,11 +28,12 @@
             android:layout_width="1dp"
             android:layout_height="40dp"/>
 
-        <TextSwitcher
+        <TextView
             android:id="@+id/tv_name"
             android:text="SWAG se Swagat"
             android:textColor="@android:color/white"
             android:textStyle="bold"
+            android:lines="1"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
             android:layout_weight="1"
             android:layout_gravity="center"
@@ -65,20 +66,20 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"/>
 
-    <it.moondroid.coverflow.components.ui.containers.FeatureCoverFlow
-        android:id="@+id/cf_list"
-        android:layout_above="@id/ll_progress"
-        android:layout_below="@id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:coverHeight="200dp"
-        app:coverWidth="140dp"
-        app:maxScaleFactor="1.5"
-        app:reflectionGap="0px"
-        app:adjustPositionMultiplier="0.5"
-        app:rotationThreshold="0.5"
-        app:scalingThreshold="0.5"
-        app:spacing="0.6"/>
+    <!--<it.moondroid.coverflow.components.ui.containers.FeatureCoverFlow-->
+        <!--android:id="@+id/cf_list"-->
+        <!--android:layout_above="@id/ll_progress"-->
+        <!--android:layout_below="@id/divider"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--app:coverHeight="200dp"-->
+        <!--app:coverWidth="140dp"-->
+        <!--app:maxScaleFactor="1.5"-->
+        <!--app:reflectionGap="0px"-->
+        <!--app:adjustPositionMultiplier="0.5"-->
+        <!--app:rotationThreshold="0.5"-->
+        <!--app:scalingThreshold="0.5"-->
+        <!--app:spacing="0.6"/>-->
 
 
     <LinearLayout

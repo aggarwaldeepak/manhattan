@@ -2,6 +2,7 @@ package com.agarwal.vinod.govindkigali.fragments;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
@@ -10,8 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextSwitcher;
+import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.PlayListAdapter;
@@ -27,6 +30,7 @@ import it.moondroid.coverflow.components.ui.containers.FeatureCoverFlow;
 public class PlayerFragment extends Fragment {
 
     ImageView iv_more, iv_close;
+    String title = "";
     private ArrayList<Song> playList = new ArrayList<>();
 
     public PlayerFragment() {
@@ -34,30 +38,38 @@ public class PlayerFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        title = getArguments().getString("Title");
+    }
+
+    @Override
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 //        supportRequestWindowFeature(WindowCompat.FEATURE_ACTION_BAR_OVERLAY);
 
-        View playerFragment = inflater.inflate(R.layout.fragment_player, container, false);
+        final View playerFragment = inflater.inflate(R.layout.fragment_player, container, false);
 
         iv_more = playerFragment.findViewById(R.id.iv_more);
         iv_close = playerFragment.findViewById(R.id.iv_close);
-        TextSwitcher tvName = playerFragment.findViewById(R.id.tv_name);
+        final TextView tvName = playerFragment.findViewById(R.id.tv_name);
+        tvName.setText(title);
 
-        initData();
+
 //        tvName.setFactory(new ViewSwitcher.ViewFactory() {
 //            @Override
 //            public View makeView() {
 //                LayoutInflater inflater1 = LayoutInflater.from(getContext());
-//
+//                TextView tvTitle = (TextView) inflater1.inflate(R.layout.layout_title, null);
+//                return tvTitle;
 //            }
 //        });
-
-        PlayListAdapter adapter = new PlayListAdapter(playList, getContext());
-        FeatureCoverFlow featureCoverFlow = playerFragment.findViewById(R.id.cf_list);
-
-        featureCoverFlow.setAdapter(adapter);
+//
+//        PlayListAdapter adapter = new PlayListAdapter(playList, getContext());
+//        FeatureCoverFlow featureCoverFlow = playerFragment.findViewById(R.id.cf_list);
+//
+//        featureCoverFlow.setAdapter(adapter);
 
 //        featureCoverFlow.setOnScrollPositionListener(new FeatureCoverFlow.OnScrollPositionListener() {
 //            @Override
@@ -76,9 +88,6 @@ public class PlayerFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 ((PlayerCommunication)getActivity()).onClosePlayerFragment();
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .remove(PlayerBarFragment.fragment)
-                        .commit();
             }
         });
 
@@ -91,13 +100,6 @@ public class PlayerFragment extends Fragment {
 
 
         return playerFragment;
-    }
-
-    private void initData() {
-        playList.add(new Song("Unravel","https://images.shazam.com/coverart/t321637896-b1123768851_s400.jpg"));
-        playList.add(new Song("Heroes", "https://images.shazam.com/coverart/t377195488-b1291768065_s400.jpg "));
-        playList.add(new Song("Butterfly", "https://images.shazam.com/coverart/t362760493-b1253298937_s400.jpg"));
-        playList.add(new Song("Resonance", "https://images.shazam.com/coverart/t370903022-b1270579223_s400.jpg"));
     }
 
     public void showPopup(View v) {
