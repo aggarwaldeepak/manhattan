@@ -48,7 +48,6 @@ public class PlayerBarFragment extends Fragment {
                         .replace(R.id.main_layout, fragment)
                         .commit();
                 ((PlayerCommunication)getActivity()).onOpenPlayerFragment();
-//                MainActivity.toolbar.setVisibility(GONE);
             }
         });
 
