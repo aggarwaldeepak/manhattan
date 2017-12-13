@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
@@ -66,12 +67,12 @@ public class PlayerFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-//        supportRequestWindowFeature(WindowCompat.FEATURE_ACTION_BAR_OVERLAY);
 
         final View playerFragment = inflater.inflate(R.layout.fragment_player, container, false);
 
-        mediaPlayer = new MediaPlayer();
+        if (mediaPlayer == null) {
+            mediaPlayer = new MediaPlayer();
+        }
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
         pbLoading = playerFragment.findViewById(R.id.pb_loading);
@@ -96,12 +97,10 @@ public class PlayerFragment extends Fragment {
         rlPlayer = playerFragment.findViewById(R.id.rl_player);
 
         rlPlayer.setVisibility(GONE);
-
+        ivPlayPause.setVisibility(GONE);
         tvSongName.setText(MainFragment.playlist.get(value).getTitle());
         tvTitle.setText(MainFragment.playlist.get(value).getTitle());
-        ivPlayPause.setVisibility(GONE);
         try {
-//            mediaPlayer.reset();
             mediaPlayer.setDataSource(MainFragment.playlist.get(value).getStream_url() + client_id);
         } catch (IOException e) {
             e.printStackTrace();
@@ -117,6 +116,7 @@ public class PlayerFragment extends Fragment {
                 mp.start();
             }
         });
+
 
         ivUpArrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,6 +177,34 @@ public class PlayerFragment extends Fragment {
             }
         });
 
+        ivPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (value - 1 > 0) {
+                    value = value - 1;
+                    preparePlayer(value);
+                } else {
+                    value = MainFragment.playlist.size();
+                    preparePlayer(value);
+                }
+                Log.d(TAG, "onClick: " + value);
+            }
+        });
+
+        ivNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (value + 1 < MainFragment.playlist.size()) {
+                    value = value + 1;
+                    preparePlayer(value);
+                } else {
+                    value = 0;
+                    preparePlayer(value);
+                }
+                Log.d(TAG, "onClick: " + value);
+            }
+        });
+
 
         return playerFragment;
     }
@@ -192,5 +220,30 @@ public class PlayerFragment extends Fragment {
     public void onDetach() {
         mediaPlayer.release();
         super.onDetach();
+    }
+
+    void preparePlayer(Integer pos) {
+        tvSongName.setText(MainFragment.playlist.get(pos).getTitle());
+        tvTitle.setText(MainFragment.playlist.get(pos).getTitle());
+        pbLoading.setVisibility(View.VISIBLE);
+        ivPlayPause.setVisibility(GONE);
+        ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+        try {
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource(MainFragment.playlist.get(pos).getStream_url() + client_id);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mediaPlayer.prepareAsync();
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                pbLoading.setVisibility(GONE);
+                ivPlayPause.setVisibility(View.VISIBLE);
+                ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
+                ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
+                mp.start();
+            }
+        });
     }
 }

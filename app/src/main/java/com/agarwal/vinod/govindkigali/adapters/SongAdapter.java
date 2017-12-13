@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.agarwal.vinod.govindkigali.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.R;
+import com.agarwal.vinod.govindkigali.fragments.PlayerFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
 
 import java.util.ArrayList;
