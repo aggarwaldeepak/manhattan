@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Govind ki Gali</string>
+    <string name="app_name">Manhattan</string>
+    <string name="app_name_2">Govind ki Gali</string>
     <string name="title_play">Play</string>
     <string name="title_thought">Thought</string>
     <string name="title_upcoming">Upcomings</string>
@@ -90,4 +91,5 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+
 </resources>
