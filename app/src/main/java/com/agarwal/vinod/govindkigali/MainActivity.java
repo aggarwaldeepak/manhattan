@@ -1,7 +1,6 @@
 package com.agarwal.vinod.govindkigali;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,10 +17,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.agarwal.vinod.govindkigali.Utils.BottomNavigationViewHelper;
-import com.agarwal.vinod.govindkigali.Utils.PrefManager;
-import com.agarwal.vinod.govindkigali.Utils.Util;
-import com.agarwal.vinod.govindkigali.Utils.MediaPlayBack;
+import com.agarwal.vinod.govindkigali.utils.BottomNavigationViewHelper;
+import com.agarwal.vinod.govindkigali.utils.PrefManager;
+import com.agarwal.vinod.govindkigali.utils.Util;
+import com.agarwal.vinod.govindkigali.utils.MediaPlayBack;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.api.SongService;
 import com.agarwal.vinod.govindkigali.fragments.PlayerBarFragment;
@@ -35,8 +34,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import java.util.Locale;
-
-import static android.view.View.GONE;
 
 public class MainActivity extends AppCompatActivity implements PlayerCommunication {
 

@@ -1,4 +1,4 @@
-package com.agarwal.vinod.govindkigali.Utils;
+package com.agarwal.vinod.govindkigali.utils;
 
 import android.annotation.SuppressLint;
 import android.support.design.internal.BottomNavigationItemView;

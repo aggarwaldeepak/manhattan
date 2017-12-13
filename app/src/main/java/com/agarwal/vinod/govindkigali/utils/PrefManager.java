@@ -1,4 +1,4 @@
-package com.agarwal.vinod.govindkigali.Utils;
+package com.agarwal.vinod.govindkigali.utils;
 
 /**
  * Created by Anirudh Gupta on 12/11/2017.

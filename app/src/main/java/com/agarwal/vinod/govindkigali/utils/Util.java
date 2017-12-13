@@ -1,4 +1,4 @@
-package com.agarwal.vinod.govindkigali.Utils;
+package com.agarwal.vinod.govindkigali.utils;
 
 import android.content.Context;
 import android.content.res.Configuration;

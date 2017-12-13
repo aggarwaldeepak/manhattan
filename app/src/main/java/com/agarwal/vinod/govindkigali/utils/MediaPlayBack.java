@@ -1,4 +1,4 @@
-package com.agarwal.vinod.govindkigali.Utils;
+package com.agarwal.vinod.govindkigali.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 
 import java.io.IOException;

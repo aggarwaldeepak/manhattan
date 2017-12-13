@@ -1,7 +1,6 @@
 package com.agarwal.vinod.govindkigali.fragments;
 
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.R;
-import com.agarwal.vinod.govindkigali.Utils.MediaPlayBack;
 
 import static android.view.View.GONE;
 
