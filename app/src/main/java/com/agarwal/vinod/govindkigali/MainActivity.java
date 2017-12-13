@@ -17,6 +17,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.agarwal.vinod.govindkigali.fragments.MainFragment;
+import com.agarwal.vinod.govindkigali.fragments.MyMusicFragment;
 import com.agarwal.vinod.govindkigali.utils.BottomNavigationViewHelper;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
 import com.agarwal.vinod.govindkigali.utils.Util;
@@ -50,12 +52,18 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_play:
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fg, new MainFragment())
+                            .commit();
                     return true;
                 case R.id.navigation_thought:
                     return true;
                 case R.id.navigation_upcoming:
                     return true;
                 case R.id.navigation_my_music:
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fg, new MyMusicFragment())
+                            .commit();
                     return true;
                 case R.id.navigation_settings:
                     return true;
@@ -77,46 +85,35 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                         .getString(R.string.app_name)
         );
         initiateFirstLaunch();
-//        pb_loading = findViewById(R.id.pb_loading);
-//        pb_progress = findViewById(R.id.pb_progress);
-//        iv_play_pause = findViewById(R.id.iv_play_pause);
-//        iv_up_arrow = findViewById(R.id.iv_up_arrow);
-//        btPlay = findViewById(R.id.bt_play);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fg, new MainFragment())
+                .commit();
+
+//        playBack = new MediaPlayBack();
+//        playBack.initiate(this);
 //        fragment = new PlayerFragment();
-
-//        btPlay.setOnClickListener(new View.OnClickListener() {
+//
+//        rvPLayList = findViewById(R.id.rv_playlist);
+//
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+//        rvPLayList.setLayoutManager(layoutManager);
+//
+//        final SongAdapter adapter = new SongAdapter(this, this);
+//        rvPLayList.setAdapter(adapter);
+//
+//        SongService.getSongApi().getTracks().enqueue(new Callback<ArrayList<Song>>() {
 //            @Override
-//            public void onClick(View view) {
-//                getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.fg, new PlayerBarFragment())
-//                        .commit();
-                //toolbar.setVisibility(View.GONE);
-//=======
-
-        playBack = new MediaPlayBack();
-        playBack.initiate(this);
-        fragment = new PlayerFragment();
-
-        rvPLayList = findViewById(R.id.rv_playlist);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        rvPLayList.setLayoutManager(layoutManager);
-
-        final SongAdapter adapter = new SongAdapter(this, this);
-        rvPLayList.setAdapter(adapter);
-
-        SongService.getSongApi().getTracks().enqueue(new Callback<ArrayList<Song>>() {
-            @Override
-            public void onResponse(Call<ArrayList<Song>> call, Response<ArrayList<Song>> response) {
-                adapter.updateTracks(response.body());
-//>>>>>>> darsh
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<Song>> call, Throwable t) {
-
-            }
-        });
+//            public void onResponse(Call<ArrayList<Song>> call, Response<ArrayList<Song>> response) {
+//                adapter.updateTracks(response.body());
+////>>>>>>> darsh
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ArrayList<Song>> call, Throwable t) {
+//
+//            }
+//        });
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
