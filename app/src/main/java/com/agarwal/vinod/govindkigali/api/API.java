@@ -1,6 +1,7 @@
 package com.agarwal.vinod.govindkigali.api;
 
 import com.agarwal.vinod.govindkigali.models.Song;
+import com.agarwal.vinod.govindkigali.models.Upcoming;
 
 import java.util.ArrayList;
 
@@ -15,4 +16,7 @@ public interface API {
 
     @GET("users/17410596/tracks?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J")
     Call<ArrayList<Song>> getTracks();
+
+    @GET("bins/uz8qr")
+    Call<ArrayList<Upcoming>> getUpcomings();
 }

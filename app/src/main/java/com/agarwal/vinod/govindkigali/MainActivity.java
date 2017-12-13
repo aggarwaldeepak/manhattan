@@ -19,6 +19,7 @@ import android.view.View;
 
 import com.agarwal.vinod.govindkigali.fragments.MainFragment;
 import com.agarwal.vinod.govindkigali.fragments.MyMusicFragment;
+import com.agarwal.vinod.govindkigali.fragments.UpcomingFragment;
 import com.agarwal.vinod.govindkigali.utils.BottomNavigationViewHelper;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
 import com.agarwal.vinod.govindkigali.utils.Util;
@@ -58,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_thought:
                     return true;
                 case R.id.navigation_upcoming:
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fg, new UpcomingFragment())
+                            .commit();
                     return true;
                 case R.id.navigation_my_music:
                     getSupportFragmentManager().beginTransaction()

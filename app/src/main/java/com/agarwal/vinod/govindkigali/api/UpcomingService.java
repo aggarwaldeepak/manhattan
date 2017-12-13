@@ -7,16 +7,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by Anirudh Gupta on 11/12/17.
  */
 
-public class SongService {
+public class UpcomingService {
 
-    private SongService() {}
+    private UpcomingService() {}
 
     private static API api = null;
 
-    public static API getSongApi() {
+    public static API getUpcomingApi() {
         if (api == null) {
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("https://api.soundcloud.com/")
+                    .baseUrl("https://api.myjson.com/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
