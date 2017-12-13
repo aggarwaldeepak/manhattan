@@ -1,15 +1,23 @@
 package com.agarwal.vinod.govindkigali.fragments;
 
 
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -20,18 +28,30 @@ import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.PlayListAdapter;
 import com.agarwal.vinod.govindkigali.models.Song;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import it.moondroid.coverflow.components.ui.containers.FeatureCoverFlow;
+
+import static android.view.View.GONE;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class PlayerFragment extends Fragment {
 
-    ImageView iv_more, iv_close;
-    String title = "";
-    private ArrayList<Song> playList = new ArrayList<>();
+    RelativeLayout rlPlayer, rlPlayerOptions;
+    private MediaPlayer mediaPlayer;
+    ProgressBar pbLoading, pbProgress;
+    ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivClose, ivMore;
+    TextView tvSongName, tvTitle, tvStart, tvEnd;
+    FrameLayout flPlayerOptions, ll;
+    SeekBar sbProgress;
+    LinearLayout llHead, llProgress;
+    private String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
+    private Integer value = 0;
+    Boolean f = false;
+    public static final String TAG = "PL";
 
     public PlayerFragment() {
         // Required empty public constructor
@@ -40,7 +60,7 @@ public class PlayerFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        title = getArguments().getString("Title");
+        value = getArguments().getInt("Value");
     }
 
     @Override
@@ -51,50 +71,109 @@ public class PlayerFragment extends Fragment {
 
         final View playerFragment = inflater.inflate(R.layout.fragment_player, container, false);
 
-        iv_more = playerFragment.findViewById(R.id.iv_more);
-        iv_close = playerFragment.findViewById(R.id.iv_close);
-        final TextView tvName = playerFragment.findViewById(R.id.tv_name);
-        tvName.setText(title);
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
+        pbLoading = playerFragment.findViewById(R.id.pb_loading);
+        pbProgress = playerFragment.findViewById(R.id.pb_progress);
+        ivPlayPause = playerFragment.findViewById(R.id.iv_play_pause);
+        ivPlay = playerFragment.findViewById(R.id.iv_play);
+        ivPrevious = playerFragment.findViewById(R.id.iv_previous);
+        ivNext = playerFragment.findViewById(R.id.iv_next);
+        ivUpArrow = playerFragment.findViewById(R.id.iv_up_arrow);
+        ivUpArrow = playerFragment.findViewById(R.id.iv_up_arrow);
+        ivClose = playerFragment.findViewById(R.id.iv_close);
+        tvSongName = playerFragment.findViewById(R.id.tv_song);
+        tvTitle = playerFragment.findViewById(R.id.tv_name);
+        tvStart = playerFragment.findViewById(R.id.tv_start);
+        tvEnd = playerFragment.findViewById(R.id.tv_end);
+        ivMore = playerFragment.findViewById(R.id.iv_more);
+        rlPlayerOptions = playerFragment.findViewById(R.id.rl_player_options);
+        flPlayerOptions = playerFragment.findViewById(R.id.fl_player_options);
+        llHead = playerFragment.findViewById(R.id.ll_head);
+        llProgress = playerFragment.findViewById(R.id.ll_progress);
+        sbProgress = playerFragment.findViewById(R.id.sb_progress);
+        rlPlayer = playerFragment.findViewById(R.id.rl_player);
 
-//        tvName.setFactory(new ViewSwitcher.ViewFactory() {
-//            @Override
-//            public View makeView() {
-//                LayoutInflater inflater1 = LayoutInflater.from(getContext());
-//                TextView tvTitle = (TextView) inflater1.inflate(R.layout.layout_title, null);
-//                return tvTitle;
-//            }
-//        });
-//
-//        PlayListAdapter adapter = new PlayListAdapter(playList, getContext());
-//        FeatureCoverFlow featureCoverFlow = playerFragment.findViewById(R.id.cf_list);
-//
-//        featureCoverFlow.setAdapter(adapter);
+        rlPlayer.setVisibility(GONE);
 
-//        featureCoverFlow.setOnScrollPositionListener(new FeatureCoverFlow.OnScrollPositionListener() {
-//            @Override
-//            public void onScrolledToPosition(int position) {
-//
-//            }
-//
-//            @Override
-//            public void onScrolling() {
-//
-//            }
-//        });
-
-
-        iv_close.setOnClickListener(new View.OnClickListener() {
+        tvSongName.setText(MainFragment.playlist.get(value).getTitle());
+        tvTitle.setText(MainFragment.playlist.get(value).getTitle());
+        ivPlayPause.setVisibility(GONE);
+        try {
+//            mediaPlayer.reset();
+            mediaPlayer.setDataSource(MainFragment.playlist.get(value).getStream_url() + client_id);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mediaPlayer.prepareAsync();
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
-            public void onClick(View view) {
-                ((PlayerCommunication)getActivity()).onClosePlayerFragment();
+            public void onPrepared(MediaPlayer mp) {
+                pbLoading.setVisibility(View.GONE);
+                ivPlayPause.setVisibility(View.VISIBLE);
+                ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
+                ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
+                mp.start();
             }
         });
 
-        iv_more.setOnClickListener(new View.OnClickListener() {
+        ivUpArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rlPlayer.setVisibility(View.VISIBLE);
+                MainFragment.rvPlayList.setVisibility(GONE);
+                flPlayerOptions.setVisibility(GONE);
+            }
+        });
+
+        ivClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainFragment.rvPlayList.setVisibility(View.VISIBLE);
+                flPlayerOptions.setVisibility(View.VISIBLE);
+                rlPlayer.setVisibility(GONE);
+            }
+        });
+
+        ivMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopup(iv_more);
+                showPopup(view);
+            }
+        });
+
+        ivPlayPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (f) {
+                    f = false;
+                    ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
+                    ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
+                    mediaPlayer.start();
+                } else {
+                    f = true;
+                    ivPlayPause.setImageResource(R.drawable.ic_play_arrow_red_a700_48dp);
+                    ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+                    mediaPlayer.pause();
+                }
+            }
+        });
+
+        ivPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (f) {
+                    f = false;
+                    ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
+                    ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
+                    mediaPlayer.start();
+                } else {
+                    f = true;
+                    ivPlayPause.setImageResource(R.drawable.ic_play_arrow_red_a700_48dp);
+                    ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+                    mediaPlayer.pause();
+                }
             }
         });
 
@@ -109,4 +188,9 @@ public class PlayerFragment extends Fragment {
         popup.show();
     }
 
+    @Override
+    public void onDetach() {
+        mediaPlayer.release();
+        super.onDetach();
+    }
 }
