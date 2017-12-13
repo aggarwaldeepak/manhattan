@@ -13,6 +13,8 @@ import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.api.SongService;
 import com.agarwal.vinod.govindkigali.models.Song;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -74,7 +76,7 @@ public class MainFragment extends Fragment {
 
                 @Override
                 public void onFailure(Call<ArrayList<Song>> call, Throwable t) {
-
+                    t.printStackTrace();
                 }
             });
         } else {

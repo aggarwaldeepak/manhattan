@@ -28,6 +28,8 @@ import com.agarwal.vinod.govindkigali.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.PlayListAdapter;
 import com.agarwal.vinod.govindkigali.models.Song;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ public class PlayerFragment extends Fragment {
     RelativeLayout rlPlayer, rlPlayerOptions;
     private MediaPlayer mediaPlayer;
     ProgressBar pbLoading, pbProgress;
-    ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivClose, ivMore;
+    ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivClose, ivMore, ivFav;
     TextView tvSongName, tvTitle, tvStart, tvEnd;
     FrameLayout flPlayerOptions, ll;
     SeekBar sbProgress;
@@ -53,6 +55,8 @@ public class PlayerFragment extends Fragment {
     private Integer value = 0;
     Boolean f = false;
     public static final String TAG = "PL";
+    DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference favRef = reference.child("fav");
 
     public PlayerFragment() {
         // Required empty public constructor
@@ -89,6 +93,7 @@ public class PlayerFragment extends Fragment {
         tvStart = playerFragment.findViewById(R.id.tv_start);
         tvEnd = playerFragment.findViewById(R.id.tv_end);
         ivMore = playerFragment.findViewById(R.id.iv_more);
+        ivFav = playerFragment.findViewById(R.id.iv_fav);
         rlPlayerOptions = playerFragment.findViewById(R.id.rl_player_options);
         flPlayerOptions = playerFragment.findViewById(R.id.fl_player_options);
         llHead = playerFragment.findViewById(R.id.ll_head);
@@ -127,6 +132,15 @@ public class PlayerFragment extends Fragment {
             }
         });
 
+        tvSongName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rlPlayer.setVisibility(View.VISIBLE);
+                MainFragment.rvPlayList.setVisibility(GONE);
+                flPlayerOptions.setVisibility(GONE);
+            }
+        });
+
         ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,6 +154,14 @@ public class PlayerFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 showPopup(view);
+            }
+        });
+
+        ivFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                favRef.child(MainFragment.playlist.get(value).getTitle()).setValue(MainFragment.playlist.get(value).getStream_url());
+                favRef.child(MainFragment.playlist.get(value).getId()).setValue(MainFragment.playlist.get(value));
             }
         });
 

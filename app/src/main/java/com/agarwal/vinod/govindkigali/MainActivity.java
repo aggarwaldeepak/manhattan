@@ -25,7 +25,6 @@ import com.agarwal.vinod.govindkigali.utils.Util;
 import com.agarwal.vinod.govindkigali.utils.MediaPlayBack;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.api.SongService;
-import com.agarwal.vinod.govindkigali.fragments.PlayerBarFragment;
 import com.agarwal.vinod.govindkigali.fragments.PlayerFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
 
