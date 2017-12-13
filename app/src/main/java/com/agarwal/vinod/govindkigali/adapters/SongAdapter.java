@@ -25,15 +25,12 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
     private ArrayList<Song> playList = new ArrayList<>();
     private Context context;
-//    private PlayerCommunication communication;
-    private Activity activity;
+    PlayerInterface playerInterface;
     public static final String TAG = "CHECK";
 
-    public SongAdapter(Context context, Activity activity) {
-//    }, PlayerCommunication communication) {
+    public SongAdapter(Context context, PlayerInterface playerInterface) {
         this.context = context;
-        this.activity = activity;
-//        this.communication = communication;
+        this.playerInterface = playerInterface;
     }
 
     public void updateTracks(ArrayList<Song> playList) {
@@ -50,7 +47,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
     @Override
     public void onBindViewHolder(SongViewHolder holder, int position) {
-        holder.bindView(playList.get(position));
+        holder.bindView(playList.get(position), position);
     }
 
     @Override
@@ -67,26 +64,26 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
             super(itemView);
 
             tvName = itemView.findViewById(R.id.tv_name);
-//            tvDescription = itemView.findViewById(R.id.tv_description);
             tvLikes = itemView.findViewById(R.id.tv_likes);
             tvViews = itemView.findViewById(R.id.tv_views);
             llSong = itemView.findViewById(R.id.ll_song);
 
         }
 
-        void bindView(final Song song) {
+        void bindView(final Song song, final int pos) {
             tvName.setText(song.getTitle());
-//            tvDescription.setText(song.getDescription());
-            tvLikes.setText(song.getFavoritings_count());
-            tvViews.setText(song.getPlayback_count());
 
             llSong.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((PlayerCommunication)activity).playSong(song);
+                    playerInterface.playSong(pos);
                 }
             });
 
         }
+    }
+
+    public interface PlayerInterface {
+        void playSong(Integer value);
     }
 }

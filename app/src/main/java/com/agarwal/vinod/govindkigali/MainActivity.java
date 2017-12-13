@@ -37,7 +37,7 @@ import retrofit2.Response;
 
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements PlayerCommunication {
+public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     RecyclerView rvPLayList;
@@ -186,24 +186,6 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     }
 
 
-    @Override
-    public void onClosePlayerFragment() {
-
-        toolbar.setVisibility(View.VISIBLE);
-        getSupportFragmentManager().beginTransaction()
-                .remove(fragment)
-                .commit();
-    }
-
-    @Override
-    public void onOpenPlayerFragment() {
-//<<<<<<< HEAD
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_layout, fragment)
-                .commit();
-        toolbar.setVisibility(View.GONE);
-    }
-
     public void setLanguageWithDialog(final PrefManager prefManager){
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setCancelable(false);
@@ -269,16 +251,4 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         recreate();
     }
 
-    @Override
-    public void playSong(Song song) {
-        PlayerBarFragment fragmentBar = new PlayerBarFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("Title", song.getTitle());
-        bundle.putString("Stream", song.getStream_url());
-        bundle.putInt("Duration", song.getDuration());
-        fragmentBar.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fg, fragmentBar)
-                        .commit();
-    }
 }

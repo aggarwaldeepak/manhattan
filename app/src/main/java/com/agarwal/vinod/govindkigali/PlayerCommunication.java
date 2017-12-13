@@ -10,5 +10,5 @@ import com.agarwal.vinod.govindkigali.models.Song;
 public interface PlayerCommunication {
     void onClosePlayerFragment();
     void onOpenPlayerFragment();
-    void playSong(Song song);
+    void playSong(Integer pos);
 }
