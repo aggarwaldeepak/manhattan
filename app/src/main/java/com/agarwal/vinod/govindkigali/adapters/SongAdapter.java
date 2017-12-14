@@ -27,7 +27,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     private ArrayList<Song> playList = new ArrayList<>();
     private Context context;
     PlayerInterface playerInterface;
-    public static final String TAG = "CHECK";
+    public static final String TAG = "PL";
 
     public SongAdapter(Context context, PlayerInterface playerInterface) {
         this.context = context;
@@ -75,6 +75,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
             llSong.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    PlayerFragment.focus = false;
+                    Log.d(TAG, "onClick: checking loss first :)");
                     playerInterface.playSong(pos);
                 }
             });

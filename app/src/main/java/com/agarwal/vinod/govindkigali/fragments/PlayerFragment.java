@@ -29,6 +29,7 @@ import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.PlayListAdapter;
+import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.models.Song;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -58,6 +59,7 @@ public class PlayerFragment extends Fragment {
     private Integer value = 0;
     Boolean f = false;
     Boolean manual = true;
+    public static Boolean focus = true;
     public static final String TAG = "PL";
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
     DatabaseReference favRef = reference.child("fav");
@@ -86,6 +88,7 @@ public class PlayerFragment extends Fragment {
                         playPause();
                     } else if (i == AudioManager.AUDIOFOCUS_LOSS) {
                         Log.d(TAG, "onAudioFocusChange: ------------------------------------------>");
+                        curVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
                         f = false;
                         manual = false;
                         playPause();
@@ -116,6 +119,7 @@ public class PlayerFragment extends Fragment {
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 
             Log.d(TAG, "onCreateView: ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::>>");
+            focus = true;
             //Initializing media player object
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -356,7 +360,7 @@ public class PlayerFragment extends Fragment {
             if (manual) {
                 int res = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
                 if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                    Log.d(TAG, "playPause: granted again :)");
+                    Log.d(TAG, "playPause: granted again :)" + audioFocusChangeListener);
                     mediaPlayer.start();
                 }
             } else {
@@ -368,16 +372,25 @@ public class PlayerFragment extends Fragment {
             ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
             if (manual) {
                 audioManager.abandonAudioFocus(audioFocusChangeListener);
-                Log.d(TAG, "playPause: abondoned :)");
+                Log.d(TAG, "playPause: abondoned :)" + audioFocusChangeListener);
                 mediaPlayer.pause();
             } else {
                 mediaPlayer.pause();
             }
         }
     }
+    
+    
 
     public static void hideIt() {
         flPlayerOptions.setVisibility(View.VISIBLE);
         rlPlayer.setVisibility(GONE);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (!focus) audioManager.abandonAudioFocus(audioFocusChangeListener);
+        Log.d(TAG, "onPause: " + audioFocusChangeListener);
     }
 }
