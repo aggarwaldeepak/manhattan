@@ -131,6 +131,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
+                android:id="@+id/iv_repeat"
                 android:layout_centerVertical="true"
                 android:layout_alignParentStart="true"
                 android:src="@drawable/ic_repeat_white_24dp"

@@ -51,7 +51,7 @@ public class PlayerFragment extends Fragment {
     private MediaPlayer mediaPlayer;
     private AudioManager audioManager;
     ProgressBar pbLoading, pbProgress;
-    ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivClose, ivMore, ivFav;
+    ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivClose, ivMore, ivFav, ivRepeat;
     TextView tvSongName, tvTitle, tvStart, tvEnd;
     static FrameLayout flPlayerOptions;
     SeekBar sbProgress;
@@ -59,6 +59,7 @@ public class PlayerFragment extends Fragment {
     private String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
     private Integer value = 0;
     Boolean f = false;
+    Boolean repeat = false;
     Boolean manual = true;
     public static Boolean focus = true;
     public static final String TAG = "PL";
@@ -129,6 +130,7 @@ public class PlayerFragment extends Fragment {
         tvEnd = playerFragment.findViewById(R.id.tv_end);
         ivMore = playerFragment.findViewById(R.id.iv_more);
         ivFav = playerFragment.findViewById(R.id.iv_fav);
+        ivRepeat= playerFragment.findViewById(R.id.iv_repeat);
         rlPlayerOptions = playerFragment.findViewById(R.id.rl_player_options);
         flPlayerOptions = playerFragment.findViewById(R.id.fl_player_options);
         llHead = playerFragment.findViewById(R.id.ll_head);
@@ -207,14 +209,18 @@ public class PlayerFragment extends Fragment {
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    if (value + 1 < MainFragment.playlist.size()) {
-                        value = value + 1;
-                        preparePlayer(value);
+                    if (!repeat) {
+                        if (value + 1 < MainFragment.playlist.size()) {
+                            value = value + 1;
+                            preparePlayer(value);
+                        } else {
+                            value = 0;
+                            preparePlayer(value);
+                        }
+                        Log.d(TAG, "onClick: " + value);
                     } else {
-                        value = 0;
                         preparePlayer(value);
                     }
-                    Log.d(TAG, "onClick: " + value);
                 }
             });
         }
@@ -311,6 +317,19 @@ public class PlayerFragment extends Fragment {
             }
         });
 
+        ivRepeat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (repeat) {
+                    repeat = false;
+                    ivRepeat.setImageResource(R.drawable.ic_repeat_white_24dp);
+                } else {
+                    repeat = true;
+                    ivRepeat.setImageResource(R.drawable.ic_repeat_one_white_24dp);
+                }
+            }
+        });
+
         sbProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -387,6 +406,24 @@ public class PlayerFragment extends Fragment {
                     Log.d(TAG, "onPrepared2: 2222222222");
                 }
             });
+
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    if (!repeat) {
+                        if (value + 1 < MainFragment.playlist.size()) {
+                            value = value + 1;
+                            preparePlayer(value);
+                        } else {
+                            value = 0;
+                            preparePlayer(value);
+                        }
+                        Log.d(TAG, "onClick: " + value);
+                    } else {
+                        preparePlayer(value);
+                    }
+                }
+            });
         }
     }
 
@@ -433,8 +470,10 @@ public class PlayerFragment extends Fragment {
     
 
     public static void hideIt() {
-        flPlayerOptions.setVisibility(View.VISIBLE);
-        rlPlayer.setVisibility(GONE);
+        if (flPlayerOptions != null && rlPlayer != null) {
+            flPlayerOptions.setVisibility(View.VISIBLE);
+            rlPlayer.setVisibility(GONE);
+        }
     }
 
     @Override

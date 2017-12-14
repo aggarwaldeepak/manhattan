@@ -13,11 +13,13 @@
         app:cardElevation="5dp">
 
         <TextView
-            android:layout_gravity="center"
+            android:id="@+id/tv_recently_played"
             android:text="@string/recently_played"
+            android:background="@android:color/holo_blue_bright"
+            android:gravity="center"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </android.support.v7.widget.CardView>
 
@@ -29,11 +31,13 @@
         app:cardElevation="5dp">
 
         <TextView
-            android:layout_gravity="center"
+            android:id="@+id/tv_fav"
             android:text="@string/favourites"
+            android:background="@android:color/holo_orange_dark"
+            android:gravity="center"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"  />
 
     </android.support.v7.widget.CardView>
 
@@ -45,11 +49,13 @@
         app:cardElevation="5dp">
 
         <TextView
-            android:layout_gravity="center"
+            android:id="@+id/tv_listen_later"
             android:text="@string/play_lists"
+            android:background="@android:color/holo_purple"
+            android:gravity="center"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"  />
 
     </android.support.v7.widget.CardView>
 
