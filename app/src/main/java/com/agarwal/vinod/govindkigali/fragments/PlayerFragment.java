@@ -6,6 +6,7 @@ import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.PopupMenu;
@@ -112,56 +113,6 @@ public class PlayerFragment extends Fragment {
 
         final View playerFragment = inflater.inflate(R.layout.fragment_player, container, false);
 
-        releaseMediaPlayer();
-        audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-
-        int result = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-
-            Log.d(TAG, "onCreateView: ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::>>");
-            focus = true;
-            //Initializing media player object
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-            try {
-                mediaPlayer.setDataSource(MainFragment.playlist.get(value).getStream_url() + client_id);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            mediaPlayer.prepareAsync();
-            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-
-                    //Changing visibility
-                    //as player loaded
-                    pbLoading.setVisibility(View.GONE);
-                    ivPlayPause.setVisibility(View.VISIBLE);
-                    ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
-                    ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
-
-                    //after preparing media-player
-                    //launching player to play music
-                    mp.start();
-                }
-            });
-
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    if (value + 1 < MainFragment.playlist.size()) {
-                        value = value + 1;
-                        preparePlayer(value);
-                    } else {
-                        value = 0;
-                        preparePlayer(value);
-                    }
-                    Log.d(TAG, "onClick: " + value);
-                }
-            });
-        }
-
         //Getting all id's
         pbLoading = playerFragment.findViewById(R.id.pb_loading);
         pbProgress = playerFragment.findViewById(R.id.pb_progress);
@@ -192,6 +143,81 @@ public class PlayerFragment extends Fragment {
         //Assigning title of sing to textview
         tvSongName.setText(MainFragment.playlist.get(value).getTitle());
         tvTitle.setText(MainFragment.playlist.get(value).getTitle());
+
+        //Media player services
+        //Manager
+        //Completion Listener
+        releaseMediaPlayer();
+        audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
+
+        int result = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+
+            Log.d(TAG, "onCreateView: ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::>>");
+            focus = true;
+            tvEnd.setText(String.valueOf(MainFragment.playlist.get(value).getDuration()/1000));
+            sbProgress.setMax(MainFragment.playlist.get(value).getDuration()/1000);
+            pbProgress.setMax(MainFragment.playlist.get(value).getDuration()/1000);
+
+
+            //Initializing media player object
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+            try {
+                mediaPlayer.setDataSource(MainFragment.playlist.get(value).getStream_url() + client_id);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mediaPlayer.prepareAsync();
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+
+                    //Changing visibility
+                    //as player loaded
+                    pbLoading.setVisibility(View.GONE);
+                    ivPlayPause.setVisibility(View.VISIBLE);
+                    ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
+                    ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
+
+                    //after preparing media-player
+                    //launching player to play music
+                    mp.start();
+                    Log.d(TAG, "onPrepare1d: 111111111111111111111");
+                }
+            });
+
+            final Handler mHandler = new Handler();
+            //Make sure you update Seekbar on UI thread
+            getActivity().runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    if(mediaPlayer != null){
+                        int mCurrentPosition = mediaPlayer.getCurrentPosition() / 1000;
+                        sbProgress.setProgress(mCurrentPosition);
+                        pbProgress.setProgress(mCurrentPosition);
+                        tvStart.setText(String.valueOf(mCurrentPosition));
+                    }
+                    mHandler.postDelayed(this, 1000);
+                }
+            });
+
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    if (value + 1 < MainFragment.playlist.size()) {
+                        value = value + 1;
+                        preparePlayer(value);
+                    } else {
+                        value = 0;
+                        preparePlayer(value);
+                    }
+                    Log.d(TAG, "onClick: " + value);
+                }
+            });
+        }
 
 
         //For launching full screen player
@@ -285,6 +311,25 @@ public class PlayerFragment extends Fragment {
             }
         });
 
+        sbProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if (mediaPlayer != null && b) {
+                    mediaPlayer.seekTo(i * 1000);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         return playerFragment;
     }
 
@@ -312,6 +357,10 @@ public class PlayerFragment extends Fragment {
         int result = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 
+            tvEnd.setText(String.valueOf(MainFragment.playlist.get(value).getDuration()/1000));
+            sbProgress.setMax(MainFragment.playlist.get(value).getDuration()/1000);
+            pbProgress.setMax(MainFragment.playlist.get(value).getDuration()/1000);
+
             //Initializing media player object
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -335,6 +384,7 @@ public class PlayerFragment extends Fragment {
                     ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
                     ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
                     mp.start();
+                    Log.d(TAG, "onPrepared2: 2222222222");
                 }
             });
         }

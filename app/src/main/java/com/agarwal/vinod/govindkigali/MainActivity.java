@@ -96,31 +96,6 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.fg, new MainFragment())
                 .commit();
 
-//        playBack = new MediaPlayBack();
-//        playBack.initiate(this);
-//        fragment = new PlayerFragment();
-//
-//        rvPLayList = findViewById(R.id.rv_playlist);
-//
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-//        rvPLayList.setLayoutManager(layoutManager);
-//
-//        final SongAdapter adapter = new SongAdapter(this, this);
-//        rvPLayList.setAdapter(adapter);
-//
-//        SongService.getSongApi().getTracks().enqueue(new Callback<ArrayList<Song>>() {
-//            @Override
-//            public void onResponse(Call<ArrayList<Song>> call, Response<ArrayList<Song>> response) {
-//                adapter.updateTracks(response.body());
-////>>>>>>> darsh
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ArrayList<Song>> call, Throwable t) {
-//
-//            }
-//        });
-
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         BottomNavigationViewHelper.disableShiftMode(navigation);
