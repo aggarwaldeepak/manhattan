@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_play:
+                    PlayerFragment.hideIt();
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fg, new MainFragment())
                             .commit();
@@ -59,11 +60,13 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_thought:
                     return true;
                 case R.id.navigation_upcoming:
+                    PlayerFragment.hideIt();
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fg, new UpcomingFragment())
                             .commit();
                     return true;
                 case R.id.navigation_my_music:
+                    PlayerFragment.hideIt();
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fg, new MyMusicFragment())
                             .commit();

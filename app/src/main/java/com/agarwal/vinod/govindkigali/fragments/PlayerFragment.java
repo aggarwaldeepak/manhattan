@@ -1,6 +1,8 @@
 package com.agarwal.vinod.govindkigali.fragments;
 
 
+import android.content.Context;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -43,20 +45,49 @@ import static android.view.View.GONE;
  */
 public class PlayerFragment extends Fragment {
 
-    RelativeLayout rlPlayer, rlPlayerOptions;
+    static RelativeLayout rlPlayer, rlPlayerOptions;
     private MediaPlayer mediaPlayer;
+    private AudioManager audioManager;
     ProgressBar pbLoading, pbProgress;
     ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivClose, ivMore, ivFav;
     TextView tvSongName, tvTitle, tvStart, tvEnd;
-    FrameLayout flPlayerOptions, ll;
+    static FrameLayout flPlayerOptions;
     SeekBar sbProgress;
     LinearLayout llHead, llProgress;
     private String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
     private Integer value = 0;
     Boolean f = false;
+    Boolean manual = true;
     public static final String TAG = "PL";
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
     DatabaseReference favRef = reference.child("fav");
+
+    AudioManager.OnAudioFocusChangeListener audioFocusChangeListener =
+            new AudioManager.OnAudioFocusChangeListener() {
+                @Override
+                public void onAudioFocusChange(int i) {
+                    if (i == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+                        Log.d(TAG, "onAudioFocusChange: =========================================>" );
+                        f = false;
+                        manual = false;
+                        playPause();
+                    } else if (i == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+                        Log.d(TAG, "onAudioFocusChange: ******************************************>");
+                        mediaPlayer.setVolume(AudioManager.ADJUST_LOWER, AudioManager.ADJUST_LOWER);
+                    } else if (i == AudioManager.AUDIOFOCUS_GAIN) {
+                        Log.d(TAG, "onAudioFocusChange: ???????????????????????????????????????????>");
+                        f = true;
+                        manual = false;
+                        playPause();
+                        mediaPlayer.setVolume(AudioManager.ADJUST_RAISE, AudioManager.ADJUST_RAISE);
+                    } else if (i == AudioManager.AUDIOFOCUS_LOSS) {
+                        Log.d(TAG, "onAudioFocusChange: ------------------------------------------>");
+                        f = false;
+                        manual = false;
+                        playPause();
+                    }
+                }
+            };
 
     public PlayerFragment() {
         // Required empty public constructor
@@ -74,11 +105,56 @@ public class PlayerFragment extends Fragment {
 
         final View playerFragment = inflater.inflate(R.layout.fragment_player, container, false);
 
-        if (mediaPlayer == null) {
-            mediaPlayer = new MediaPlayer();
-        }
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        releaseMediaPlayer();
+        audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
 
+        int result = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+
+            Log.d(TAG, "onCreateView: ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::>>");
+            //Initializing media player object
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+            try {
+                mediaPlayer.setDataSource(MainFragment.playlist.get(value).getStream_url() + client_id);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mediaPlayer.prepareAsync();
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+
+                    //Changing visibility
+                    //as player loaded
+                    pbLoading.setVisibility(View.GONE);
+                    ivPlayPause.setVisibility(View.VISIBLE);
+                    ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
+                    ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
+
+                    //after preparing media-player
+                    //launching player to play music
+                    mp.start();
+                }
+            });
+
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    if (value + 1 < MainFragment.playlist.size()) {
+                        value = value + 1;
+                        preparePlayer(value);
+                    } else {
+                        value = 0;
+                        preparePlayer(value);
+                    }
+                    Log.d(TAG, "onClick: " + value);
+                }
+            });
+        }
+
+        //Getting all id's
         pbLoading = playerFragment.findViewById(R.id.pb_loading);
         pbProgress = playerFragment.findViewById(R.id.pb_progress);
         ivPlayPause = playerFragment.findViewById(R.id.iv_play_pause);
@@ -101,28 +177,16 @@ public class PlayerFragment extends Fragment {
         sbProgress = playerFragment.findViewById(R.id.sb_progress);
         rlPlayer = playerFragment.findViewById(R.id.rl_player);
 
+        //Setting initial visibility modes
         rlPlayer.setVisibility(GONE);
         ivPlayPause.setVisibility(GONE);
+
+        //Assigning title of sing to textview
         tvSongName.setText(MainFragment.playlist.get(value).getTitle());
         tvTitle.setText(MainFragment.playlist.get(value).getTitle());
-        try {
-            mediaPlayer.setDataSource(MainFragment.playlist.get(value).getStream_url() + client_id);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mediaPlayer.prepareAsync();
-        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                pbLoading.setVisibility(View.GONE);
-                ivPlayPause.setVisibility(View.VISIBLE);
-                ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
-                ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
-                mp.start();
-            }
-        });
 
 
+        //For launching full screen player
         ivUpArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,6 +196,7 @@ public class PlayerFragment extends Fragment {
             }
         });
 
+        //full screen player option to text-View to
         tvSongName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,6 +206,7 @@ public class PlayerFragment extends Fragment {
             }
         });
 
+        //getting back to player bar(small player)
         ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,6 +216,7 @@ public class PlayerFragment extends Fragment {
             }
         });
 
+        //Pop up menu
         ivMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -157,45 +224,28 @@ public class PlayerFragment extends Fragment {
             }
         });
 
+        //fav goes to firebase as fav folder
         ivFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                favRef.child(MainFragment.playlist.get(value).getTitle()).setValue(MainFragment.playlist.get(value).getStream_url());
                 favRef.child(MainFragment.playlist.get(value).getId()).setValue(MainFragment.playlist.get(value));
             }
         });
 
+        //now play pause button set-up
         ivPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (f) {
-                    f = false;
-                    ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
-                    ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
-                    mediaPlayer.start();
-                } else {
-                    f = true;
-                    ivPlayPause.setImageResource(R.drawable.ic_play_arrow_red_a700_48dp);
-                    ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-                    mediaPlayer.pause();
-                }
+                manual = true;
+                playPause();
             }
         });
 
         ivPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (f) {
-                    f = false;
-                    ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
-                    ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
-                    mediaPlayer.start();
-                } else {
-                    f = true;
-                    ivPlayPause.setImageResource(R.drawable.ic_play_arrow_red_a700_48dp);
-                    ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-                    mediaPlayer.pause();
-                }
+                manual = true;
+                playPause();
             }
         });
 
@@ -206,7 +256,7 @@ public class PlayerFragment extends Fragment {
                     value = value - 1;
                     preparePlayer(value);
                 } else {
-                    value = MainFragment.playlist.size();
+                    value = MainFragment.playlist.size() - 1;
                     preparePlayer(value);
                 }
                 Log.d(TAG, "onClick: " + value);
@@ -227,7 +277,6 @@ public class PlayerFragment extends Fragment {
             }
         });
 
-
         return playerFragment;
     }
 
@@ -240,32 +289,91 @@ public class PlayerFragment extends Fragment {
 
     @Override
     public void onDetach() {
-        mediaPlayer.release();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+
+            mediaPlayer = null;
+        }
         super.onDetach();
     }
 
     void preparePlayer(Integer pos) {
-        tvSongName.setText(MainFragment.playlist.get(pos).getTitle());
-        tvTitle.setText(MainFragment.playlist.get(pos).getTitle());
-        pbLoading.setVisibility(View.VISIBLE);
-        ivPlayPause.setVisibility(GONE);
-        ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-        try {
-            mediaPlayer.reset();
-            mediaPlayer.setDataSource(MainFragment.playlist.get(pos).getStream_url() + client_id);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mediaPlayer.prepareAsync();
-        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                pbLoading.setVisibility(GONE);
-                ivPlayPause.setVisibility(View.VISIBLE);
-                ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
-                ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
-                mp.start();
+
+        releaseMediaPlayer();
+
+        int result = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+
+            //Initializing media player object
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+            tvSongName.setText(MainFragment.playlist.get(pos).getTitle());
+            tvTitle.setText(MainFragment.playlist.get(pos).getTitle());
+            pbLoading.setVisibility(View.VISIBLE);
+            ivPlayPause.setVisibility(GONE);
+            ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+            try {
+                mediaPlayer.setDataSource(MainFragment.playlist.get(pos).getStream_url() + client_id);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        });
+            mediaPlayer.prepareAsync();
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    pbLoading.setVisibility(GONE);
+                    ivPlayPause.setVisibility(View.VISIBLE);
+                    ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
+                    ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
+                    mp.start();
+                }
+            });
+        }
+    }
+
+    void releaseMediaPlayer() {
+        if (mediaPlayer != null) {
+            //Before playing new song  we have to release the player
+            mediaPlayer.release();
+
+            //And set player to null
+            mediaPlayer = null;
+
+            audioManager.abandonAudioFocus(audioFocusChangeListener);
+        }
+    }
+
+    void playPause() {
+        if (f) {
+            f = false;
+            ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
+            ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
+            if (manual) {
+                int res = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+                if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    Log.d(TAG, "playPause: granted again :)");
+                    mediaPlayer.start();
+                }
+            } else {
+                mediaPlayer.start();
+            }
+        } else {
+            f = true;
+            ivPlayPause.setImageResource(R.drawable.ic_play_arrow_red_a700_48dp);
+            ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+            if (manual) {
+                audioManager.abandonAudioFocus(audioFocusChangeListener);
+                Log.d(TAG, "playPause: abondoned :)");
+                mediaPlayer.pause();
+            } else {
+                mediaPlayer.pause();
+            }
+        }
+    }
+
+    public static void hideIt() {
+        flPlayerOptions.setVisibility(View.VISIBLE);
+        rlPlayer.setVisibility(GONE);
     }
 }

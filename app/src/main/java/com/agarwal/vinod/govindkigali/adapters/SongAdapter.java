@@ -58,15 +58,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
     class SongViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvName, tvDescription, tvLikes, tvViews;
+        TextView tvName;
         LinearLayout llSong;
 
         private SongViewHolder(View itemView) {
             super(itemView);
 
             tvName = itemView.findViewById(R.id.tv_name);
-            tvLikes = itemView.findViewById(R.id.tv_likes);
-            tvViews = itemView.findViewById(R.id.tv_views);
             llSong = itemView.findViewById(R.id.ll_song);
 
         }
