@@ -61,6 +61,8 @@ public class PlayerFragment extends Fragment {
     public static final String TAG = "PL";
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
     DatabaseReference favRef = reference.child("fav");
+    int maxVolume;
+    int curVolume;
 
     AudioManager.OnAudioFocusChangeListener audioFocusChangeListener =
             new AudioManager.OnAudioFocusChangeListener() {
@@ -73,13 +75,15 @@ public class PlayerFragment extends Fragment {
                         playPause();
                     } else if (i == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
                         Log.d(TAG, "onAudioFocusChange: ******************************************>");
-                        mediaPlayer.setVolume(AudioManager.ADJUST_LOWER, AudioManager.ADJUST_LOWER);
+                        maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                        curVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int)(maxVolume * 0.1), 0);
                     } else if (i == AudioManager.AUDIOFOCUS_GAIN) {
                         Log.d(TAG, "onAudioFocusChange: ???????????????????????????????????????????>");
                         f = true;
                         manual = false;
+                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, curVolume, 0);
                         playPause();
-                        mediaPlayer.setVolume(AudioManager.ADJUST_RAISE, AudioManager.ADJUST_RAISE);
                     } else if (i == AudioManager.AUDIOFOCUS_LOSS) {
                         Log.d(TAG, "onAudioFocusChange: ------------------------------------------>");
                         f = false;
