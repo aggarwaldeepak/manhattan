@@ -4,7 +4,11 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -19,5 +23,26 @@ public class Util {
         conf.setLocale(desiredLocale);
         Context localizedContext = context.createConfigurationContext(conf);
         return localizedContext.getResources();
+    }
+
+    public static long timeinMillis(int day, String month, int year, String time){
+        long timeInMilliseconds = 0;
+        String[] timeArr = time.split("P");
+        if (timeArr.length == 1){
+            timeArr = time.split("A");
+            timeArr[1] = "AM";
+        } else {
+            timeArr[1] = "PM";
+        }
+        String formattedTime = day + "-" + month + "-" + year + "-" + timeArr[0] + "-" + timeArr[1];
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMMMM-yyyy-h:mm-a");
+        try {
+            Date mDate = sdf.parse(formattedTime);
+            timeInMilliseconds = mDate.getTime();
+        } catch (ParseException e) {
+            Log.d("Util", "timeinMillis: Invalid Date");
+            e.printStackTrace();
+        }
+        return timeInMilliseconds;
     }
 }

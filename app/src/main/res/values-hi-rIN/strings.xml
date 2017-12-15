@@ -9,5 +9,7 @@
     <string name="title_settings">सेटिंग्स</string>
     <string name="action_settings">सेटिंग्स</string>
     <string name="action_search">खोज</string>
+    <string name="invite">Invite</string>
+    <string name="directions">Directions</string>
 
 </resources>
