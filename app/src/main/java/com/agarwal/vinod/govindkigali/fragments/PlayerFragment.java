@@ -32,8 +32,11 @@ import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.PlayListAdapter;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.models.Song;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -217,7 +220,7 @@ public class PlayerFragment extends Fragment {
                             value = 0;
                             preparePlayer(value);
                         }
-                        Log.d(TAG, "onClick: " + value);
+                        Log.d(TAG, "onClick: OnCreateView:" + value);
                     } else {
                         preparePlayer(value);
                     }
@@ -292,28 +295,14 @@ public class PlayerFragment extends Fragment {
         ivPrevious.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (value - 1 > 0) {
-                    value = value - 1;
-                    preparePlayer(value);
-                } else {
-                    value = MainFragment.playlist.size() - 1;
-                    preparePlayer(value);
-                }
-                Log.d(TAG, "onClick: " + value);
+                playPrevious();
             }
         });
 
         ivNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (value + 1 < MainFragment.playlist.size()) {
-                    value = value + 1;
-                    preparePlayer(value);
-                } else {
-                    value = 0;
-                    preparePlayer(value);
-                }
-                Log.d(TAG, "onClick: " + value);
+                playNext();
             }
         });
 
@@ -418,7 +407,7 @@ public class PlayerFragment extends Fragment {
                             value = 0;
                             preparePlayer(value);
                         }
-                        Log.d(TAG, "onClick: " + value);
+                        Log.d(TAG, "onClick: preparePlayer:" + value);
                     } else {
                         preparePlayer(value);
                     }
@@ -467,7 +456,33 @@ public class PlayerFragment extends Fragment {
         }
     }
     
-    
+    void playNext() {
+        audioManager.abandonAudioFocus(audioFocusChangeListener);
+        if (value + 1 < MainFragment.playlist.size()) {
+            value = value + 1;
+            preparePlayer(value);
+        } else {
+            value = 0;
+            preparePlayer(value);
+        }
+        Log.d(TAG, "onClick: " + value);
+    }
+
+    void playPrevious() {
+        audioManager.abandonAudioFocus(audioFocusChangeListener);
+        if (value - 1 > 0) {
+            value = value - 1;
+            preparePlayer(value);
+        } else {
+            value = MainFragment.playlist.size() - 1;
+            preparePlayer(value);
+        }
+        Log.d(TAG, "onClick: " + value);
+    }
+
+    void setFav() {
+//        favRef.child(MainFragment.playlist.get(value).getId()).
+    }
 
     public static void hideIt() {
         if (flPlayerOptions != null && rlPlayer != null) {
@@ -475,6 +490,22 @@ public class PlayerFragment extends Fragment {
             rlPlayer.setVisibility(GONE);
         }
     }
+
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        favRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Log.d(TAG, "onCancelled: cancelled!!!!!!!!!!!!!!!!!!!!!!!");
+//            }
+//        });
+//    }
 
     @Override
     public void onPause() {
@@ -485,6 +516,7 @@ public class PlayerFragment extends Fragment {
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
+                    audioManager.abandonAudioFocus(audioFocusChangeListener);
                     if (!repeat) {
                         if (value + 1 < MainFragment.playlist.size()) {
                             value = value + 1;
@@ -493,7 +525,7 @@ public class PlayerFragment extends Fragment {
                             value = 0;
                             preparePlayer(value);
                         }
-                        Log.d(TAG, "onClick: " + value);
+                        Log.d(TAG, "onClick: onPause:" + value);
                     } else {
                         preparePlayer(value);
                     }
