@@ -479,7 +479,27 @@ public class PlayerFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (!focus) audioManager.abandonAudioFocus(audioFocusChangeListener);
+        if (!focus) {
+            audioManager.abandonAudioFocus(audioFocusChangeListener);
+        } else {
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    if (!repeat) {
+                        if (value + 1 < MainFragment.playlist.size()) {
+                            value = value + 1;
+                            preparePlayer(value);
+                        } else {
+                            value = 0;
+                            preparePlayer(value);
+                        }
+                        Log.d(TAG, "onClick: " + value);
+                    } else {
+                        preparePlayer(value);
+                    }
+                }
+            });
+        }
         Log.d(TAG, "onPause: " + audioFocusChangeListener);
     }
 }
