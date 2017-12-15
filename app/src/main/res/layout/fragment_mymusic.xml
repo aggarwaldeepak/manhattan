@@ -49,7 +49,7 @@
         app:cardElevation="5dp">
 
         <TextView
-            android:id="@+id/tv_listen_later"
+            android:id="@+id/tv_play_list"
             android:text="@string/play_lists"
             android:background="@android:color/holo_purple"
             android:gravity="center"

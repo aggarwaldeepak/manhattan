@@ -12,13 +12,15 @@ import android.widget.TextView;
 
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.activities.FavActivity;
+import com.agarwal.vinod.govindkigali.activities.PlayListActivity;
+import com.agarwal.vinod.govindkigali.activities.RecentsActivity;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MyMusicFragment extends Fragment {
 
-    TextView tvRecents, tvFav, tvListenLater;
+    TextView tvRecents, tvFav, tvPlaylists;
     public MyMusicFragment() {
         // Required empty public constructor
     }
@@ -32,7 +34,7 @@ public class MyMusicFragment extends Fragment {
 
         tvFav = myMusicFragment.findViewById(R.id.tv_fav);
         tvRecents = myMusicFragment.findViewById(R.id.tv_recently_played);
-        tvListenLater = myMusicFragment.findViewById(R.id.tv_listen_later);
+        tvPlaylists = myMusicFragment.findViewById(R.id.tv_play_list);
 
         tvFav.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,6 +43,19 @@ public class MyMusicFragment extends Fragment {
             }
         });
 
+        tvPlaylists.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getContext(), PlayListActivity.class));
+            }
+        });
+
+        tvRecents.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getContext(), RecentsActivity.class));
+            }
+        });
 
         return myMusicFragment;
     }
