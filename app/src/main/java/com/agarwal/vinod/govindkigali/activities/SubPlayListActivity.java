@@ -19,28 +19,33 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class RecentsActivity extends AppCompatActivity {
+public class SubPlayListActivity extends AppCompatActivity {
 
-    RecyclerView rvFav;
+    RecyclerView rvsubList;
     SongAdapter adapter;
-    DatabaseReference recentsReference = FirebaseDatabase.getInstance().getReference("recents");
-    private ArrayList<Song> recentList = new ArrayList<>();
+    DatabaseReference playListReference = FirebaseDatabase.getInstance().getReference("pop");
+    private ArrayList<Song> subPlayList = new ArrayList<>();
     public static final String TAG = "FAV";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fav);
 
-        rvFav = findViewById(R.id.rv_fav);
+        rvsubList = findViewById(R.id.rv_fav);
 
-        recentsReference.addValueEventListener(new ValueEventListener() {
+        String name = getIntent().getStringExtra("Name");
+        Log.d(TAG, "onCreate: " + name);
+        DatabaseReference subListReference = playListReference.child(name);
+
+        subListReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot favSnapshot : dataSnapshot.getChildren()) {
                     Song song = favSnapshot.getValue(Song.class);
-                    recentList.add(song);
+                    subPlayList.add(song);
                 }
-                adapter.updateTracks(recentList);
+                adapter.updateTracks(subPlayList);
                 Log.d(TAG, "onDataChange: :)   :)   :)");
             }
 
@@ -61,12 +66,13 @@ public class RecentsActivity extends AppCompatActivity {
 //                getSupportFragmentManager().beginTransaction()
 //                        .replace(R.id.fg_main, fragment)
 //                        .commit();
-                Toast.makeText(RecentsActivity.this, "Under Process: : :", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SubPlayListActivity.this, "Under Process: : :", Toast.LENGTH_SHORT).show();
             }
         };
 
-        rvFav.setLayoutManager(new LinearLayoutManager(this));
+        rvsubList.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SongAdapter(this, playerInterface);
-        rvFav.setAdapter(adapter);
+        rvsubList.setAdapter(adapter);
+
     }
 }

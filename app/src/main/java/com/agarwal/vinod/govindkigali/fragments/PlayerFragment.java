@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -32,6 +33,7 @@ import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.PlayListAdapter;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.models.Song;
+import com.agarwal.vinod.govindkigali.utils.CustomDialogClass;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,13 +52,15 @@ import static android.view.View.GONE;
  */
 public class PlayerFragment extends Fragment {
 
+    //CHECK THIS
     static RelativeLayout rlPlayer, rlPlayerOptions;
+    static FrameLayout flPlayerOptions;
+
     private MediaPlayer mediaPlayer;
     private AudioManager audioManager;
     ProgressBar pbLoading, pbProgress;
     ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivClose, ivMore, ivFav, ivRepeat;
     TextView tvSongName, tvTitle, tvStart, tvEnd;
-    static FrameLayout flPlayerOptions;
     SeekBar sbProgress;
     LinearLayout llHead, llProgress;
     private String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
@@ -68,6 +72,8 @@ public class PlayerFragment extends Fragment {
     public static final String TAG = "PL";
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
     DatabaseReference favRef = reference.child("fav");
+    DatabaseReference recentRef = reference.child("recents");
+    private String ADDTOPLAYLIST = "Add to Playlist";
     int maxVolume;
     int curVolume;
 
@@ -160,6 +166,8 @@ public class PlayerFragment extends Fragment {
 
             Log.d(TAG, "onCreateView: ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::>>");
             focus = true;
+            recentRef.child(MainFragment.playlist.get(value).getId()).setValue(MainFragment.playlist.get(value));
+            setFav(MainFragment.playlist.get(value).getId());
             tvEnd.setText(String.valueOf(MainFragment.playlist.get(value).getDuration()/1000));
             sbProgress.setMax(MainFragment.playlist.get(value).getDuration()/1000);
             pbProgress.setMax(MainFragment.playlist.get(value).getDuration()/1000);
@@ -272,6 +280,7 @@ public class PlayerFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 favRef.child(MainFragment.playlist.get(value).getId()).setValue(MainFragment.playlist.get(value));
+                ivFav.setImageResource(R.drawable.ic_favorite_white_24dp);
             }
         });
 
@@ -346,6 +355,21 @@ public class PlayerFragment extends Fragment {
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.main, popup.getMenu());
         popup.show();
+
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Log.d(TAG, "onMenuItemClick: " + item);
+                switch (item.getItemId()) {
+                    case R.id.navigation_add_to_playlist:
+                        CustomDialogClass cdd=new CustomDialogClass(getContext(), MainFragment.playlist.get(value));
+                        cdd.show();
+                        Log.d(TAG, "onMenuItemClick: jksahdkjsdhaksjhdaksjdhk");
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     @Override
@@ -365,6 +389,8 @@ public class PlayerFragment extends Fragment {
         int result = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 
+            setFav(MainFragment.playlist.get(value).getId());
+            recentRef.child(MainFragment.playlist.get(value).getId()).setValue(MainFragment.playlist.get(value));
             tvEnd.setText(String.valueOf(MainFragment.playlist.get(value).getDuration()/1000));
             sbProgress.setMax(MainFragment.playlist.get(value).getDuration()/1000);
             pbProgress.setMax(MainFragment.playlist.get(value).getDuration()/1000);
@@ -480,8 +506,22 @@ public class PlayerFragment extends Fragment {
         Log.d(TAG, "onClick: " + value);
     }
 
-    void setFav() {
-//        favRef.child(MainFragment.playlist.get(value).getId()).
+    void setFav(final String id) {
+        favRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.child(id).exists()) {
+                    ivFav.setImageResource(R.drawable.ic_favorite_white_24dp);
+                } else {
+                    ivFav.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public static void hideIt() {
@@ -490,22 +530,6 @@ public class PlayerFragment extends Fragment {
             rlPlayer.setVisibility(GONE);
         }
     }
-
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        favRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                Log.d(TAG, "onCancelled: cancelled!!!!!!!!!!!!!!!!!!!!!!!");
-//            }
-//        });
-//    }
 
     @Override
     public void onPause() {

@@ -48,7 +48,7 @@ public class Song {
 //        return Duration;
 //    }
 
-        @SerializedName("title")
+    @SerializedName("title")
     @Expose
     private String title;
 
@@ -79,6 +79,9 @@ public class Song {
     @SerializedName("duration")
     @Expose
     private Integer duration;
+
+    public Song() {
+    }
 
     public Song(String title, String id, String description, String stream_url, String download_url, String favoritings_count, String playback_count, Integer duration) {
         this.title = title;
