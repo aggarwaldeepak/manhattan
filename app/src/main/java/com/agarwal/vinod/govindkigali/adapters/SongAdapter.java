@@ -2,6 +2,8 @@ package com.agarwal.vinod.govindkigali.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,19 +26,18 @@ import java.util.ArrayList;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
 
-    private ArrayList<Song> playList = new ArrayList<>();
+    public static ArrayList<Song> playList = new ArrayList<>();
     private Context context;
-    PlayerInterface playerInterface;
     public static final String TAG = "PL";
 
-    public SongAdapter(Context context, PlayerInterface playerInterface) {
+    public SongAdapter(Context context, ArrayList<Song> playList) {
         this.context = context;
-        this.playerInterface = playerInterface;
+        SongAdapter.playList = playList;
     }
 
     public void updateTracks(ArrayList<Song> playList) {
         Log.d(TAG, "updateNews: " + playList.size());
-        this.playList = playList;
+        SongAdapter.playList = playList;
         notifyDataSetChanged();
     }
 
@@ -77,14 +78,12 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                 public void onClick(View view) {
                     PlayerFragment.focus = false;
                     Log.d(TAG, "onClick: checking loss first :)");
-                    playerInterface.playSong(pos);
+                    Intent i = new Intent("custom-message");
+                    i.putExtra("val", pos);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(i);
                 }
             });
 
         }
-    }
-
-    public interface PlayerInterface {
-        void playSong(Integer value);
     }
 }

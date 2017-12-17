@@ -33,26 +33,26 @@ public class PlayListActivity extends AppCompatActivity {
 
         rvPlayList = findViewById(R.id.rv_fav);
 
-        listReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot popSnapshot : dataSnapshot.getChildren()) {
-                    String name = popSnapshot.getKey();
-                    List.add(name);
-                    Log.d(TAG, "onDataChange: " + popSnapshot.getKey());
-                }
-                adapter.updateList(List);
-                Log.d(TAG, "onDataChange: :)   :)   :)" + dataSnapshot.getChildren());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled: :(   :(   :(");
-            }
-        });
-
-        rvPlayList.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new PopListAdapter(this, new Song(), false);
-        rvPlayList.setAdapter(adapter);
+//        listReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot popSnapshot : dataSnapshot.getChildren()) {
+//                    String name = popSnapshot.getKey();
+//                    List.add(name);
+//                    Log.d(TAG, "onDataChange: " + popSnapshot.getKey());
+//                }
+//                adapter.updateList(List);
+//                Log.d(TAG, "onDataChange: :)   :)   :)" + dataSnapshot.getChildren());
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Log.d(TAG, "onCancelled: :(   :(   :(");
+//            }
+//        });
+//
+//        rvPlayList.setLayoutManager(new LinearLayoutManager(this));
+//        adapter = new PopListAdapter(getconte, new Song(), false);
+//        rvPlayList.setAdapter(adapter);
     }
 }

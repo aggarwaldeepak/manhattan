@@ -1,7 +1,10 @@
 package com.agarwal.vinod.govindkigali.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +16,9 @@ import android.widget.Toast;
 
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.activities.SubPlayListActivity;
+import com.agarwal.vinod.govindkigali.fragments.MyMusicFragment;
 import com.agarwal.vinod.govindkigali.fragments.PlayerFragment;
+import com.agarwal.vinod.govindkigali.fragments.SubPlayListFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -86,9 +91,14 @@ public class PopListAdapter extends RecyclerView.Adapter<PopListAdapter.PopListV
                 llSong.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent i = new Intent(context, SubPlayListActivity.class);
-                        i.putExtra("Name", name);
-                        context.startActivity(i);
+                        SubPlayListFragment fragment = new SubPlayListFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("Name", name);
+                        fragment.setArguments(bundle);
+                        MyMusicFragment.fragmentManager.beginTransaction()
+                                .replace(R.id.fg, fragment)
+                                .addToBackStack("remove2")
+                                .commit();
                     }
                 });
             }

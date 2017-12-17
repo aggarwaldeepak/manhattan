@@ -1,15 +1,18 @@
-package com.agarwal.vinod.govindkigali.activities;
+package com.agarwal.vinod.govindkigali.fragments;
 
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
-import com.agarwal.vinod.govindkigali.fragments.PlayerFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,24 +22,33 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class FavActivity extends AppCompatActivity {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class FavFragment extends Fragment {
 
     RecyclerView rvFav;
     SongAdapter adapter;
     DatabaseReference favReference = FirebaseDatabase.getInstance().getReference("fav");
     private ArrayList<Song> favList = new ArrayList<>();
     public static final String TAG = "FAV";
+    public FavFragment() {
+        // Required empty public constructor
+    }
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fav);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View recentsFragment =  inflater.inflate(R.layout.fragment_multi, container, false);
 
-        rvFav = findViewById(R.id.rv_fav);
+        rvFav = recentsFragment.findViewById(R.id.rv_multi);
 
         favReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                favList.clear();
                 for (DataSnapshot favSnapshot : dataSnapshot.getChildren()) {
                     Song song = favSnapshot.getValue(Song.class);
                     favList.add(song);
@@ -51,25 +63,11 @@ public class FavActivity extends AppCompatActivity {
             }
         });
 
-//        SongAdapter.PlayerInterface playerInterface = new SongAdapter.PlayerInterface() {
-//            @Override
-//            public void playSong(Integer value) {
-//
-////                PlayerFragment fragment = new PlayerFragment();
-////                Bundle bundle = new Bundle();
-////                bundle.putInt("Value", value);
-////                fragment.setArguments(bundle);
-////                getSupportFragmentManager().beginTransaction()
-////                        .replace(R.id.fg_main, fragment)
-////                        .commit();
-//                Toast.makeText(FavActivity.this, "Under Process: : :", Toast.LENGTH_SHORT).show();
-//            }
-//        };
-//
-//        rvFav.setLayoutManager(new LinearLayoutManager(this));
-//        adapter = new SongAdapter(this, playerInterface);
-//        rvFav.setAdapter(adapter);
+        rvFav.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new SongAdapter(getContext(), new ArrayList<Song>());
+        rvFav.setAdapter(adapter);
 
+        return recentsFragment;
     }
 
 }

@@ -39,7 +39,7 @@ public class CustomDialogClass extends Dialog implements View.OnClickListener {
     LinearLayout llList;
     private Context context;
     private EditText etListName;
-    private Button btCreate;
+    private Button btCreate, btCancel;
     private Song song;
     private DatabaseReference popReference = FirebaseDatabase.getInstance().getReference("pop");
     private ArrayList<String> popupList = new ArrayList<>();
@@ -60,12 +60,15 @@ public class CustomDialogClass extends Dialog implements View.OnClickListener {
         llList = findViewById(R.id.ll_createPlaylist);
         etListName = findViewById(R.id.et_list_name);
         btCreate = findViewById(R.id.bt_create);
+        btCancel = findViewById(R.id.bt_cancel);
 
         etListName.setVisibility(View.GONE);
         btCreate.setVisibility(View.GONE);
+        btCancel.setVisibility(View.GONE);
 
         llList.setOnClickListener(this);
         btCreate.setOnClickListener(this);
+        btCancel.setOnClickListener(this);
 
         popReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -98,12 +101,34 @@ public class CustomDialogClass extends Dialog implements View.OnClickListener {
             case R.id.ll_createPlaylist:
                 etListName.setVisibility(View.VISIBLE);
                 btCreate.setVisibility(View.VISIBLE);
+                btCancel.setVisibility(View.VISIBLE);
                 rvPopPlayList.setVisibility(View.GONE);
                 break;
             case R.id.bt_create:
-                popReference.child(etListName.getText().toString()).child(song.getId()).setValue(song);
-                Toast.makeText(context, "Song Added to " + etListName.getText().toString(), Toast.LENGTH_SHORT).show();
-                dismiss();
+                final String id = etListName.getText().toString();
+                popReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.child(id).exists()) {
+                            Toast.makeText(context, "PLay List Already Exits", Toast.LENGTH_SHORT).show();
+                        } else {
+                            popReference.child(etListName.getText().toString()).child(song.getId()).setValue(song);
+                            Toast.makeText(context, "Song Added to " + etListName.getText().toString(), Toast.LENGTH_SHORT).show();
+                            dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                break;
+            case R.id.bt_cancel:
+                etListName.setVisibility(View.GONE);
+                btCreate.setVisibility(View.GONE);
+                btCancel.setVisibility(View.GONE);
+                rvPopPlayList.setVisibility(View.VISIBLE);
                 break;
         }
     }

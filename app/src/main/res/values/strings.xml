@@ -106,5 +106,6 @@
     <string name="create_playlist">Create PlayList</string>
     <string name="create">CREATE</string>
     <string name="type_name">Type Name...</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

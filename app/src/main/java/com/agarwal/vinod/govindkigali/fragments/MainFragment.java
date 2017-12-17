@@ -29,7 +29,7 @@ public class MainFragment extends Fragment {
 
     public static RecyclerView rvPlayList;
     public static final String TAG = "MAIN";
-    public static ArrayList<Song> playlist = new ArrayList<>();
+    private ArrayList<Song> playlist = new ArrayList<>();
 
     public MainFragment() {
         // Required empty public constructor
@@ -47,21 +47,7 @@ public class MainFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvPlayList.setLayoutManager(layoutManager);
 
-        SongAdapter.PlayerInterface playerInterface = new SongAdapter.PlayerInterface() {
-            @Override
-            public void playSong(Integer value) {
-
-                PlayerFragment fragment = new PlayerFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt("Value", value);
-                fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fg_main, fragment)
-                        .commit();
-            }
-        };
-
-        final SongAdapter adapter = new SongAdapter(getContext(), playerInterface);
+        final SongAdapter adapter = new SongAdapter(getContext(), new ArrayList<Song>());
         rvPlayList.setAdapter(adapter);
 
         if (playlist.size() == 0) {
