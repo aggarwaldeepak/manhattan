@@ -40,6 +40,7 @@ dependencies {
         mavenCentral()
     }
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
+    implementation 'com.github.crosswall:Android-Coverflow:release-v1.0.4'
 }
 
 

@@ -12,19 +12,28 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,7 +41,9 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.agarwal.vinod.govindkigali.adapters.ImageAdapter;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.fragments.MainFragment;
 import com.agarwal.vinod.govindkigali.fragments.MyMusicFragment;
@@ -54,6 +65,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import me.crosswall.lib.coverflow.CoverFlow;
+import me.crosswall.lib.coverflow.core.PageItemClickListener;
+import me.crosswall.lib.coverflow.core.PagerContainer;
+
 import static android.view.View.GONE;
 
 public class MainActivity extends AppCompatActivity {
@@ -64,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     SearchView searchView;
     RelativeLayout rlPlayer, rlPlayerOptions;
     FrameLayout flPlayerOptions;
+    RecyclerView rvImage;
     private MediaPlayer mediaPlayer;
     private AudioManager audioManager;
     ProgressBar pbLoading, pbProgress;
@@ -84,6 +100,9 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference recentRef = reference.child("recents");
     int maxVolume;
     int curVolume;
+    ViewPager viewPager;
+    PagerContainer container;
+
     AudioManager.OnAudioFocusChangeListener audioFocusChangeListener =
             new AudioManager.OnAudioFocusChangeListener() {
                 @Override
@@ -166,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
         tvSongName = findViewById(R.id.tv_song);
         tvStart = findViewById(R.id.tv_start);
         tvEnd = findViewById(R.id.tv_end);
+        rvImage = findViewById(R.id.rv_song_image);
         ivMore = findViewById(R.id.iv_more);
         ivFav = findViewById(R.id.iv_fav);
         ivDownload = findViewById(R.id.iv_download);
@@ -175,6 +195,8 @@ public class MainActivity extends AppCompatActivity {
         llProgress = findViewById(R.id.ll_progress);
         sbProgress = findViewById(R.id.sb_progress);
         rlPlayer = findViewById(R.id.rl_player);
+        container = findViewById(R.id.pager_container);
+        viewPager = container.getViewPager();
 
         setTitle(
                 Util.getLocalizedResources(MainActivity.this,
@@ -223,6 +245,9 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).
                 registerReceiver(receiver, new IntentFilter("custom-message"));
 
+
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(rvImage);
         //For launching full screen player
 //        ivUpArrow.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -514,6 +539,7 @@ public class MainActivity extends AppCompatActivity {
             recentRef.child(SongAdapter.playList.get(value).getId()).setValue(SongAdapter.playList.get(value));
             setFav(SongAdapter.playList.get(value).getId());
             setRepeat();
+            loadImage();
             tvEnd.setText(String.valueOf(SongAdapter.playList.get(value).getDuration()/1000));
             sbProgress.setMax(SongAdapter.playList.get(value).getDuration()/1000);
             pbProgress.setMax(SongAdapter.playList.get(value).getDuration()/1000);
@@ -701,6 +727,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    void loadImage() {
+
+//        ImageAdapter imageAdapter = new ImageAdapter(this, SongAdapter.playList);
+//        rvImage.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+//        rvImage.setAdapter(imageAdapter);
+        SongImageAdapter adapter = new SongImageAdapter();
+        viewPager.setAdapter(adapter);
+        viewPager.setClipChildren(false);
+        viewPager.setOffscreenPageLimit(15);
+        new CoverFlow.Builder()
+                .with(viewPager)
+                .pagerMargin(getResources().getDimensionPixelSize(R.dimen.pager_margin))
+                .scale(0.3f)
+                .spaceSize(0f)
+                .rotationY(0f)
+                .build();
+        container.setPageItemClickListener(new PageItemClickListener() {
+            @Override
+            public void onItemClick(View view, int i) {
+                Toast.makeText(MainActivity.this, "Fuck Bitch!!!!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -737,5 +788,38 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public class SongImageAdapter extends PagerAdapter{
+
+
+        LayoutInflater layoutInflater;
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+            View view = layoutInflater.inflate(R.layout.layout_image,container,false);
+            ImageView im = view.findViewById(R.id.iv_Image);
+            container.addView(view);
+//            int sze = value%SongAdapter.playList.size();
+//            im.setImageResource(SongAdapter.playList.get(value);
+            im.setImageResource(R.drawable.ic_dashboard_black_24dp);
+            return view;
+        }
+
+        @Override
+        public int getCount() {
+            return SongAdapter.playList.size();
+//            return Integer.MAX_VALUE;
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            View view = (View) object;
+            container.removeView(view);
+        }
+    }
 
 }
