@@ -47,6 +47,7 @@ import com.agarwal.vinod.govindkigali.adapters.ImageAdapter;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.fragments.MainFragment;
 import com.agarwal.vinod.govindkigali.fragments.MyMusicFragment;
+import com.agarwal.vinod.govindkigali.fragments.PlayerFragment;
 import com.agarwal.vinod.govindkigali.fragments.SettingsFragment;
 import com.agarwal.vinod.govindkigali.fragments.UpcomingFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
@@ -162,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                             .commit();
                     return true;
                 case R.id.navigation_settings:
-                    PlayerFragment.hideIt();
+                    hideIt();
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fg,new SettingsFragment())
                             .commit();
@@ -508,7 +509,6 @@ public class MainActivity extends AppCompatActivity {
                 getBaseContext().getResources().getDisplayMetrics());
         recreate();
     }
-<<<<<<< 7abaf7d6ce90a285fe220bc752804ae00dd1553f
 
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -830,6 +830,3 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
-=======
-}
->>>>>>> Settings Screen
