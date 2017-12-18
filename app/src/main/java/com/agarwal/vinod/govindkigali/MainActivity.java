@@ -221,7 +221,13 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.fg, new MainFragment())
                 .commit();
 
-        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            Log.d(TAG, "onCreate: 111111111111111111111111111111111111111 ");
+            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        } else {
+            Log.d(TAG, "onCreate: 222222222222222222222222222222222222222");
+            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+        }
 
         slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
@@ -453,7 +459,8 @@ public class MainActivity extends AppCompatActivity {
             --fragmentCheck;
             MyMusicFragment.fragmentManager.popBackStack();
         } else {
-            super.onBackPressed();
+            moveTaskToBack(true);
+//            super.onBackPressed();
         }
     }
 
@@ -654,6 +661,8 @@ public class MainActivity extends AppCompatActivity {
 
     void releaseMediaPlayer() {
         if (mediaPlayer != null) {
+
+            Log.d(TAG, "releaseMediaPlayer: ----------------------------------------------");
             //Before playing new song  we have to release the player
             mediaPlayer.release();
 
@@ -688,74 +697,80 @@ public class MainActivity extends AppCompatActivity {
 
     void playPause() {
         Log.d(TAG, "playPause: " + f);
-        if (f) {
-            f = false;
-            ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
-            ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
-            if (manual) {
-                int res = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-                if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                    Log.d(TAG, "playPause: granted again :)" + audioFocusChangeListener);
+        if (mediaPlayer != null) {
+            if (f) {
+                f = false;
+                ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
+                ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
+                if (manual) {
+                    int res = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+                    if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                        Log.d(TAG, "playPause: granted again :)" + audioFocusChangeListener);
+                        mediaPlayer.start();
+                    }
+                } else {
                     mediaPlayer.start();
                 }
             } else {
-                mediaPlayer.start();
-            }
-        } else {
-            f = true;
-            ivPlayPause.setImageResource(R.drawable.ic_play_arrow_red_a700_48dp);
-            ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-            if (manual) {
-                audioManager.abandonAudioFocus(audioFocusChangeListener);
-                Log.d(TAG, "playPause: abondoned :)" + audioFocusChangeListener);
-                mediaPlayer.pause();
-            } else {
-                mediaPlayer.pause();
+                f = true;
+                ivPlayPause.setImageResource(R.drawable.ic_play_arrow_red_a700_48dp);
+                ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+                if (manual) {
+                    audioManager.abandonAudioFocus(audioFocusChangeListener);
+                    Log.d(TAG, "playPause: abondoned :)" + audioFocusChangeListener);
+                    mediaPlayer.pause();
+                } else {
+                    mediaPlayer.pause();
+                }
             }
         }
     }
 
     void playNext() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (mediaPlayer != null) {
+            ConnectivityManager cm =
+                    (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-        if (isConnected) {
-            audioManager.abandonAudioFocus(audioFocusChangeListener);
-            if (value + 1 < SongAdapter.playList.size()) {
-                value = value + 1;
-                preparePlayer(value);
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            boolean isConnected = activeNetwork != null &&
+                    activeNetwork.isConnectedOrConnecting();
+            if (isConnected) {
+                audioManager.abandonAudioFocus(audioFocusChangeListener);
+                if (value + 1 < SongAdapter.playList.size()) {
+                    value = value + 1;
+                    preparePlayer(value);
+                } else {
+                    value = 0;
+                    preparePlayer(value);
+                }
+                Log.d(TAG, "onClick: " + value);
             } else {
-                value = 0;
-                preparePlayer(value);
+                Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
             }
-            Log.d(TAG, "onClick: " + value);
-        } else {
-            Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
         }
     }
 
     void playPrevious() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (mediaPlayer != null) {
+            ConnectivityManager cm =
+                    (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-        if (isConnected) {
-            audioManager.abandonAudioFocus(audioFocusChangeListener);
-            if (value - 1 > 0) {
-                value = value - 1;
-                preparePlayer(value);
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            boolean isConnected = activeNetwork != null &&
+                    activeNetwork.isConnectedOrConnecting();
+            if (isConnected) {
+                audioManager.abandonAudioFocus(audioFocusChangeListener);
+                if (value - 1 > 0) {
+                    value = value - 1;
+                    preparePlayer(value);
+                } else {
+                    value = SongAdapter.playList.size() - 1;
+                    preparePlayer(value);
+                }
+                Log.d(TAG, "onClick: " + value);
             } else {
-                value = SongAdapter.playList.size() - 1;
-                preparePlayer(value);
+                Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
             }
-            Log.d(TAG, "onClick: " + value);
-        } else {
-            Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -900,5 +915,4 @@ public class MainActivity extends AppCompatActivity {
             container.removeView(view);
         }
     }
-
 }

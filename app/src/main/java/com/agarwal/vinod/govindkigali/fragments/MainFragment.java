@@ -29,7 +29,7 @@ public class MainFragment extends Fragment {
 
     public static RecyclerView rvPlayList;
     public static final String TAG = "MAIN";
-    private ArrayList<Song> playlist = new ArrayList<>();
+    private static ArrayList<Song> songlist = new ArrayList<>();
 
     public MainFragment() {
         // Required empty public constructor
@@ -50,13 +50,13 @@ public class MainFragment extends Fragment {
         final SongAdapter adapter = new SongAdapter(getContext(), new ArrayList<Song>());
         rvPlayList.setAdapter(adapter);
 
-        if (playlist.size() == 0) {
+        if (songlist.size() == 0) {
             Log.d(TAG, "onCreateView: ======== Empty");
             SongService.getSongApi().getTracks().enqueue(new Callback<ArrayList<Song>>() {
                 @Override
                 public void onResponse(Call<ArrayList<Song>> call, Response<ArrayList<Song>> response) {
-                    playlist = response.body();
-                    Log.d(TAG, "onResponse: " + playlist.get(0).getTitle());
+                    songlist = response.body();
+                    Log.d(TAG, "onResponse: " + songlist.get(0).getTitle());
                     adapter.updateTracks(response.body());
                 }
 
@@ -66,7 +66,7 @@ public class MainFragment extends Fragment {
                 }
             });
         } else {
-            adapter.updateTracks(playlist);
+            adapter.updateTracks(songlist);
         }
 
         return mainFragment;
