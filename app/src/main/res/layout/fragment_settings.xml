@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:layout_gravity="center"
-            android:text="Feedback" />
+            android:text="@string/settings_feedback" />
 
     </android.support.v7.widget.CardView>
 
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:layout_gravity="center"
-            android:text="Night Mode" />
+            android:text="@string/settings_night_mode" />
 
     </android.support.v7.widget.CardView>
 
@@ -44,13 +44,14 @@
         android:layout_margin="8dp"
         app:cardElevation="5dp">
 
-        <Switch
+        <TextView
             android:id="@+id/id_Language"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:layout_gravity="center"
-            android:text="Hindi" />
+            android:text="@string/settings_change_language" />
+
 
     </android.support.v7.widget.CardView>
 
@@ -66,7 +67,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:layout_gravity="center"
-            android:text="Rate App" />
+            android:text="@string/settings_rate_app" />
 
     </android.support.v7.widget.CardView>
 
@@ -82,7 +83,7 @@
             android:textAlignment="center"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Share app" />
+            android:text="@string/settings_share_app" />
 
     </android.support.v7.widget.CardView>
 
@@ -98,7 +99,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:layout_gravity="center"
-            android:text="AboutApp" />
+            android:text="@string/settings_about_app" />
 
     </android.support.v7.widget.CardView>
 

@@ -104,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
     int curVolume;
     ViewPager viewPager;
     PagerContainer container;
+    BottomNavigationView navigation;
+
 
     AudioManager.OnAudioFocusChangeListener audioFocusChangeListener =
             new AudioManager.OnAudioFocusChangeListener() {
@@ -204,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
         rlPlayer = findViewById(R.id.rl_player);
         container = findViewById(R.id.pager_container);
         viewPager = container.getViewPager();
+        navigation = findViewById(R.id.navigation);
 
         setTitle(
                 Util.getLocalizedResources(MainActivity.this,
@@ -372,7 +375,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        BottomNavigationView navigation = findViewById(R.id.navigation);
+
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         BottomNavigationViewHelper.disableShiftMode(navigation);
 

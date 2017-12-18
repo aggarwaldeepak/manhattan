@@ -2,18 +2,27 @@ package com.agarwal.vinod.govindkigali.fragments;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.activities.AboutAppDetails;
+import com.agarwal.vinod.govindkigali.utils.PrefManager;
+
+import java.util.Locale;
 
 public class SettingsFragment extends Fragment {
 
@@ -21,8 +30,8 @@ public class SettingsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    Switch night_mode, language;
-    TextView rate_app, share_app, about_app , feedback;
+    Switch night_mode;
+    TextView rate_app, share_app, about_app , feedback, language;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
@@ -60,9 +69,16 @@ public class SettingsFragment extends Fragment {
                 Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
                 // To count with Play market backstack, After pressing back button,
                 // to taken back to our application, we need to add following flags to intent.
-                goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
-                        Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
-                        Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                            Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                            Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                } else {
+                    goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                            Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET |
+                            Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+
+                }
                 try {
                     startActivity(goToMarket);
                 } catch (ActivityNotFoundException e) {
@@ -99,8 +115,67 @@ public class SettingsFragment extends Fragment {
             }
         });
 
+        language.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setLanguageWithDialog(new PrefManager(getContext()));
+            }
+        });
+
         return settingsFragment;
 
+    }
+    public void setLanguageWithDialog(final PrefManager prefManager) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setCancelable(true);
+        builder.setTitle(R.string.languages);
+        // Add the buttons
+        builder.setPositiveButton(R.string.english, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                String languageToLoad = "en"; // your language
+                Locale locale = new Locale(languageToLoad);
+                Locale.setDefault(locale);
+                Configuration config = new Configuration();
+                config.locale = locale;
+                getActivity().getBaseContext().getResources().updateConfiguration(config,
+                        getActivity().getBaseContext().getResources().getDisplayMetrics());
+                prefManager.setLanguage("en");
+                dialog.dismiss();
+                ((BottomNavigationView)getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
+                getActivity().recreate();
+                /*Intent refresh = new Intent(MainActivity.this, MainActivity.class);
+                startActivity(refresh);
+                finish();*/
+
+            }
+        });
+        builder.setNegativeButton(R.string.hindi, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+
+                String languageToLoad = "hi"; // your language
+                Locale locale = new Locale(languageToLoad);
+                Locale.setDefault(locale);
+                Configuration config = new Configuration();
+                config.locale = locale;
+                getActivity().getBaseContext().getResources().updateConfiguration(config,
+                        getActivity().getBaseContext().getResources().getDisplayMetrics());
+                prefManager.setLanguage("hi");
+                dialog.dismiss();
+                ((BottomNavigationView)getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
+               /* rEditor.putString("language", languageToLoad);
+                rEditor.commit();*/
+
+
+                getActivity().recreate();
+               /* Intent refresh = new Intent(MainActivity.this, MainActivity.class);
+                startActivity(refresh);
+                finish();*/
+
+            }
+        });
+
+        builder.create().show();
     }
 }
 
