@@ -46,12 +46,12 @@ public class PlayListAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         View rootView = view;
         if (rootView == null) {
-            rootView = LayoutInflater.from(context).inflate(R.layout.layout_item, null);
-
-            ImageView ivSong = rootView.findViewById(R.id.iv_song);
-
-            Glide.with(context).load(playList.get(i).getImageUrl())
-                    .into(ivSong);
+//            rootView = LayoutInflater.from(context).inflate(R.layout.layout_item, null);
+//
+//            ImageView ivSong = rootView.findViewById(R.id.iv_song);
+//
+//            Glide.with(context).load(playList.get(i).getImageUrl())
+//                    .into(ivSong);
         }
         return rootView;
     }
