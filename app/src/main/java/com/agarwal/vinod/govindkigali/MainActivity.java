@@ -8,6 +8,8 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -43,7 +45,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.agarwal.vinod.govindkigali.adapters.ImageAdapter;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.fragments.MainFragment;
 import com.agarwal.vinod.govindkigali.fragments.MyMusicFragment;
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     Boolean fav = true;
     public static Boolean focus = true;
     public static Integer fragmentCheck = 0;
-    public static final String TAG = "PL";
+    public static final String TAG = "MAIN";
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
     DatabaseReference favRef = reference.child("fav");
     DatabaseReference recentRef = reference.child("recents");
@@ -225,9 +226,6 @@ public class MainActivity extends AppCompatActivity {
         slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
-                Log.d(TAG, "onPanelSlide: " + slideOffset + " === " + panel);
-                if (slideOffset >= 0 && slideOffset <= 1) {
-                }
             }
 
             @Override
@@ -301,14 +299,24 @@ public class MainActivity extends AppCompatActivity {
         ivFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!fav) {
-                    fav = true;
-                    favRef.child(SongAdapter.playList.get(value).getId()).setValue(SongAdapter.playList.get(value));
-                    ivFav.setImageResource(R.drawable.ic_favorite_white_24dp);
+                ConnectivityManager cm =
+                        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null &&
+                        activeNetwork.isConnectedOrConnecting();
+                if (isConnected) {
+                    if (!fav) {
+                        fav = true;
+                        favRef.child(SongAdapter.playList.get(value).getId()).setValue(SongAdapter.playList.get(value));
+                        ivFav.setImageResource(R.drawable.ic_favorite_white_24dp);
+                    } else {
+                        fav = false;
+                        favRef.child(SongAdapter.playList.get(value).getId()).removeValue();
+                        ivFav.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+                    }
                 } else {
-                    fav = false;
-                    favRef.child(SongAdapter.playList.get(value).getId()).removeValue();
-                    ivFav.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+                    Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -520,13 +528,14 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
 
             Integer pos = intent.getIntExtra("val", 0);
+            Log.d(TAG, "onReceive: " + pos);
 
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
             preparePlayer(pos);
         }
     };
 
-    void preparePlayer(Integer pos) {
+    void preparePlayer(final Integer pos) {
         value = pos;
         if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED
                 || slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.HIDDEN) {
@@ -607,17 +616,36 @@ public class MainActivity extends AppCompatActivity {
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    if (!repeat) {
-                        if (value + 1 < SongAdapter.playList.size()) {
-                            value = value + 1;
-                            preparePlayer(value);
+                    ConnectivityManager cm =
+                            (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                    boolean isConnected = activeNetwork != null &&
+                            activeNetwork.isConnectedOrConnecting();
+                    if (isConnected) {
+                        if (!repeat) {
+                            if (value + 1 < SongAdapter.playList.size()) {
+                                value = value + 1;
+                                preparePlayer(value);
+                            } else {
+                                value = 0;
+                                preparePlayer(value);
+                            }
+                            Log.d(TAG, "onClick: OnCreateView:" + value);
                         } else {
-                            value = 0;
                             preparePlayer(value);
                         }
-                        Log.d(TAG, "onClick: OnCreateView:" + value);
-                    } else {
-                        preparePlayer(value);
+                    }else {
+                        if (repeat) {
+                            mediaPlayer.pause();
+                            mediaPlayer.start();
+                        } else {
+                            f = true;
+                            mediaPlayer.pause();
+                            ivPlayPause.setImageResource(R.drawable.ic_play_arrow_red_a700_48dp);
+                            ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+                        }
+                        Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -688,27 +716,47 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void playNext() {
-        audioManager.abandonAudioFocus(audioFocusChangeListener);
-        if (value + 1 < SongAdapter.playList.size()) {
-            value = value + 1;
-            preparePlayer(value);
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        if (isConnected) {
+            audioManager.abandonAudioFocus(audioFocusChangeListener);
+            if (value + 1 < SongAdapter.playList.size()) {
+                value = value + 1;
+                preparePlayer(value);
+            } else {
+                value = 0;
+                preparePlayer(value);
+            }
+            Log.d(TAG, "onClick: " + value);
         } else {
-            value = 0;
-            preparePlayer(value);
+            Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
         }
-        Log.d(TAG, "onClick: " + value);
     }
 
     void playPrevious() {
-        audioManager.abandonAudioFocus(audioFocusChangeListener);
-        if (value - 1 > 0) {
-            value = value - 1;
-            preparePlayer(value);
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        if (isConnected) {
+            audioManager.abandonAudioFocus(audioFocusChangeListener);
+            if (value - 1 > 0) {
+                value = value - 1;
+                preparePlayer(value);
+            } else {
+                value = SongAdapter.playList.size() - 1;
+                preparePlayer(value);
+            }
+            Log.d(TAG, "onClick: " + value);
         } else {
-            value = SongAdapter.playList.size() - 1;
-            preparePlayer(value);
+            Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
         }
-        Log.d(TAG, "onClick: " + value);
     }
 
     void setFav(final String id) {
@@ -726,7 +774,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Log.d(TAG, "onCancelled: " + databaseError.getDetails());
             }
         });
     }
@@ -774,18 +822,37 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mediaPlayer) {
-                        audioManager.abandonAudioFocus(audioFocusChangeListener);
-                        if (!repeat) {
-                            if (value + 1 < SongAdapter.playList.size()) {
-                                value = value + 1;
-                                preparePlayer(value);
+                        ConnectivityManager cm =
+                                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                        boolean isConnected = activeNetwork != null &&
+                                activeNetwork.isConnectedOrConnecting();
+                        if (isConnected) {
+                            audioManager.abandonAudioFocus(audioFocusChangeListener);
+                            if (!repeat) {
+                                if (value + 1 < SongAdapter.playList.size()) {
+                                    value = value + 1;
+                                    preparePlayer(value);
+                                } else {
+                                    value = 0;
+                                    preparePlayer(value);
+                                }
+                                Log.d(TAG, "onClick: OnCreateView:" + value);
                             } else {
-                                value = 0;
                                 preparePlayer(value);
                             }
-                            Log.d(TAG, "onClick: onPause:" + value);
                         } else {
-                            preparePlayer(value);
+                            if (repeat) {
+                                mediaPlayer.pause();
+                                mediaPlayer.start();
+                            } else {
+                                f = true;
+                                mediaPlayer.pause();
+                                ivPlayPause.setImageResource(R.drawable.ic_play_arrow_red_a700_48dp);
+                                ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+                            }
+                            Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

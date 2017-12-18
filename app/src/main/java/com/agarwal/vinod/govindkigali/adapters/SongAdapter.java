@@ -3,6 +3,8 @@ package com.agarwal.vinod.govindkigali.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.agarwal.vinod.govindkigali.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.R;
@@ -28,7 +31,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
     public static ArrayList<Song> playList = new ArrayList<>();
     private Context context;
-    public static final String TAG = "PL";
+    public static final String TAG = "SA";
 
     public SongAdapter(Context context, ArrayList<Song> playList) {
         this.context = context;
@@ -76,11 +79,22 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
             llSong.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    PlayerFragment.focus = false;
-                    Log.d(TAG, "onClick: checking loss first :)");
-                    Intent i = new Intent("custom-message");
-                    i.putExtra("val", pos);
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(i);
+                    ConnectivityManager cm =
+                            (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                    final boolean isConnected = activeNetwork != null &&
+                            activeNetwork.isConnectedOrConnecting();
+                    Log.d(TAG, "onClick: " + isConnected);
+                    if (isConnected) {
+                        PlayerFragment.focus = false;
+                        Log.d(TAG, "onClick: checking loss first :)");
+                        Intent i = new Intent("custom-message");
+                        i.putExtra("val", pos);
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(i);
+                    } else {
+                        Toast.makeText(context, "Internet not available!!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 

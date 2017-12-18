@@ -1,15 +1,19 @@
-package com.agarwal.vinod.govindkigali.activities;
+package com.agarwal.vinod.govindkigali.fragments.mymusic;
 
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
-import com.agarwal.vinod.govindkigali.fragments.PlayerFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,28 +23,41 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class SubPlayListActivity extends AppCompatActivity {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class SubPlayListFragment extends Fragment {
 
     RecyclerView rvsubList;
     SongAdapter adapter;
+    String name;
     DatabaseReference playListReference = FirebaseDatabase.getInstance().getReference("pop");
     private ArrayList<Song> subPlayList = new ArrayList<>();
     public static final String TAG = "FAV";
+    public SubPlayListFragment() {
+        // Required empty public constructor
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fav);
+        name = getArguments().getString("Name");
+    }
 
-        rvsubList = findViewById(R.id.rv_fav);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View subFragment = inflater.inflate(R.layout.fragment_multi, container, false);
 
-        String name = getIntent().getStringExtra("Name");
+        rvsubList = subFragment.findViewById(R.id.rv_multi);
+
         Log.d(TAG, "onCreate: " + name);
         DatabaseReference subListReference = playListReference.child(name);
 
         subListReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                subPlayList.clear();
                 for (DataSnapshot favSnapshot : dataSnapshot.getChildren()) {
                     Song song = favSnapshot.getValue(Song.class);
                     subPlayList.add(song);
@@ -55,24 +72,11 @@ public class SubPlayListActivity extends AppCompatActivity {
             }
         });
 
-//        SongAdapter.PlayerInterface playerInterface = new SongAdapter.PlayerInterface() {
-//            @Override
-//            public void playSong(Integer value) {
-//
-////                PlayerFragment fragment = new PlayerFragment();
-////                Bundle bundle = new Bundle();
-////                bundle.putInt("Value", value);
-////                fragment.setArguments(bundle);
-////                getSupportFragmentManager().beginTransaction()
-////                        .replace(R.id.fg_main, fragment)
-////                        .commit();
-//                Toast.makeText(SubPlayListActivity.this, "Under Process: : :", Toast.LENGTH_SHORT).show();
-//            }
-//        };
-//
-//        rvsubList.setLayoutManager(new LinearLayoutManager(this));
-//        adapter = new SongAdapter(this, playerInterface);
-//        rvsubList.setAdapter(adapter);
+        rvsubList.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new SongAdapter(getContext(), new ArrayList<Song>());
+        rvsubList.setAdapter(adapter);
 
+        return subFragment;
     }
+
 }

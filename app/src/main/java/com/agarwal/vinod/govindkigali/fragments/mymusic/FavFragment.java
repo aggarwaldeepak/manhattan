@@ -1,4 +1,4 @@
-package com.agarwal.vinod.govindkigali.fragments;
+package com.agarwal.vinod.govindkigali.fragments.mymusic;
 
 
 import android.os.Bundle;
@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
@@ -24,14 +25,14 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RecentsFragment extends Fragment {
+public class FavFragment extends Fragment {
 
-    RecyclerView rvRecents;
+    RecyclerView rvFav;
     SongAdapter adapter;
-    DatabaseReference recentsReference = FirebaseDatabase.getInstance().getReference("recents");
-    private ArrayList<Song> recentList = new ArrayList<>();
+    DatabaseReference favReference = FirebaseDatabase.getInstance().getReference("fav");
+    private ArrayList<Song> favList = new ArrayList<>();
     public static final String TAG = "FAV";
-    public RecentsFragment() {
+    public FavFragment() {
         // Required empty public constructor
     }
 
@@ -42,17 +43,17 @@ public class RecentsFragment extends Fragment {
         // Inflate the layout for this fragment
         View recentsFragment =  inflater.inflate(R.layout.fragment_multi, container, false);
 
-        rvRecents = recentsFragment.findViewById(R.id.rv_multi);
+        rvFav = recentsFragment.findViewById(R.id.rv_multi);
 
-        recentsReference.addValueEventListener(new ValueEventListener() {
+        favReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                recentList.clear();
+                favList.clear();
                 for (DataSnapshot favSnapshot : dataSnapshot.getChildren()) {
                     Song song = favSnapshot.getValue(Song.class);
-                    recentList.add(song);
+                    favList.add(song);
                 }
-                adapter.updateTracks(recentList);
+                adapter.updateTracks(favList);
                 Log.d(TAG, "onDataChange: :)   :)   :)");
             }
 
@@ -62,13 +63,11 @@ public class RecentsFragment extends Fragment {
             }
         });
 
-        rvRecents.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvFav.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new SongAdapter(getContext(), new ArrayList<Song>());
-        rvRecents.setAdapter(adapter);
+        rvFav.setAdapter(adapter);
 
         return recentsFragment;
     }
-
-
 
 }

@@ -1,11 +1,9 @@
 package com.agarwal.vinod.govindkigali.fragments;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +11,9 @@ import android.widget.TextView;
 
 import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
-import com.agarwal.vinod.govindkigali.activities.FavActivity;
-import com.agarwal.vinod.govindkigali.activities.PlayListActivity;
-import com.agarwal.vinod.govindkigali.activities.RecentsActivity;
+import com.agarwal.vinod.govindkigali.fragments.mymusic.FavFragment;
+import com.agarwal.vinod.govindkigali.fragments.mymusic.PlayListsFragment;
+import com.agarwal.vinod.govindkigali.fragments.mymusic.RecentsFragment;
 
 /**
  * A simple {@link Fragment} subclass.

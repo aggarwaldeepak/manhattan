@@ -1,8 +1,7 @@
-package com.agarwal.vinod.govindkigali.fragments;
+package com.agarwal.vinod.govindkigali.fragments.mymusic;
 
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
@@ -26,43 +24,35 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SubPlayListFragment extends Fragment {
+public class RecentsFragment extends Fragment {
 
-    RecyclerView rvsubList;
+    RecyclerView rvRecents;
     SongAdapter adapter;
-    String name;
-    DatabaseReference playListReference = FirebaseDatabase.getInstance().getReference("pop");
-    private ArrayList<Song> subPlayList = new ArrayList<>();
+    DatabaseReference recentsReference = FirebaseDatabase.getInstance().getReference("recents");
+    private ArrayList<Song> recentList = new ArrayList<>();
     public static final String TAG = "FAV";
-    public SubPlayListFragment() {
+    public RecentsFragment() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        name = getArguments().getString("Name");
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View subFragment = inflater.inflate(R.layout.fragment_multi, container, false);
+        // Inflate the layout for this fragment
+        View recentsFragment =  inflater.inflate(R.layout.fragment_multi, container, false);
 
-        rvsubList = subFragment.findViewById(R.id.rv_multi);
+        rvRecents = recentsFragment.findViewById(R.id.rv_multi);
 
-        Log.d(TAG, "onCreate: " + name);
-        DatabaseReference subListReference = playListReference.child(name);
-
-        subListReference.addValueEventListener(new ValueEventListener() {
+        recentsReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                subPlayList.clear();
+                recentList.clear();
                 for (DataSnapshot favSnapshot : dataSnapshot.getChildren()) {
                     Song song = favSnapshot.getValue(Song.class);
-                    subPlayList.add(song);
+                    recentList.add(song);
                 }
-                adapter.updateTracks(subPlayList);
+                adapter.updateTracks(recentList);
                 Log.d(TAG, "onDataChange: :)   :)   :)");
             }
 
@@ -72,11 +62,13 @@ public class SubPlayListFragment extends Fragment {
             }
         });
 
-        rvsubList.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvRecents.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new SongAdapter(getContext(), new ArrayList<Song>());
-        rvsubList.setAdapter(adapter);
+        rvRecents.setAdapter(adapter);
 
-        return subFragment;
+        return recentsFragment;
     }
+
+
 
 }
