@@ -47,6 +47,7 @@ import com.agarwal.vinod.govindkigali.adapters.ImageAdapter;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.fragments.MainFragment;
 import com.agarwal.vinod.govindkigali.fragments.MyMusicFragment;
+import com.agarwal.vinod.govindkigali.fragments.SettingsFragment;
 import com.agarwal.vinod.govindkigali.fragments.UpcomingFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
 import com.agarwal.vinod.govindkigali.utils.BottomNavigationViewHelper;
@@ -133,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
 
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -160,6 +162,10 @@ public class MainActivity extends AppCompatActivity {
                             .commit();
                     return true;
                 case R.id.navigation_settings:
+                    PlayerFragment.hideIt();
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fg,new SettingsFragment())
+                            .commit();
                     return true;
             }
             return false;
@@ -375,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
     private void initiateFirstLaunch() {
 
         PrefManager prefManager = new PrefManager(this);
-        if(prefManager.isFirstTimeLaunch()){
+        if (prefManager.isFirstTimeLaunch()) {
             prefManager.setFirstTimeLaunch(false);
             setLanguageWithDialog(prefManager);
         } else {
@@ -416,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_notifications:
                 break;
             case R.id.action_search:
@@ -438,7 +444,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void setLanguageWithDialog(final PrefManager prefManager){
+    public void setLanguageWithDialog(final PrefManager prefManager) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setCancelable(false);
         builder.setTitle(R.string.languages);
@@ -489,10 +495,10 @@ public class MainActivity extends AppCompatActivity {
         builder.create().show();
     }
 
-    public void setLanguage(PrefManager prefManager){
+    public void setLanguage(PrefManager prefManager) {
         String languageToLoad = prefManager.getUserLanguage();
 
-        if(Locale.getDefault().getLanguage().equals(languageToLoad))return;
+        if (Locale.getDefault().getLanguage().equals(languageToLoad)) return;
 
         Locale locale = new Locale(languageToLoad);
         Locale.setDefault(locale);
@@ -502,6 +508,7 @@ public class MainActivity extends AppCompatActivity {
                 getBaseContext().getResources().getDisplayMetrics());
         recreate();
     }
+<<<<<<< 7abaf7d6ce90a285fe220bc752804ae00dd1553f
 
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -823,3 +830,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
+=======
+}
+>>>>>>> Settings Screen

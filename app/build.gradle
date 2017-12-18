@@ -42,16 +42,8 @@ dependencies {
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
     implementation 'com.github.crosswall:Android-Coverflow:release-v1.0.4'
     compile files('libs/PGSDK_V2.1.jar','libs/pg-checksum-1.0-jar-with-dependencies.jar')
+    implementation files('libs/YouTubeAndroidPlayerApi-1.0.0')
 }
-
-
-
-
-
-
-
-
-
 
 
 apply plugin: 'com.google.gms.google-services'

@@ -108,4 +108,27 @@
     <string name="type_name">Type Name...</string>
     <string name="cancel">Cancel</string>
 
+
+    <string name="AboutAppDetails_PrivacyPolicy">Lorem ipsum dolor sit amet,
+        consectetur adipiscing elit. Quisque malesuada, erat ac sodales vestibulum,
+        ante arcu egestas ipsum, sed elementum augue lacus eget magna. Maecenas quis
+        imperdiet nibh. Aliquam varius orci eget diam semper sollicitudin.
+        Nulla sollicitudin sem in tortor vulputate, vel tempus metus commodo.</string>
+    <string name="AboutAppDetails_TermsnConditions">Lorem ipsum dolor sit amet,
+        consectetur adipiscing elit. Quisque malesuada, erat ac sodales vestibulum,
+        ante arcu egestas ipsum, sed elementum augue lacus eget magna. Maecenas quis
+        imperdiet nibh. Aliquam varius orci eget diam semper sollicitudin.
+        Nulla sollicitudin sem in tortor vulputate, vel tempus metus commodo.</string>
+    <string name="AboutAppDetails_AboutCompany">Lorem ipsum dolor sit amet,
+        consectetur adipiscing elit. Quisque malesuada, erat ac sodales vestibulum,
+        ante arcu egestas ipsum, sed elementum augue lacus eget magna. Maecenas quis
+        imperdiet nibh. Aliquam varius orci eget diam semper sollicitudin.
+        Nulla sollicitudin sem in tortor vulputate, vel tempus metus commodo.</string>
+
+
+    <string name="title_send_feedback">Send feedback</string>
+    <string name="mail_feedback_email">feedback@example.com</string>
+    <string name="mail_feedback_subject">Feedback on your app</string>
+    <string name="mail_feedback_message">Hi,I would like to give you some feedback:</string>
+
 </resources>
