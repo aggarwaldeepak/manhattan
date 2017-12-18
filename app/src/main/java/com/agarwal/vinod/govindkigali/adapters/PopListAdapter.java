@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.activities.SubPlayListActivity;
 import com.agarwal.vinod.govindkigali.fragments.MyMusicFragment;
@@ -95,6 +96,7 @@ public class PopListAdapter extends RecyclerView.Adapter<PopListAdapter.PopListV
                         Bundle bundle = new Bundle();
                         bundle.putString("Name", name);
                         fragment.setArguments(bundle);
+                        ++MainActivity.fragmentCheck;
                         MyMusicFragment.fragmentManager.beginTransaction()
                                 .replace(R.id.fg, fragment)
                                 .addToBackStack("remove2")

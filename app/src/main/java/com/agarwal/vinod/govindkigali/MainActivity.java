@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
     Boolean manual = true;
     Boolean fav = true;
     public static Boolean focus = true;
+    public static Integer fragmentCheck = 0;
     public static final String TAG = "PL";
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
     DatabaseReference favRef = reference.child("fav");
@@ -440,7 +441,8 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!searchView.isIconified()) {
             searchView.setIconified(true);
-        } else if (MyMusicFragment.fragmentManager != null) {
+        } else if (fragmentCheck > 0) {
+            --fragmentCheck;
             MyMusicFragment.fragmentManager.popBackStack();
         } else {
             super.onBackPressed();

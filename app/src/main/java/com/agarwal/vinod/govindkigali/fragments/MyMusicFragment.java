@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.activities.FavActivity;
 import com.agarwal.vinod.govindkigali.activities.PlayListActivity;
@@ -42,6 +43,7 @@ public class MyMusicFragment extends Fragment {
         tvFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ++MainActivity.fragmentCheck;
                 fragmentManager.beginTransaction()
                         .replace(R.id.fg, new FavFragment())
                         .addToBackStack("remove")
@@ -52,6 +54,7 @@ public class MyMusicFragment extends Fragment {
         tvPlaylists.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ++MainActivity.fragmentCheck;
                 fragmentManager.beginTransaction()
                         .replace(R.id.fg, new PlayListsFragment())
                         .addToBackStack("remove")
@@ -62,6 +65,7 @@ public class MyMusicFragment extends Fragment {
         tvRecents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ++MainActivity.fragmentCheck;
                 fragmentManager.beginTransaction()
                         .replace(R.id.fg, new RecentsFragment())
                         .addToBackStack("remove")
