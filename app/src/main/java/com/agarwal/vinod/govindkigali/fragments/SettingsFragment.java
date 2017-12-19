@@ -14,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -50,13 +51,26 @@ public class SettingsFragment extends Fragment {
         feedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/html");
-                intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{ getString(R.string.mail_feedback_email) });
-                intent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.mail_feedback_subject));
-                intent.putExtra(android.content.Intent.EXTRA_TEXT, getString(R.string.mail_feedback_message));
-                intent.setPackage("com.google.android.gm");
-                startActivity(Intent.createChooser(intent, getString(R.string.title_send_feedback)));
+//                final Intent intent = new Intent(Intent.ACTION_SEND);
+//                intent.setType("text/html");
+//                intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{ getString(R.string.mail_feedback_email) });
+//                intent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.mail_feedback_subject));
+//                intent.putExtra(android.content.Intent.EXTRA_TEXT, getString(R.string.mail_feedback_message));
+//                intent.setPackage("com.google.android.gm");
+//                startActivity(Intent.createChooser(intent, getString(R.string.title_send_feedback)));
+
+                AlertDialog.Builder b = new AlertDialog.Builder(getContext());
+                b.setTitle("Send Us Some Feedback!");
+                final EditText input = new EditText(getContext());
+                b.setView(input);
+                b.setPositiveButton("Send Feedback", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String result = input.getText().toString();
+                    }
+                });
+                b.setNegativeButton("CANCEL", null);
+                b.show();
             }
         });
 
