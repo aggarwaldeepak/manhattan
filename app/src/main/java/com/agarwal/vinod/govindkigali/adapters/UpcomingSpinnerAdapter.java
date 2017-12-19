@@ -14,6 +14,9 @@ import com.agarwal.vinod.govindkigali.R;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.agarwal.vinod.govindkigali.utils.Util.convertPixelsToDp;
+import static com.agarwal.vinod.govindkigali.utils.Util.convertPixelsToDp2;
+
 /**
  * Created by anirudh on 20/12/17.
  */
@@ -51,7 +54,12 @@ public class UpcomingSpinnerAdapter extends BaseAdapter implements SpinnerAdapte
 
         TextView tv = (TextView) view;
         tv.setText(months.get(i));
-        tv.setPadding(70,50,70,50);
+        tv.setPadding(
+                convertPixelsToDp2(30f,context),
+                convertPixelsToDp2(15f,context),
+                convertPixelsToDp2(30f,context),
+                convertPixelsToDp2(15f,context)
+        );
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP,15);
         tv.setTypeface(tv.getTypeface(), Typeface.BOLD);
         tv.setTextColor(context.getResources().getColor(android.R.color.white));

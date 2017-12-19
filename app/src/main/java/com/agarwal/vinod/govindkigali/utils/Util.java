@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import java.text.ParseException;
@@ -44,5 +45,16 @@ public class Util {
             e.printStackTrace();
         }
         return timeInMilliseconds;
+    }
+    public static float convertPixelsToDp(float px, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return dp;
+    }
+    public static int convertPixelsToDp2(float sizeInDp, Context context) {
+        float scale = context.getResources().getDisplayMetrics().density;
+        int dpAsPixels = (int) (sizeInDp * scale + 0.5f);
+        return dpAsPixels;
     }
 }
