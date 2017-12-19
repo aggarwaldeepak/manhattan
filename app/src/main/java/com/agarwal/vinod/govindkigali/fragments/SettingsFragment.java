@@ -1,16 +1,23 @@
 package com.agarwal.vinod.govindkigali.fragments;
 
+import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StatFs;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,17 +29,22 @@ import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.activities.AboutAppDetails;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.File;
 import java.util.Locale;
 
 public class SettingsFragment extends Fragment {
 
+    DatabaseReference feedRefrence = FirebaseDatabase.getInstance().getReference("feed");
+    public static final String TAG = "SETT";
     public SettingsFragment() {
         // Required empty public constructor
     }
 
     Switch night_mode;
-    TextView rate_app, share_app, about_app , feedback, language;
+    TextView rate_app, share_app, about_app, feedback, language;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
@@ -67,6 +79,46 @@ public class SettingsFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String result = input.getText().toString();
+                        String id = feedRefrence.push().getKey();
+//                        String mPhoneNumber = null;
+//                        TelephonyManager tMgr = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
+//                        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+//                            // TODO: Consider calling
+//                            //    ActivityCompat#requestPermissions
+//                            // here to request the missing permissions, and then overriding
+//                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                            //                                          int[] grantResults)
+//                            // to handle the case where the user grants the permission. See the documentation
+//                            // for ActivityCompat#requestPermissions for more details.
+//                            mPhoneNumber = tMgr.getLine1Number();
+//                        }
+                        TelephonyManager manager = (TelephonyManager)getContext().getSystemService(Context.TELEPHONY_SERVICE);
+                        String carrierName = manager.getNetworkOperatorName();
+                        File path = Environment.getDataDirectory();
+                        Log.d(TAG, "onClick: " + path);
+//                        StatFs stat = new StatFs(path.getPath());
+                        double usableSize = (double) path.getUsableSpace() / 1e+9 ;
+                        double totalSize = (double)path.getTotalSpace() / 1e+9 ;
+                        double availableBlocks = (double)path.getFreeSpace() / 1e+9 ;
+
+                        String deviceOs = System.getProperty("os.version") + "(" + android.os.Build.VERSION.INCREMENTAL + ")";
+                        Integer deviceApi = android.os.Build.VERSION.SDK_INT;
+                        String deviceMan = Build.MANUFACTURER;
+                        String device = Build.DEVICE;
+
+                        String deviceModel = android.os.Build.MODEL + " ("+ android.os.Build.PRODUCT + ")";
+
+                        feedRefrence.child(id).child("feedback: ").setValue(result);
+                        feedRefrence.child(id).child("OS Version: ").setValue(deviceOs);
+                        feedRefrence.child(id).child("OS API Level: ").setValue(deviceApi);
+                        feedRefrence.child(id).child("Device Manufacturer: ").setValue(deviceMan);
+                        feedRefrence.child(id).child("Device: ").setValue(device);
+                        feedRefrence.child(id).child("Carrier: ").setValue(carrierName);
+                        feedRefrence.child(id).child("Available Storage: ").setValue(availableBlocks + "GB");
+                        feedRefrence.child(id).child("Usable Storage: ").setValue(usableSize + "GB");
+                        feedRefrence.child(id).child("Total Storage: ").setValue(totalSize + "GB");
+//                        feedRefrence.child(id).child("Device No.: ").setValue(mPhoneNumber);
+                        feedRefrence.child(id).child("Model (and Product): ").setValue(deviceModel);
                     }
                 });
                 b.setNegativeButton("CANCEL", null);
