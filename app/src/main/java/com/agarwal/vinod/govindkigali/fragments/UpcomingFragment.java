@@ -3,18 +3,23 @@ package com.agarwal.vinod.govindkigali.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Spinner;
 
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.UpcomingAdapter;
-import com.agarwal.vinod.govindkigali.api.SongService;
+import com.agarwal.vinod.govindkigali.adapters.UpcomingSpinnerAdapter;
 import com.agarwal.vinod.govindkigali.api.UpcomingService;
-import com.agarwal.vinod.govindkigali.models.Song;
 import com.agarwal.vinod.govindkigali.models.Upcoming;
 
 import java.util.ArrayList;
@@ -29,6 +34,9 @@ import retrofit2.Response;
 public class UpcomingFragment extends Fragment {
 
 
+    ActionBar actionBar;
+    Toolbar toolbar;
+    Spinner toolbarSpinner;
     public static ArrayList<Upcoming> feededUpcomings = null;
 
     public UpcomingFragment() {
@@ -39,6 +47,10 @@ public class UpcomingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //setHasOptionsMenu(true);
+        toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+
+        initiateToolbar();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_upcoming, container, false);
         RecyclerView rvUpcoming;
@@ -69,4 +81,35 @@ public class UpcomingFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    void initiateToolbar(){
+        if(actionBar == null){
+            actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        }
+        if(toolbar == null){
+            toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        }
+
+        actionBar.setDisplayShowTitleEnabled(false);
+        setupSpinner();
+    }
+
+    void setupSpinner(){
+        if (toolbarSpinner == null){
+            toolbarSpinner = toolbar.findViewById(R.id.spinner_toolbar);
+        }
+        toolbarSpinner.setVisibility(View.VISIBLE);
+        toolbarSpinner.setAdapter(new UpcomingSpinnerAdapter(getContext()));
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        actionBar.setDisplayShowTitleEnabled(true);
+        toolbarSpinner.setVisibility(View.GONE);
+    }
 }

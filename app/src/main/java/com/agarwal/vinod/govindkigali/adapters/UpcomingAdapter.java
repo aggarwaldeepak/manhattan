@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +25,7 @@ import com.agarwal.vinod.govindkigali.utils.Util;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Anirudh Gupta on 12/13/2017.
@@ -30,7 +33,13 @@ import java.util.ArrayList;
 
 public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.UpcomingViewHolder> {
 
+    static ArrayList<String> weekDaysLong;
+    static ArrayList<String> weekDaysShort;
+    static ArrayList<String> monthsLong;
+    static ArrayList<String> monthsShort;
+
     Context context;
+    Spinner spinner;
     ArrayList<Upcoming> upcomings;
     public UpcomingAdapter(Context context, ArrayList<Upcoming> upcomings) {
         this.context = context;
@@ -38,6 +47,33 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
         if(this.upcomings == null){
             this.upcomings = new ArrayList<>();
         }
+        weekDaysLong = new ArrayList<>(Arrays.asList("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"));
+        weekDaysShort = new ArrayList<>(Arrays.asList("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"));
+
+        monthsLong = new ArrayList<>(Arrays.asList("January" , "February" , "March" , "April", "May",
+                "June", "July", "August", "September", "October",
+                "November", "December"));
+        monthsShort = new ArrayList<>(Arrays.asList("Jan" , "Feb" , "March" , "April", "May",
+                "June", "July", "Aug", "Sept", "Oct",
+                "Nov", "Dec"));
+    }
+
+    public UpcomingAdapter(Context context, ArrayList<Upcoming> upcomings, Spinner spinner) {
+        this.context = context;
+        this.upcomings = upcomings;
+        this.spinner = spinner;
+        if(this.upcomings == null){
+            this.upcomings = new ArrayList<>();
+        }
+        weekDaysLong = new ArrayList<>(Arrays.asList("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"));
+        weekDaysShort = new ArrayList<>(Arrays.asList("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"));
+
+        monthsLong = new ArrayList<>(Arrays.asList("January" , "February" , "March" , "April", "May",
+                "June", "July", "August", "September", "October",
+                "November", "December"));
+        monthsShort = new ArrayList<>(Arrays.asList("Jan" , "Feb" , "March" , "April", "May",
+                "June", "July", "Aug", "Sept", "Oct",
+                "Nov", "Dec"));
     }
 
     public void update(@NonNull ArrayList<Upcoming> upcomings){
@@ -62,12 +98,14 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
     }
 
     class UpcomingViewHolder extends RecyclerView.ViewHolder {
-        TextView tvDate,tvVenue,tvTime;
-        Button btnOptions;
+        TextView tvMonth,tvDayNumber,tvWeekDay,tvVenue,tvTime;
+        ImageView btnOptions;
 
         public UpcomingViewHolder(View itemView) {
             super(itemView);
-            tvDate = itemView.findViewById(R.id.tv_date);
+            tvMonth = itemView.findViewById(R.id.tv_month);
+            tvDayNumber = itemView.findViewById(R.id.tv_day_number);
+            tvWeekDay = itemView.findViewById(R.id.tv_week_day);
             tvVenue = itemView.findViewById(R.id.tv_venue);
             tvTime = itemView.findViewById(R.id.tv_time);
             btnOptions = itemView.findViewById(R.id.btn_options);
@@ -79,7 +117,15 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
             final int day = upcomings.get(position).getmDate();
             final String month = upcomings.get(position).getmMonth();
             final int year = upcomings.get(position).getmYear();
-            tvDate.setText(new StringBuilder().append(month).append(" ").append(day).append("\n").append(year).toString());
+            //tvDate.setText(new StringBuilder().append(month).append(" ").append(day).append("\n").append(year).toString());
+            tvDayNumber.setText(String.valueOf(upcomings.get(position).getmDate()));
+
+            tvWeekDay.setText(
+                    weekDaysShort.get(weekDaysLong.indexOf(upcomings.get(position).getmDay()))
+            );
+            tvMonth.setText(
+                    monthsShort.get(monthsLong.indexOf(month))
+            );
             tvVenue.setText(venue);
             tvTime.setText(time);
             btnOptions.setOnClickListener(new View.OnClickListener() {

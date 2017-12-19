@@ -42,6 +42,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,6 +78,7 @@ import static android.view.View.GONE;
 public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar;
+    Spinner spinnerToolbar;
     private ArrayList<Song> playList = new ArrayList<>();
     static SlidingUpPanelLayout slidingUpPanelLayout;
     SearchView searchView;
@@ -182,7 +184,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
+        spinnerToolbar = toolbar.findViewById(R.id.spinner_toolbar);
+        spinnerToolbar.setVisibility(View.INVISIBLE);
+
+
 
         slidingUpPanelLayout = findViewById(R.id.sliding_layout);
         pbLoading = findViewById(R.id.pb_loading);
@@ -394,6 +401,7 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         BottomNavigationViewHelper.disableShiftMode(navigation);
 
+        //navigation.setSelectedItemId(R.id.navigation_upcoming); //TODO: REMOVE
 
     }
 
