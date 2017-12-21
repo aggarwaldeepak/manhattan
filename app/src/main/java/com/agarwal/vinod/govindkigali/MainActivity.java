@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -12,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -181,6 +183,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Log.d("InsideMainActivity", "onCreate: "+sharedPreferences.getBoolean("NIGHT_MODE",false));
+        if (sharedPreferences.getBoolean("NIGHT_MODE",false)) {
+            setTheme(R.style.FeedActivityThemeDark);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
@@ -188,9 +196,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         spinnerToolbar = toolbar.findViewById(R.id.spinner_toolbar);
         spinnerToolbar.setVisibility(View.INVISIBLE);
-
-
-
         slidingUpPanelLayout = findViewById(R.id.sliding_layout);
         pbLoading = findViewById(R.id.pb_loading);
         pbProgress = findViewById(R.id.pb_progress);

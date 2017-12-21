@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -16,11 +17,13 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDelegate;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -39,6 +42,9 @@ public class SettingsFragment extends Fragment {
 
     DatabaseReference feedRefrence = FirebaseDatabase.getInstance().getReference("feed");
     public static final String TAG = "SETT";
+    private boolean isNightModeEnabled = false;
+
+
     public SettingsFragment() {
         // Required empty public constructor
     }
@@ -50,6 +56,12 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+//        final PrefManager prefManager = new PrefManager(getContext());
+//        if (prefManager.getTheme().equals("dark"))
+//            getContext().setTheme(R.style.AppThemeNormalDark);
+//        else if (prefManager.getTheme().equals("black"))
+//            getContext().setTheme(R.style.AppThemeNormalBlack);
+
         final View settingsFragment = inflater.inflate(R.layout.fragment_settings, container, false);
 
         night_mode = settingsFragment.findViewById(R.id.id_NightMode);
@@ -59,6 +71,30 @@ public class SettingsFragment extends Fragment {
         share_app = settingsFragment.findViewById(R.id.id_ShareApp);
         about_app = settingsFragment.findViewById(R.id.id_AboutApp);
 
+
+        night_mode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+//            PrefManager prefManager = new PrefManager(getContext());
+//            this.isNightModeEnabled = mPrefs.getBoolean(“NIGHT_MODE”, false);
+
+                SharedPreferences mPrefs = getContext().getSharedPreferences("manhattanPref", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = mPrefs.edit();
+                Log.d("InsideSettingsFragment", "onCheckedChanged: "+isNightModeEnabled);
+                if (isNightModeEnabled()) {
+                    isNightModeEnabled = false;
+                    editor.putBoolean("NIGHT_MODE",false);
+                }
+                else{
+                    isNightModeEnabled = true;
+                    editor.putBoolean("NIGHT_MODE",true);
+                }
+                editor.commit();
+                getActivity().recreate();
+
+            }
+        });
 
         feedback.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +106,6 @@ public class SettingsFragment extends Fragment {
 //                intent.putExtra(android.content.Intent.EXTRA_TEXT, getString(R.string.mail_feedback_message));
 //                intent.setPackage("com.google.android.gm");
 //                startActivity(Intent.createChooser(intent, getString(R.string.title_send_feedback)));
-
                 AlertDialog.Builder b = new AlertDialog.Builder(getContext());
                 b.setTitle("Send Us Some Feedback!");
                 final EditText input = new EditText(getContext());
@@ -80,33 +115,20 @@ public class SettingsFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String result = input.getText().toString();
                         String id = feedRefrence.push().getKey();
-//                        String mPhoneNumber = null;
-//                        TelephonyManager tMgr = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
-//                        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-//                            // TODO: Consider calling
-//                            //    ActivityCompat#requestPermissions
-//                            // here to request the missing permissions, and then overriding
-//                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                            //                                          int[] grantResults)
-//                            // to handle the case where the user grants the permission. See the documentation
-//                            // for ActivityCompat#requestPermissions for more details.
-//                            mPhoneNumber = tMgr.getLine1Number();
-//                        }
-                        TelephonyManager manager = (TelephonyManager)getContext().getSystemService(Context.TELEPHONY_SERVICE);
+                        TelephonyManager manager = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
                         String carrierName = manager.getNetworkOperatorName();
                         File path = Environment.getDataDirectory();
                         Log.d(TAG, "onClick: " + path);
-//                        StatFs stat = new StatFs(path.getPath());
-                        double usableSize = (double) path.getUsableSpace() / 1e+9 ;
-                        double totalSize = (double)path.getTotalSpace() / 1e+9 ;
-                        double availableBlocks = (double)path.getFreeSpace() / 1e+9 ;
+                        double usableSize = (double) path.getUsableSpace() / 1e+9;
+                        double totalSize = (double) path.getTotalSpace() / 1e+9;
+                        double availableBlocks = (double) path.getFreeSpace() / 1e+9;
 
                         String deviceOs = System.getProperty("os.version") + "(" + android.os.Build.VERSION.INCREMENTAL + ")";
                         Integer deviceApi = android.os.Build.VERSION.SDK_INT;
                         String deviceMan = Build.MANUFACTURER;
                         String device = Build.DEVICE;
 
-                        String deviceModel = android.os.Build.MODEL + " ("+ android.os.Build.PRODUCT + ")";
+                        String deviceModel = android.os.Build.MODEL + " (" + android.os.Build.PRODUCT + ")";
 
                         feedRefrence.child(id).child("feedback: ").setValue(result);
                         feedRefrence.child(id).child("OS Version: ").setValue(deviceOs);
@@ -117,7 +139,6 @@ public class SettingsFragment extends Fragment {
                         feedRefrence.child(id).child("Available Storage: ").setValue(availableBlocks + "GB");
                         feedRefrence.child(id).child("Usable Storage: ").setValue(usableSize + "GB");
                         feedRefrence.child(id).child("Total Storage: ").setValue(totalSize + "GB");
-//                        feedRefrence.child(id).child("Device No.: ").setValue(mPhoneNumber);
                         feedRefrence.child(id).child("Model (and Product): ").setValue(deviceModel);
                     }
                 });
@@ -191,6 +212,15 @@ public class SettingsFragment extends Fragment {
         return settingsFragment;
 
     }
+
+    public boolean isNightModeEnabled() {
+        return isNightModeEnabled;
+    }
+
+    public void setIsNightModeEnabled(boolean isNightModeEnabled) {
+        this.isNightModeEnabled = isNightModeEnabled;
+    }
+
     public void setLanguageWithDialog(final PrefManager prefManager) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setCancelable(true);
@@ -207,7 +237,7 @@ public class SettingsFragment extends Fragment {
                         getActivity().getBaseContext().getResources().getDisplayMetrics());
                 prefManager.setLanguage("en");
                 dialog.dismiss();
-                ((BottomNavigationView)getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
+                ((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
                 getActivity().recreate();
                 /*Intent refresh = new Intent(MainActivity.this, MainActivity.class);
                 startActivity(refresh);
@@ -228,7 +258,7 @@ public class SettingsFragment extends Fragment {
                         getActivity().getBaseContext().getResources().getDisplayMetrics());
                 prefManager.setLanguage("hi");
                 dialog.dismiss();
-                ((BottomNavigationView)getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
+                ((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
                /* rEditor.putString("language", languageToLoad);
                 rEditor.commit();*/
 
