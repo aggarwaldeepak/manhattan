@@ -32,6 +32,7 @@ import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.activities.AboutAppDetails;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
+import com.agarwal.vinod.govindkigali.utils.Util;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -42,7 +43,6 @@ public class SettingsFragment extends Fragment {
 
     DatabaseReference feedRefrence = FirebaseDatabase.getInstance().getReference("feed");
     public static final String TAG = "SETT";
-    private boolean isNightModeEnabled = false;
 
 
     public SettingsFragment() {
@@ -70,28 +70,17 @@ public class SettingsFragment extends Fragment {
         rate_app = settingsFragment.findViewById(R.id.id_RateApp);
         share_app = settingsFragment.findViewById(R.id.id_ShareApp);
         about_app = settingsFragment.findViewById(R.id.id_AboutApp);
-        isNightModeEnabled = isNightModeEnabled();
-        night_mode.setChecked(isNightModeEnabled);
+
+        final PrefManager prefManager = new PrefManager(getContext());
+
+        night_mode.setChecked(prefManager.isNightModeEnabled2());
+
 
         night_mode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-//            PrefManager prefManager = new PrefManager(getContext());
-//            this.isNightModeEnabled = mPrefs.getBoolean(“NIGHT_MODE”, false);
-
-                SharedPreferences mPrefs = getContext().getSharedPreferences("manhattanPref", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = mPrefs.edit();
-                Log.d("InsideSettingsFragment", "onCheckedChanged: "+isNightModeEnabled);
-                if (isNightModeEnabled()) {
-                    isNightModeEnabled = false;
-                    editor.putBoolean("NIGHT_MODE",false);
-                }
-                else{
-                    isNightModeEnabled = true;
-                    editor.putBoolean("NIGHT_MODE",true);
-                }
-                editor.commit();
+                prefManager.setNightModeEnabled(isChecked);
                 getActivity().recreate();
 
             }
@@ -212,14 +201,6 @@ public class SettingsFragment extends Fragment {
 
         return settingsFragment;
 
-    }
-
-    public boolean isNightModeEnabled() {
-        return isNightModeEnabled;
-    }
-
-    public void setIsNightModeEnabled(boolean isNightModeEnabled) {
-        this.isNightModeEnabled = isNightModeEnabled;
     }
 
     public void setLanguageWithDialog(final PrefManager prefManager) {

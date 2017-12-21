@@ -181,11 +181,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        Log.d("InsideMainActivity", "onCreate: "+sharedPreferences.getBoolean("NIGHT_MODE",false));
-        if (sharedPreferences.getBoolean("NIGHT_MODE",false)) {
-            setTheme(R.style.FeedActivityThemeDark);
-        }
+        initiateNightMode();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
@@ -405,6 +402,17 @@ public class MainActivity extends AppCompatActivity {
 
         //navigation.setSelectedItemId(R.id.navigation_upcoming); //TODO: REMOVE
 
+    }
+
+    private void initiateNightMode() {
+        PrefManager prefManager = new PrefManager(this);
+        if (prefManager.isNightModeEnabled2()) {
+            setTheme(R.style.FeedActivityThemeDark);
+            Log.d(TAG, "initiateNightMode: NIGHT MODE ENABLED");
+        } else {
+            setTheme(R.style.FeedActivityThemeLight);
+            Log.d(TAG, "initiateNightMode: NIGHT MODE DISABLED");
+        }
     }
 
     private void initiateFirstLaunch() {
