@@ -70,7 +70,8 @@ public class SettingsFragment extends Fragment {
         rate_app = settingsFragment.findViewById(R.id.id_RateApp);
         share_app = settingsFragment.findViewById(R.id.id_ShareApp);
         about_app = settingsFragment.findViewById(R.id.id_AboutApp);
-
+        isNightModeEnabled = isNightModeEnabled();
+        night_mode.setChecked(isNightModeEnabled);
 
         night_mode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
