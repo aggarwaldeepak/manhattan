@@ -52,7 +52,7 @@ public class AuthenticationScreen extends AppCompatActivity {
         emailTextView = (TextView) findViewById(R.id.email_text_view);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("127459802026-s9vlvggc87l7anic5alpa9gdbmeunim4.apps.googleusercontent.com ")
+                .requestIdToken("25611614140-msaag3cb2igdcbt62dsdqgdpdgc3k9qf.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
 
@@ -124,10 +124,13 @@ public class AuthenticationScreen extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         Log.d(TAG, "onActivityResult: "+requestCode);
+
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             Log.d(TAG, "onActivityResult: "+result.toString());
+            Log.d(TAG, "onActivityResult: Yo " + result.getStatus().getStatusMessage());
+            Log.d(TAG, "onActivityResult: Yo " + result.getStatus().hasResolution());
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
