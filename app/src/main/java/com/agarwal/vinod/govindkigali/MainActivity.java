@@ -1,5 +1,9 @@
 package com.agarwal.vinod.govindkigali;
 
+import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,9 +17,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
@@ -40,6 +46,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.RemoteViews;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -65,7 +72,11 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.io.IOException;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import me.crosswall.lib.coverflow.CoverFlow;
@@ -76,6 +87,13 @@ import static android.view.View.GONE;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String NOTIFY_PREVIOUS = "com.com.agarwal.vinod.govindkigali.previous";
+    public static final String NOTIFY_CLOSE = "com.com.agarwal.vinod.govindkigali.close";
+    public static final String NOTIFY_PLAY = "com.com.agarwal.vinod.govindkigali.play";
+    public static final String NOTIFY_NEXT = "com.com.agarwal.vinod.govindkigali.next";
+
+    RemoteViews simpleContentView;
+    RemoteViews expandedView;
     Toolbar toolbar;
     Spinner spinnerToolbar;
     private ArrayList<Song> playList = new ArrayList<>();
@@ -88,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     private AudioManager audioManager;
     ProgressBar pbLoading, pbProgress;
     ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivMore, ivFav, ivRepeat, ivDownload;
-    TextView tvSongName, tvStart, tvEnd;
+    TextView tvSongName, tvStart, tvEnd, tvNotName;
     SeekBar sbProgress;
     LinearLayout llProgress;
     private String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
@@ -108,7 +126,10 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     PagerContainer container;
     BottomNavigationView navigation;
-
+    NotificationManager mNotificationManager;
+    Notification notification;
+    String CHANNEL_ID = "player_goving_ki_gali";
+    Integer NOTIFICATION_ID = 50891387;
 
     AudioManager.OnAudioFocusChangeListener audioFocusChangeListener =
             new AudioManager.OnAudioFocusChangeListener() {
@@ -206,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
         ivMore = findViewById(R.id.iv_more);
         ivFav = findViewById(R.id.iv_fav);
         ivDownload = findViewById(R.id.iv_download);
-        ivRepeat= findViewById(R.id.iv_repeat);
+        ivRepeat = findViewById(R.id.iv_repeat);
         rlPlayerOptions = findViewById(R.id.rl_player_options);
         flPlayerOptions = findViewById(R.id.fl_player_options);
         llProgress = findViewById(R.id.ll_progress);
@@ -215,6 +236,8 @@ public class MainActivity extends AppCompatActivity {
         container = findViewById(R.id.pager_container);
         viewPager = container.getViewPager();
         navigation = findViewById(R.id.navigation);
+        simpleContentView = new RemoteViews(getPackageName(), R.layout.layout_not_sm_player);
+        expandedView = new RemoteViews(getPackageName(), R.layout.layout_not_player);
 
         setTitle(
                 Util.getLocalizedResources(MainActivity.this,
@@ -266,10 +289,14 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).
                 registerReceiver(receiver, new IntentFilter("custom-message"));
 
+        registerReceiver(playerReceiver, new IntentFilter(NOTIFY_PLAY));
+        registerReceiver(playerReceiver, new IntentFilter(NOTIFY_NEXT));
+        registerReceiver(playerReceiver, new IntentFilter(NOTIFY_CLOSE));
+        registerReceiver(playerReceiver, new IntentFilter(NOTIFY_PREVIOUS));
 
-        SnapHelper snapHelper = new PagerSnapHelper();
-        snapHelper.attachToRecyclerView(rvImage);
-        //For launching full screen player
+//        SnapHelper snapHelper = new PagerSnapHelper();
+//        snapHelper.attachToRecyclerView(rvImage)
+//        For launching full screen player
 //        ivUpArrow.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -573,6 +600,8 @@ public class MainActivity extends AppCompatActivity {
 
         //Assigning title of sing to textview
         tvSongName.setText(SongAdapter.playList.get(value).getTitle());
+        simpleContentView.setTextViewText(R.id.tv_not_name, SongAdapter.playList.get(value).getTitle());
+        expandedView.setTextViewText(R.id.tv_not_name, SongAdapter.playList.get(value).getTitle());
 
         releaseMediaPlayer();
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -586,7 +615,35 @@ public class MainActivity extends AppCompatActivity {
             setFav(SongAdapter.playList.get(value).getId());
             setRepeat();
             loadImage();
-            tvEnd.setText(String.valueOf(SongAdapter.playList.get(value).getDuration()/1000));
+            Integer num = SongAdapter.playList.get(value).getDuration() / 1000;
+            int hh = num / 3600;
+            int mm = num / 60;
+            int ss = num - (hh * 3600) - (mm * 60);
+            String HH, MM, SS;
+            if (hh > 10) {
+                HH ="" + hh;
+            } else {
+                HH = "0" + hh;
+            }
+            if (mm > 10) {
+                MM ="" + mm;
+            } else {
+                MM = "0" + mm;
+            }
+            if (ss > 10) {
+                SS ="" + ss;
+            } else {
+                SS = "0" + ss;
+            }
+            String time;
+            if (hh != 0) {
+                time = HH + ":" + MM + ":" + SS;
+            } else {
+                time = MM + ":" + SS;
+            }
+            tvEnd.setText(time);
+            Log.d(TAG, "preparePlayer: " + time);
+//            tvEnd.setText(dateFormat.format(new Date(SongAdapter.playList.get(value).getDuration())));
             sbProgress.setMax(SongAdapter.playList.get(value).getDuration()/1000);
             pbProgress.setMax(SongAdapter.playList.get(value).getDuration()/1000);
 
@@ -612,8 +669,12 @@ public class MainActivity extends AppCompatActivity {
                         ivPlayPause.setVisibility(View.VISIBLE);
                     }
                     f = false;
+                    generateNotification();
                     ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
                     ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
+                    simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
+                    expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
+                    mNotificationManager.notify(NOTIFICATION_ID, notification);
 
                     //after preparing media-player
                     //launching player to play music
@@ -629,10 +690,35 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     if(mediaPlayer != null){
-                        int mCurrentPosition = mediaPlayer.getCurrentPosition() / 1000;
-                        sbProgress.setProgress(mCurrentPosition);
-                        pbProgress.setProgress(mCurrentPosition);
-                        tvStart.setText(String.valueOf(mCurrentPosition));
+                        int num = mediaPlayer.getCurrentPosition() / 1000;
+                        sbProgress.setProgress(num);
+                        pbProgress.setProgress(num);
+                        int hh = num / 3600;
+                        int mm = num / 60;
+                        int ss = num - (hh * 3600) - (mm * 60);
+                        String HH, MM, SS;
+                        if (hh > 10) {
+                            HH ="" + hh;
+                        } else {
+                            HH = "0" + hh;
+                        }
+                        if (mm > 10) {
+                            MM ="" + mm;
+                        } else {
+                            MM = "0" + mm;
+                        }
+                        if (ss > 10) {
+                            SS ="" + ss;
+                        } else {
+                            SS = "0" + ss;
+                        }
+                        String time;
+                        if (hh != 0) {
+                            time = HH + ":" + MM + ":" + SS;
+                        } else {
+                            time = MM + ":" + SS;
+                        }
+                        tvStart.setText(time);
                     }
                     mHandler.postDelayed(this, 1000);
                 }
@@ -669,6 +755,9 @@ public class MainActivity extends AppCompatActivity {
                             mediaPlayer.pause();
                             ivPlayPause.setImageResource(R.drawable.ic_play_arrow_red_a700_48dp);
                             ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+                            simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
+                            expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
+                            mNotificationManager.notify(NOTIFICATION_ID, notification);
                         }
                         Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
                     }
@@ -720,6 +809,9 @@ public class MainActivity extends AppCompatActivity {
                 f = false;
                 ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
                 ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
+                simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
+                expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
+                mNotificationManager.notify(NOTIFICATION_ID, notification);
                 if (manual) {
                     int res = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
                     if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
@@ -733,6 +825,9 @@ public class MainActivity extends AppCompatActivity {
                 f = true;
                 ivPlayPause.setImageResource(R.drawable.ic_play_arrow_red_a700_48dp);
                 ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+                simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
+                expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
+                mNotificationManager.notify(NOTIFICATION_ID, notification);
                 if (manual) {
                     audioManager.abandonAudioFocus(audioFocusChangeListener);
                     Log.d(TAG, "playPause: abondoned :)" + audioFocusChangeListener);
@@ -820,6 +915,54 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    void generateNotification() {
+        notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setContentTitle("Song name")
+                .build();
+
+        //Set Listeners
+        setListeners(simpleContentView);
+        setListeners(expandedView);
+
+        notification.contentView = simpleContentView;
+        if (currentVersionSupportBigNotification()) {
+            notification.bigContentView = expandedView;
+        }
+
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        mNotificationManager.notify(NOTIFICATION_ID, notification);
+    }
+
+    public static boolean currentVersionSupportBigNotification() {
+        int sdkVersion = android.os.Build.VERSION.SDK_INT;
+        if(sdkVersion >= android.os.Build.VERSION_CODES.JELLY_BEAN){
+            return true;
+        }
+        return false;
+    }
+
+    public void setListeners(RemoteViews view) {
+        Intent previous = new Intent(NOTIFY_PREVIOUS);
+        Intent close = new Intent(NOTIFY_CLOSE);
+        Intent next = new Intent(NOTIFY_NEXT);
+        Intent play = new Intent(NOTIFY_PLAY);
+        Log.d(TAG, "setListeners: entered in listener");
+
+        PendingIntent pPrevious = PendingIntent.getBroadcast(getApplicationContext(), 0, previous, PendingIntent.FLAG_UPDATE_CURRENT);
+        view.setOnClickPendingIntent(R.id.btnPrevious, pPrevious);
+
+        PendingIntent pClose = PendingIntent.getBroadcast(getApplicationContext(), 0, close, PendingIntent.FLAG_UPDATE_CURRENT);
+        view.setOnClickPendingIntent(R.id.btnClose, pClose);
+
+        PendingIntent pNext = PendingIntent.getBroadcast(getApplicationContext(), 0, next, PendingIntent.FLAG_UPDATE_CURRENT);
+        view.setOnClickPendingIntent(R.id.btnNext, pNext);
+
+        PendingIntent pPlay = PendingIntent.getBroadcast(getApplicationContext(), 0, play, PendingIntent.FLAG_UPDATE_CURRENT);
+        view.setOnClickPendingIntent(R.id.btnPlay, pPlay);
+    }
+
     void loadImage() {
 
 //        ImageAdapter imageAdapter = new ImageAdapter(this, SongAdapter.playList);
@@ -884,6 +1027,9 @@ public class MainActivity extends AppCompatActivity {
                                 mediaPlayer.pause();
                                 ivPlayPause.setImageResource(R.drawable.ic_play_arrow_red_a700_48dp);
                                 ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+                                simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
+                                expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
+                                mNotificationManager.notify(NOTIFICATION_ID, notification);
                             }
                             Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
                         }
@@ -932,5 +1078,44 @@ public class MainActivity extends AppCompatActivity {
             View view = (View) object;
             container.removeView(view);
         }
+    }
+
+    public BroadcastReceiver playerReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch(intent.getAction()) {
+                case NOTIFY_PLAY:
+                    Toast.makeText(context, "Play/Pause", Toast.LENGTH_SHORT).show();
+                    manual = true;
+                    playPause();
+                    break;
+
+                case NOTIFY_NEXT:
+                    Toast.makeText(context, "Next", Toast.LENGTH_SHORT).show();
+                    playNext();
+                    break;
+
+                case NOTIFY_PREVIOUS:
+                    Toast.makeText(context, "Previous", Toast.LENGTH_SHORT).show();
+                    playPrevious();
+                    break;
+
+                case NOTIFY_CLOSE:
+                    Toast.makeText(context, "Cancel", Toast.LENGTH_SHORT).show();
+                    mNotificationManager.cancel(NOTIFICATION_ID);
+                    break;
+            }
+            Toast.makeText(context, "Receiver :) ", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mNotificationManager != null) {
+            Log.d(TAG, "onDestroy:  in  player");
+            mNotificationManager.cancel(NOTIFICATION_ID);
+        }
+        Log.d(TAG, "onDestroy: in destroy");
     }
 }
