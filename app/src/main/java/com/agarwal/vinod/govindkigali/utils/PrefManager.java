@@ -31,7 +31,6 @@ public class PrefManager {
     private static final String USER_LANGUAGE= "UserLanguage";
     private static final String THEME_PREFERNCE = "theme_preference";
     private static final String NIGHT_MODE = "nightmode";
-    public boolean isNightModeEnabled = false;
 
     public PrefManager(Context context) {
         this._context = context;

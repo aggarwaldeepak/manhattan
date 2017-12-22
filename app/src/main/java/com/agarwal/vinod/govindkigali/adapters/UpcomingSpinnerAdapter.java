@@ -10,6 +10,7 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.agarwal.vinod.govindkigali.R;
+import com.agarwal.vinod.govindkigali.utils.PrefManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,7 +64,11 @@ public class UpcomingSpinnerAdapter extends BaseAdapter implements SpinnerAdapte
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP,15);
         tv.setTypeface(tv.getTypeface(), Typeface.BOLD);
         tv.setTextColor(context.getResources().getColor(android.R.color.white));
-        tv.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+        PrefManager prefManager = new PrefManager(context);
+        if(prefManager.isNightModeEnabled2() == true)
+            tv.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDarkTheme));
+        else
+            tv.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
         return tv;
     }
 }

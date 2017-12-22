@@ -21,11 +21,6 @@
         <item name="android:background">@color/black_overlay</item>
     </style>
 
-    <!--<style name="AppTheme.NoActionBar">-->
-        <!--<item name="windowActionBar">false</item>-->
-        <!--<item name="windowNoTitle">true</item>-->
-    <!--</style>-->
-
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
@@ -39,21 +34,18 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <!--<item name="textColorPrimary">#ffffff</item>-->
-        <!--<item name="textColorSecondary">#000000</item>-->
+        <item name="colorControlActivated">#ffffff</item>
+        <item name="textColorPrimary">#ffffff</item>
+        <item name="textColorSecondary">#ffffff</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
     <!-- Dark base activity theme -->
-    <style name="ActivityTheme.Primary.Base.Dark" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="ActivityTheme.Primary.Base.Dark" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/colorPrimaryDarkTheme</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkDarkTheme</item>
         <item name="colorAccent">@color/colorPrimary</item>
-        <!--<item name="textColorPrimary">#ffffff</item>-->
-        <!--<item name="textColorSecondary">#ffffff</item>-->
-        <!--<item name="primaryTextColor">#ffffff</item>-->
-        <!--<item name="secondaryTextColor">#ffffff</item>-->
         <item name="backgroundCardColor">#acacac</item>
         <item name="dividerColor">#F2F2F3</item>
         <item name="android:background">#000000</item>
