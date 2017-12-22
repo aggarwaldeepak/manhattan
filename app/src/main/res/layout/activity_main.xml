@@ -78,7 +78,7 @@
                 android:id="@+id/rl_player"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/darker_gray"
+                android:background="#4a4359"
                 tools:context="com.agarwal.vinod.govindkigali.MainActivity">
 
                 <FrameLayout
@@ -90,7 +90,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:background="@android:color/darker_gray"
+                        android:background="@color/colorPrimaryDarkTheme"
                         android:orientation="horizontal"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp">
@@ -102,7 +102,7 @@
                             android:layout_gravity="center"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:paddingEnd="10dp"
-                            android:src="@drawable/ic_keyboard_arrow_up_black_24dp" />
+                            android:src="@drawable/ic_keyboard_arrow_up_white_24dp" />
 
                         <TextView
                             android:id="@+id/tv_song"
@@ -113,6 +113,7 @@
                             android:maxLines="1"
                             android:paddingLeft="10dp"
                             android:paddingRight="10dp"
+                            android:textColor="@android:color/white"
                             android:text="SWAG Se Swagat: Tiger Zinda Hai"
                             android:textStyle="bold" />
 
@@ -128,7 +129,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:background="?attr/selectableItemBackgroundBorderless"
-                            android:src="@drawable/ic_play_arrow_red_a700_48dp" />
+                            android:src="@drawable/ic_play_arrow_white_48dp" />
 
                         <ImageView
                             android:id="@+id/iv_download"
@@ -136,7 +137,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:background="?attr/selectableItemBackgroundBorderless"
-                            android:src="@drawable/ic_file_download_black_24dp" />
+                            android:src="@drawable/ic_file_download_white_24dp" />
 
                         <ImageView
                             android:id="@+id/iv_more"
@@ -145,7 +146,7 @@
                             android:layout_gravity="center"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:paddingStart="5dp"
-                            android:src="@drawable/ic_more_vert_black_24dp" />
+                            android:src="@drawable/ic_more_vert_white_24dp" />
 
                     </LinearLayout>
 
@@ -182,27 +183,28 @@
                 <!--&lt;!&ndash;app:scalingThreshold="0.5"&ndash;&gt;-->
                 <!--&lt;!&ndash;app:spacing="0.6"/>&ndash;&gt;-->
 
-                <!--<android.support.v7.widget.RecyclerView-->
-                <!--android:id="@+id/rv_song_image"-->
-                <!--android:layout_above="@id/ll_progress"-->
-                <!--android:layout_below="@id/divider"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"/>-->
-
-                <me.crosswall.lib.coverflow.core.PagerContainer
-                    android:id="@+id/pager_container"
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_song_image"
+                    android:layout_above="@id/ll_progress"
+                    android:layout_below="@id/divider"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_above="@id/ll_progress"
-                    android:layout_below="@id/divider">
+                    tools:listitem="@layout/layout_image"/>
 
-                    <android.support.v4.view.ViewPager
-                        android:id="@+id/vp_Image"
-                        android:layout_width="300dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center" />
+                <!--<me.crosswall.lib.coverflow.core.PagerContainer-->
+                    <!--android:id="@+id/pager_container"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_above="@id/ll_progress"-->
+                    <!--android:layout_below="@id/divider">-->
 
-                </me.crosswall.lib.coverflow.core.PagerContainer>
+                    <!--<android.support.v4.view.ViewPager-->
+                        <!--android:id="@+id/vp_Image"-->
+                        <!--android:layout_width="300dp"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:layout_gravity="center" />-->
+
+                <!--</me.crosswall.lib.coverflow.core.PagerContainer>-->
 
                 <LinearLayout
                     android:id="@+id/ll_progress"
@@ -213,18 +215,28 @@
 
                     <TextView
                         android:id="@+id/tv_start"
+                        android:textColor="@android:color/white"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/timeline" />
 
-                    <SeekBar
-                        android:id="@+id/sb_progress"
+                    <!--<SeekBar-->
+                    <!--android:id="@+id/sb_progress"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1" />-->
+
+                    <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+                        android:id="@+id/dsb_progress"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_height="10dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        app:dsb_trackHeight="5dp" />
 
                     <TextView
                         android:id="@+id/tv_end"
+                        android:textColor="@android:color/white"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/timeline" />
@@ -236,7 +248,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:background="@android:color/black"
                     android:padding="10dp">
 
                     <ImageView

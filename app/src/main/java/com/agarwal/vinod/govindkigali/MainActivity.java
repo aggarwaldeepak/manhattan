@@ -1,6 +1,5 @@
 package com.agarwal.vinod.govindkigali;
 
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,19 +8,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
@@ -29,6 +28,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -54,9 +54,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
+import com.agarwal.vinod.govindkigali.adapters.SongImageAdapter;
 import com.agarwal.vinod.govindkigali.fragments.MainFragment;
 import com.agarwal.vinod.govindkigali.fragments.MyMusicFragment;
-import com.agarwal.vinod.govindkigali.fragments.PlayerFragment;
 import com.agarwal.vinod.govindkigali.fragments.SettingsFragment;
 import com.agarwal.vinod.govindkigali.fragments.UpcomingFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
@@ -64,6 +64,8 @@ import com.agarwal.vinod.govindkigali.utils.BottomNavigationViewHelper;
 import com.agarwal.vinod.govindkigali.utils.CustomDialogClass;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
 import com.agarwal.vinod.govindkigali.utils.Util;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -71,13 +73,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
+
 import java.io.IOException;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import me.crosswall.lib.coverflow.CoverFlow;
@@ -102,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
     SearchView searchView;
     RelativeLayout rlPlayer, rlPlayerOptions;
     FrameLayout flPlayerOptions;
-    RecyclerView rvImage;
     private MediaPlayer mediaPlayer;
     private AudioManager audioManager;
     ProgressBar pbLoading, pbProgress;
@@ -124,11 +127,14 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference recentRef = reference.child("recents");
     int maxVolume;
     int curVolume;
+    RecyclerView recyclerView;
+    SongImageAdapter adapter;
     ViewPager viewPager;
     PagerContainer container;
     BottomNavigationView navigation;
     NotificationManager mNotificationManager;
     Notification notification;
+    DiscreteSeekBar discreteSeekBar;
     String CHANNEL_ID = "player_goving_ki_gali";
     Integer NOTIFICATION_ID = 50891387;
 
@@ -225,18 +231,19 @@ public class MainActivity extends AppCompatActivity {
         tvSongName = findViewById(R.id.tv_song);
         tvStart = findViewById(R.id.tv_start);
         tvEnd = findViewById(R.id.tv_end);
-        rvImage = findViewById(R.id.rv_song_image);
         ivMore = findViewById(R.id.iv_more);
         ivFav = findViewById(R.id.iv_fav);
         ivDownload = findViewById(R.id.iv_download);
         ivRepeat = findViewById(R.id.iv_repeat);
         rlPlayerOptions = findViewById(R.id.rl_player_options);
         flPlayerOptions = findViewById(R.id.fl_player_options);
+        recyclerView = findViewById(R.id.rv_song_image);
         llProgress = findViewById(R.id.ll_progress);
-        sbProgress = findViewById(R.id.sb_progress);
+//        sbProgress = findViewById(R.id.sb_progress);
+        discreteSeekBar = findViewById(R.id.dsb_progress);
         rlPlayer = findViewById(R.id.rl_player);
-        container = findViewById(R.id.pager_container);
-        viewPager = container.getViewPager();
+//        container = findViewById(R.id.pager_container);
+//        viewPager = container.getViewPager();
         navigation = findViewById(R.id.navigation);
         simpleContentView = new RemoteViews(getPackageName(), R.layout.layout_not_sm_player);
         expandedView = new RemoteViews(getPackageName(), R.layout.layout_not_player);
@@ -272,15 +279,15 @@ public class MainActivity extends AppCompatActivity {
                     ivPlayPause.setVisibility(View.GONE);
                     pbLoading.setVisibility(View.GONE);
                     pbProgress.setVisibility(View.GONE);
-                    ivUpArrow.setImageResource(R.drawable.ic_close_black_24dp);
+                    ivUpArrow.setImageResource(R.drawable.ic_close_white_24dp);
                     ivMore.setVisibility(View.VISIBLE);
                     ivDownload.setVisibility(View.VISIBLE);
                 } else if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED){
-                    ivUpArrow.setImageResource(R.drawable.ic_keyboard_arrow_up_black_24dp);
+                    ivUpArrow.setImageResource(R.drawable.ic_keyboard_arrow_up_white_24dp);
                     ivDownload.setVisibility(View.GONE);
                     ivMore.setVisibility(View.GONE);
                     pbProgress.setVisibility(View.VISIBLE);
-                    if (mediaPlayer != null && (mediaPlayer.isPlaying() || sbProgress.getProgress() != 0)) {
+                    if (mediaPlayer != null && (mediaPlayer.isPlaying() || discreteSeekBar.getProgress() != 0)) {
                         ivPlayPause.setVisibility(View.VISIBLE);
                     } else if (mediaPlayer != null) {
                         pbLoading.setVisibility(View.VISIBLE);
@@ -289,16 +296,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        adapter = new SongImageAdapter(this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recyclerView.setAdapter(adapter);
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(recyclerView);
+
         LocalBroadcastManager.getInstance(this).
                 registerReceiver(receiver, new IntentFilter("custom-message"));
+
+        LocalBroadcastManager.getInstance(this).
+                registerReceiver(imageReceiver, new IntentFilter("custom-image"));
 
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_PLAY));
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_NEXT));
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_CLOSE));
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_PREVIOUS));
 
-//        SnapHelper snapHelper = new PagerSnapHelper();
-//        snapHelper.attachToRecyclerView(rvImage)
 //        For launching full screen player
 //        ivUpArrow.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -407,24 +422,42 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        sbProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        discreteSeekBar.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+            public void onProgressChanged(DiscreteSeekBar seekBar, int i, boolean b) {
                 if (mediaPlayer != null && b) {
                     mediaPlayer.seekTo(i * 1000);
                 }
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(DiscreteSeekBar seekBar) {
 
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void onStopTrackingTouch(DiscreteSeekBar seekBar) {
 
             }
         });
+//        sbProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+//                if (mediaPlayer != null && b) {
+//                    mediaPlayer.seekTo(i * 1000);
+//                }
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//        });
 
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -503,6 +536,8 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!searchView.isIconified()) {
             searchView.setIconified(true);
+        } else if(slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         } else if (fragmentCheck > 0) {
             --fragmentCheck;
             MyMusicFragment.fragmentManager.popBackStack();
@@ -590,6 +625,16 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    public BroadcastReceiver imageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Integer pos = intent.getIntExtra("val", 0);
+            Log.d(TAG, "onReceive: " + pos);
+            preparePlayer(pos);
+        }
+    };
+
     void preparePlayer(final Integer pos) {
         value = pos;
         if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED
@@ -599,12 +644,18 @@ public class MainActivity extends AppCompatActivity {
             ivMore.setVisibility(GONE);
             ivDownload.setVisibility(GONE);
         }
+
         ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
 
         //Assigning title of sing to textview
         tvSongName.setText(SongAdapter.playList.get(value).getTitle());
         simpleContentView.setTextViewText(R.id.tv_not_name, SongAdapter.playList.get(value).getTitle());
         expandedView.setTextViewText(R.id.tv_not_name, SongAdapter.playList.get(value).getTitle());
+
+        String imageurl = SongAdapter.playList.get(value).getArtwork_url();
+        if (imageurl != null) {
+            new ImageLoader().execute(imageurl);
+        }
 
         releaseMediaPlayer();
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -623,17 +674,17 @@ public class MainActivity extends AppCompatActivity {
             int mm = num / 60;
             int ss = num - (hh * 3600) - (mm * 60);
             String HH, MM, SS;
-            if (hh > 10) {
+            if (hh >= 10) {
                 HH ="" + hh;
             } else {
                 HH = "0" + hh;
             }
-            if (mm > 10) {
+            if (mm >= 10) {
                 MM ="" + mm;
             } else {
                 MM = "0" + mm;
             }
-            if (ss > 10) {
+            if (ss >= 10) {
                 SS ="" + ss;
             } else {
                 SS = "0" + ss;
@@ -647,7 +698,8 @@ public class MainActivity extends AppCompatActivity {
             tvEnd.setText(time);
             Log.d(TAG, "preparePlayer: " + time);
 //            tvEnd.setText(dateFormat.format(new Date(SongAdapter.playList.get(value).getDuration())));
-            sbProgress.setMax(SongAdapter.playList.get(value).getDuration()/1000);
+//            sbProgress.setMax(SongAdapter.playList.get(value).getDuration()/1000);
+            discreteSeekBar.setMax(SongAdapter.playList.get(value).getDuration()/1000);
             pbProgress.setMax(SongAdapter.playList.get(value).getDuration()/1000);
 
 
@@ -673,6 +725,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     f = false;
                     generateNotification();
+                    adapter.updateImage(SongAdapter.playList);
                     ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
                     ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
                     simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
@@ -694,23 +747,24 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     if(mediaPlayer != null){
                         int num = mediaPlayer.getCurrentPosition() / 1000;
-                        sbProgress.setProgress(num);
+//                        sbProgress.setProgress(num);
+                        discreteSeekBar.setProgress(num);
                         pbProgress.setProgress(num);
                         int hh = num / 3600;
                         int mm = num / 60;
                         int ss = num - (hh * 3600) - (mm * 60);
                         String HH, MM, SS;
-                        if (hh > 10) {
+                        if (hh >= 10) {
                             HH ="" + hh;
                         } else {
                             HH = "0" + hh;
                         }
-                        if (mm > 10) {
+                        if (mm >= 10) {
                             MM ="" + mm;
                         } else {
                             MM = "0" + mm;
                         }
-                        if (ss > 10) {
+                        if (ss >= 10) {
                             SS ="" + ss;
                         } else {
                             SS = "0" + ss;
@@ -756,7 +810,7 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             f = true;
                             mediaPlayer.pause();
-                            ivPlayPause.setImageResource(R.drawable.ic_play_arrow_red_a700_48dp);
+                            ivPlayPause.setImageResource(R.drawable.ic_play_arrow_white_48dp);
                             ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
                             simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
                             expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
@@ -826,7 +880,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else {
                 f = true;
-                ivPlayPause.setImageResource(R.drawable.ic_play_arrow_red_a700_48dp);
+                ivPlayPause.setImageResource(R.drawable.ic_play_arrow_white_48dp);
                 ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
                 simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
                 expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
@@ -922,6 +976,8 @@ public class MainActivity extends AppCompatActivity {
         notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setContentTitle("Song name")
+                .setPriority(Notification.PRIORITY_MAX)
+                .setOngoing(true)
                 .build();
 
         //Set Listeners
@@ -968,26 +1024,28 @@ public class MainActivity extends AppCompatActivity {
 
     void loadImage() {
 
+        recyclerView.scrollToPosition(value);
+
 //        ImageAdapter imageAdapter = new ImageAdapter(this, SongAdapter.playList);
 //        rvImage.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 //        rvImage.setAdapter(imageAdapter);
-        SongImageAdapter adapter = new SongImageAdapter();
-        viewPager.setAdapter(adapter);
-        viewPager.setClipChildren(false);
-        viewPager.setOffscreenPageLimit(15);
-        new CoverFlow.Builder()
-                .with(viewPager)
-                .pagerMargin(getResources().getDimensionPixelSize(R.dimen.pager_margin))
-                .scale(0.3f)
-                .spaceSize(0f)
-                .rotationY(0f)
-                .build();
-        container.setPageItemClickListener(new PageItemClickListener() {
-            @Override
-            public void onItemClick(View view, int i) {
-                Toast.makeText(MainActivity.this, "Fuck Bitch!!!!", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        SongImageAdapter adapter = new SongImageAdapter(value);
+//        viewPager.setAdapter(adapter);
+//        viewPager.setClipChildren(false);
+//        viewPager.setOffscreenPageLimit(15);
+//        new CoverFlow.Builder()
+//                .with(viewPager)
+//                .pagerMargin(getResources().getDimensionPixelSize(R.dimen.pager_margin))
+//                .scale(0.3f)
+//                .spaceSize(0f)
+//                .rotationY(0f)
+//                .build();
+//        container.setPageItemClickListener(new PageItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, int i) {
+//                Toast.makeText(MainActivity.this, "Fuck Bitch!!!!", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
     }
 
@@ -1028,7 +1086,7 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 f = true;
                                 mediaPlayer.pause();
-                                ivPlayPause.setImageResource(R.drawable.ic_play_arrow_red_a700_48dp);
+                                ivPlayPause.setImageResource(R.drawable.ic_play_arrow_white_48dp);
                                 ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
                                 simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
                                 expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
@@ -1049,39 +1107,44 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public class SongImageAdapter extends PagerAdapter{
-
-
-        LayoutInflater layoutInflater;
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-            View view = layoutInflater.inflate(R.layout.layout_image,container,false);
-            ImageView im = view.findViewById(R.id.iv_Image);
-            container.addView(view);
-//            int sze = value%SongAdapter.playList.size();
-//            im.setImageResource(SongAdapter.playList.get(value);
-            im.setImageResource(R.drawable.ic_dashboard_black_24dp);
-            return view;
-        }
-
-        @Override
-        public int getCount() {
-            return SongAdapter.playList.size();
-//            return Integer.MAX_VALUE;
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            View view = (View) object;
-            container.removeView(view);
-        }
-    }
+//    public class SongImageAdapter extends PagerAdapter{
+//
+//        Integer pos;
+//        SongImageAdapter (Integer pos) {
+//            this.pos = pos;
+//        }
+//        LayoutInflater layoutInflater;
+//        @Override
+//        public Object instantiateItem(ViewGroup container, int position) {
+//            layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+//            View view = layoutInflater.inflate(R.layout.layout_image,container,false);
+//            ImageView im = view.findViewById(R.id.iv_Image);
+//            container.addView(view);
+//            RequestOptions requestOptions = new RequestOptions();
+//            requestOptions.placeholder(R.drawable.photo);
+//            requestOptions.error(R.drawable.photo);
+//            requestOptions.centerCrop();
+//            Glide.with(MainActivity.this).load(SongAdapter.playList.get(position).getArtwork_url()).apply(requestOptions).into(im);
+//            return view;
+//        }
+//
+//        @Override
+//        public int getCount() {
+//            return SongAdapter.playList.size();
+////            return Integer.MAX_VALUE;
+//        }
+//
+//        @Override
+//        public boolean isViewFromObject(View view, Object object) {
+//            return view == object;
+//        }
+//
+//        @Override
+//        public void destroyItem(ViewGroup container, int position, Object object) {
+//            View view = (View) object;
+//            container.removeView(view);
+//        }
+//    }
 
     public BroadcastReceiver playerReceiver = new BroadcastReceiver() {
         @Override
@@ -1120,5 +1183,36 @@ public class MainActivity extends AppCompatActivity {
             mNotificationManager.cancel(NOTIFICATION_ID);
         }
         Log.d(TAG, "onDestroy: in destroy");
+    }
+
+    class ImageLoader extends AsyncTask<String, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            Log.d(TAG, "doInBackground: working...");
+            InputStream in = null;
+            try
+            {
+                Log.i("URL", params[0]);
+                URL url = new URL(params[0]);
+                URLConnection urlConn = url.openConnection();
+                HttpURLConnection httpConn = (HttpURLConnection) urlConn;
+                httpConn.connect();
+
+                in = httpConn.getInputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Bitmap image = BitmapFactory.decodeStream(in);
+            return image;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            Log.d(TAG, "onPostExecute: setting bitmap");
+            simpleContentView.setImageViewBitmap(R.id.iv_not_image, bitmap);
+            expandedView.setImageViewBitmap(R.id.iv_not_image, bitmap);
+        }
     }
 }
