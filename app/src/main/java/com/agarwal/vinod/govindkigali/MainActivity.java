@@ -1100,10 +1100,12 @@ public class MainActivity extends AppCompatActivity {
     };
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         if (mNotificationManager != null) {
+            Log.d(TAG, "onDestroy:  in  player");
             mNotificationManager.cancel(NOTIFICATION_ID);
         }
+        Log.d(TAG, "onDestroy: in destroy");
     }
 }
