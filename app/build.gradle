@@ -26,7 +26,10 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.android.support:support-vector-drawable:26.1.0'
     implementation 'com.android.support:support-v4:26.1.0'
-    implementation 'com.google.firebase:firebase-database:11.0.4'
+    implementation 'com.google.firebase:firebase-database:9.8.0'
+    compile 'com.google.firebase:firebase-core:9.8.0'
+    compile 'com.google.firebase:firebase-auth:9.8.0'
+    compile 'com.google.android.gms:play-services-auth:9.8.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
@@ -40,11 +43,14 @@ dependencies {
     }
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
     implementation 'com.github.crosswall:Android-Coverflow:release-v1.0.4'
-    compile files('libs/PGSDK_V2.1.jar','libs/pg-checksum-1.0-jar-with-dependencies.jar')
+    compile files('libs/PGSDK_V2.1.jar', 'libs/pg-checksum-1.0-jar-with-dependencies.jar')
     implementation files('libs/YouTubeAndroidPlayerApi-1.0.0')
     implementation 'com.github.bumptech.glide:glide:4.0.0'
     implementation 'org.adw.library:discrete-seekbar:1.0.1'
 }
+
+
+
 
 
 apply plugin: 'com.google.gms.google-services'

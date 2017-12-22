@@ -137,4 +137,6 @@
     <string name="settings_about_app">About App</string>
     <string name="play_lists">Play Lists</string>
 
+    <!--<string name="default_web_client_id">25611614140-msaag3cb2igdcbt62dsdqgdpdgc3k9qf.apps.googleusercontent.com</string>-->
+
 </resources>
