@@ -1098,4 +1098,12 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(context, "Receiver :) ", Toast.LENGTH_SHORT).show();
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mNotificationManager != null) {
+            mNotificationManager.cancel(NOTIFICATION_ID);
+        }
+    }
 }
