@@ -1,6 +1,7 @@
 package com.agarwal.vinod.govindkigali.fragments;
 
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -37,6 +38,9 @@ public class UpcomingFragment extends Fragment {
     ActionBar actionBar;
     Toolbar toolbar;
     Spinner toolbarSpinner;
+    RecyclerView rvUpcoming;
+    LinearLayoutManager linearLayoutManager;
+
     public static ArrayList<Upcoming> feededUpcomings = null;
 
     public UpcomingFragment() {
@@ -53,10 +57,10 @@ public class UpcomingFragment extends Fragment {
         initiateToolbar();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_upcoming, container, false);
-        RecyclerView rvUpcoming;
         rvUpcoming = view.findViewById(R.id.rvUpcoming);
         final UpcomingAdapter adapter = new UpcomingAdapter(getContext(),null);
-        rvUpcoming.setLayoutManager(new LinearLayoutManager(getContext()));
+        linearLayoutManager = new LinearLayoutManager(getContext());
+        rvUpcoming.setLayoutManager(linearLayoutManager);
         rvUpcoming.setAdapter(adapter);
         if(feededUpcomings == null){
             UpcomingService.getUpcomingApi().getUpcomings().enqueue(new Callback<ArrayList<Upcoming>>() {
@@ -77,6 +81,31 @@ public class UpcomingFragment extends Fragment {
             });
         } else {
             adapter.update(feededUpcomings);
+        }
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            rvUpcoming.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(View view, int i, int i1, int i2, int i3) {
+                    int idx = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+                    toolbarSpinner.setSelection(UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(idx).getmMonth()));
+                }
+            });
+        } else {
+            rvUpcoming.setOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    int idx = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+                    toolbarSpinner.setSelection(UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(idx).getmMonth()));
+                    super.onScrollStateChanged(recyclerView, newState);
+                }
+
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                }
+            });
         }
         return view;
     }
@@ -103,7 +132,9 @@ public class UpcomingFragment extends Fragment {
             toolbarSpinner = toolbar.findViewById(R.id.spinner_toolbar);
         }
         toolbarSpinner.setVisibility(View.VISIBLE);
-        toolbarSpinner.setAdapter(new UpcomingSpinnerAdapter(getContext()));
+        toolbarSpinner.setAdapter(new UpcomingSpinnerAdapter(getContext(),rvUpcoming));
+        toolbarSpinner.setEnabled(false);
+        toolbarSpinner.setClickable(true);
     }
 
     @Override

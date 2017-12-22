@@ -2,6 +2,7 @@ package com.agarwal.vinod.govindkigali.adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +26,16 @@ import static com.agarwal.vinod.govindkigali.utils.Util.convertPixelsToDp2;
 public class UpcomingSpinnerAdapter extends BaseAdapter implements SpinnerAdapter {
 
     Context context;
+    RecyclerView recyclerView;
     public static final ArrayList<String> months = new ArrayList<>(Arrays.asList("January" , "February" , "March" , "April", "May",
             "June", "July", "August", "September", "October",
             "November", "December"));
 
-    public UpcomingSpinnerAdapter(Context context) {
+    public UpcomingSpinnerAdapter(Context context, RecyclerView recyclerView) {
         this.context = context;
+        this.recyclerView = recyclerView;
     }
+
     @Override
     public int getCount() {
         return months.size();
@@ -65,7 +69,7 @@ public class UpcomingSpinnerAdapter extends BaseAdapter implements SpinnerAdapte
         tv.setTypeface(tv.getTypeface(), Typeface.BOLD);
         tv.setTextColor(context.getResources().getColor(android.R.color.white));
         PrefManager prefManager = new PrefManager(context);
-        if(prefManager.isNightModeEnabled2() == true)
+        if(prefManager.isNightModeEnabled2())
             tv.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDarkTheme));
         else
             tv.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));

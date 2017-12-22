@@ -499,13 +499,15 @@ public class MainActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 Log.d("Yooo", "onQueryTextSubmit: " + query);
                 searchView.clearFocus();
-                return false;
+
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.d("Yooo", "onQueryTextSubmit: " + newText);
-                return false;
+
+                return true;
             }
 
 

@@ -97,6 +97,10 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
         return upcomings.size();
     }
 
+    public ArrayList<Upcoming> getUpcomings(){
+        return upcomings;
+    }
+
     class UpcomingViewHolder extends RecyclerView.ViewHolder {
         TextView tvMonth,tvDayNumber,tvWeekDay,tvVenue,tvTime;
         ImageView btnOptions;
