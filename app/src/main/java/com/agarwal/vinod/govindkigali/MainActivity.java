@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
@@ -207,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(Color.parseColor("#ffffff"));
 
         setSupportActionBar(toolbar);
         spinnerToolbar = toolbar.findViewById(R.id.spinner_toolbar);
@@ -238,6 +240,7 @@ public class MainActivity extends AppCompatActivity {
         navigation = findViewById(R.id.navigation);
         simpleContentView = new RemoteViews(getPackageName(), R.layout.layout_not_sm_player);
         expandedView = new RemoteViews(getPackageName(), R.layout.layout_not_player);
+
 
         setTitle(
                 Util.getLocalizedResources(MainActivity.this,

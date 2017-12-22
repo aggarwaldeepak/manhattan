@@ -4,14 +4,16 @@
     <style name="ActivityTheme.Primary.Base.Dark" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimaryDarkTheme</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkDarkTheme</item>
-        <item name="textColorPrimary">#ffffff</item>
-        <item name="textColorSecondary">#ffffff</item>
-        <item name="primaryTextColor">#ffffff</item>
-        <item name="secondaryTextColor">#ffffff</item>
+        <!--<item name="textColorPrimary">#ffffff</item>-->
+        <!--<item name="textColorSecondary">#ffffff</item>-->
+        <!--<item name="primaryTextColor">#ffffff</item>-->
+        <!--<item name="secondaryTextColor">#ffffff</item>-->
         <item name="backgroundCardColor">#28292e</item>
-        <item name="dividerColor">#F2F2F3</item>
+        <item name="dividerColor">#c4c4c4</item>
+        <!--<item name="background">#000000</item>-->
+        <item name="textColor">#FFFFFF</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="colorControlActivated">#22ec0a0a</item>
+        <item name="colorControlActivated">#ec4141</item>
     </style>
 </resources>

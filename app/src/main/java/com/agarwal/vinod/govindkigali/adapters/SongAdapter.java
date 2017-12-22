@@ -3,8 +3,10 @@ package com.agarwal.vinod.govindkigali.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,6 +21,7 @@ import com.agarwal.vinod.govindkigali.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.fragments.PlayerFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
+import com.agarwal.vinod.govindkigali.utils.PrefManager;
 
 import java.util.ArrayList;
 
@@ -47,7 +50,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     @Override
     public SongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        return new SongViewHolder(inflater.inflate(R.layout.layout_song, parent, false));
+        SongViewHolder songViewHolder  = new SongViewHolder(inflater.inflate(R.layout.layout_song, parent, false));
+        return songViewHolder ;
     }
 
     @Override
@@ -70,6 +74,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
             tvName = itemView.findViewById(R.id.tv_name);
             llSong = itemView.findViewById(R.id.ll_song);
+            PrefManager preferenceManager = new PrefManager(context);
+            if(preferenceManager.isNightModeEnabled2()){
+                llSong.setBackgroundColor(Color.parseColor("#000000"));
+                tvName.setTextColor(Color.parseColor("#ffffff"));
+            }
 
         }
 
