@@ -68,9 +68,9 @@ public class Song {
     @Expose
     private String download_url;
 
-    @SerializedName("favoritings_count")
+    @SerializedName("artwork_url")
     @Expose
-    private String favoritings_count;
+    private String artwork_url;
 
     @SerializedName("playback_count")
     @Expose
@@ -83,13 +83,13 @@ public class Song {
     public Song() {
     }
 
-    public Song(String title, String id, String description, String stream_url, String download_url, String favoritings_count, String playback_count, Integer duration) {
+    public Song(String title, String id, String description, String stream_url, String download_url, String artwork_url, String playback_count, Integer duration) {
         this.title = title;
         this.id = id;
         this.description = description;
         this.stream_url = stream_url;
         this.download_url = download_url;
-        this.favoritings_count = favoritings_count;
+        this.artwork_url = artwork_url;
         this.playback_count = playback_count;
         this.duration = duration;
     }
@@ -114,8 +114,8 @@ public class Song {
         return download_url;
     }
 
-    public String getFavoritings_count() {
-        return favoritings_count;
+    public String getArtwork_url() {
+        return artwork_url;
     }
 
     public String getPlayback_count() {

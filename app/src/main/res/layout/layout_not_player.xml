@@ -9,6 +9,7 @@
 
     <ImageView
         android:src="@drawable/photo"
+        android:id="@+id/iv_not_image"
         android:layout_gravity="center"
         android:layout_width="80dp"
         android:layout_height="80dp" />

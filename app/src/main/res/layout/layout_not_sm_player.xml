@@ -8,6 +8,7 @@
     android:layout_height="75dp">
 
     <ImageView
+        android:id="@+id/iv_not_image"
         android:src="@drawable/photo"
         android:layout_gravity="center"
         android:layout_width="60dp"
