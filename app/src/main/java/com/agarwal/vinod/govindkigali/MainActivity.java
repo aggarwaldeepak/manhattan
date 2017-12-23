@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
     NotificationManager mNotificationManager;
     Notification notification;
     DiscreteSeekBar discreteSeekBar;
+    MainFragment mainFragment;
     String CHANNEL_ID = "player_goving_ki_gali";
     Integer NOTIFICATION_ID = 50891387;
 
@@ -256,8 +257,9 @@ public class MainActivity extends AppCompatActivity {
         );
         initiateFirstLaunch();
 
+        mainFragment = new MainFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fg, new MainFragment())
+                .replace(R.id.fg, mainFragment, "BSDK")
                 .commit();
 
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
@@ -566,6 +568,9 @@ public class MainActivity extends AppCompatActivity {
                         getBaseContext().getResources().getDisplayMetrics());
                 prefManager.setLanguage("en");
                 dialog.dismiss();
+                getSupportFragmentManager().beginTransaction()
+                        .remove(mainFragment)
+                        .commit();
                 recreate();
                 /*Intent refresh = new Intent(MainActivity.this, MainActivity.class);
                 startActivity(refresh);
@@ -588,7 +593,9 @@ public class MainActivity extends AppCompatActivity {
                 dialog.dismiss();
                /* rEditor.putString("language", languageToLoad);
                 rEditor.commit();*/
-
+                getSupportFragmentManager().beginTransaction()
+                        .remove(mainFragment)
+                        .commit();
 
                 recreate();
                /* Intent refresh = new Intent(MainActivity.this, MainActivity.class);
@@ -612,13 +619,16 @@ public class MainActivity extends AppCompatActivity {
         config.locale = locale;
         getBaseContext().getResources().updateConfiguration(config,
                 getBaseContext().getResources().getDisplayMetrics());
+        getSupportFragmentManager().beginTransaction()
+                .remove(mainFragment)
+                .commit();
         recreate();
     }
 
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
+            releaseMediaPlayer();
             Integer pos = intent.getIntExtra("val", 0);
             Log.d(TAG, "onReceive: " + pos);
 
@@ -630,7 +640,7 @@ public class MainActivity extends AppCompatActivity {
     public BroadcastReceiver imageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
+            releaseMediaPlayer();
             Integer pos = intent.getIntExtra("val", 0);
             Log.d(TAG, "onReceive: " + pos);
             preparePlayer(pos);
@@ -732,8 +742,9 @@ public class MainActivity extends AppCompatActivity {
                     ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
                     simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
                     expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
-                    mNotificationManager.notify(NOTIFICATION_ID, notification);
-
+                    if (mNotificationManager != null) {
+                        mNotificationManager.notify(NOTIFICATION_ID, notification);
+                    }
                     //after preparing media-player
                     //launching player to play music
                     mp.start();
@@ -816,8 +827,9 @@ public class MainActivity extends AppCompatActivity {
                             ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
                             simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
                             expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
-                            mNotificationManager.notify(NOTIFICATION_ID, notification);
-                        }
+                            if (mNotificationManager != null) {
+                                mNotificationManager.notify(NOTIFICATION_ID, notification);
+                            }                        }
                         Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -870,7 +882,9 @@ public class MainActivity extends AppCompatActivity {
                 ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
                 simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
                 expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
-                mNotificationManager.notify(NOTIFICATION_ID, notification);
+                if (mNotificationManager != null) {
+                    mNotificationManager.notify(NOTIFICATION_ID, notification);
+                }
                 if (manual) {
                     int res = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
                     if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
@@ -886,7 +900,9 @@ public class MainActivity extends AppCompatActivity {
                 ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
                 simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
                 expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
-                mNotificationManager.notify(NOTIFICATION_ID, notification);
+                if (mNotificationManager != null) {
+                    mNotificationManager.notify(NOTIFICATION_ID, notification);
+                }
                 if (manual) {
                     audioManager.abandonAudioFocus(audioFocusChangeListener);
                     Log.d(TAG, "playPause: abondoned :)" + audioFocusChangeListener);
@@ -1092,8 +1108,9 @@ public class MainActivity extends AppCompatActivity {
                                 ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
                                 simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
                                 expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
-                                mNotificationManager.notify(NOTIFICATION_ID, notification);
-                            }
+                                if (mNotificationManager != null) {
+                                    mNotificationManager.notify(NOTIFICATION_ID, notification);
+                                }                            }
                             Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -1177,15 +1194,15 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mNotificationManager != null) {
-            Log.d(TAG, "onDestroy:  in  player");
-            mNotificationManager.cancel(NOTIFICATION_ID);
-        }
-        Log.d(TAG, "onDestroy: in destroy");
-    }
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        if (mNotificationManager != null) {
+//            Log.d(TAG, "onDestroy:  in  player");
+//            mNotificationManager.cancel(NOTIFICATION_ID);
+//        }
+//        Log.d(TAG, "onDestroy: in destroy");
+//    }
 
     class ImageLoader extends AsyncTask<String, Void, Bitmap> {
 
