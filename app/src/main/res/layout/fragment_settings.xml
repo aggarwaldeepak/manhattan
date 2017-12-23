@@ -13,6 +13,21 @@
         app:cardElevation="5dp">
 
         <TextView
+            android:id="@+id/id_signin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Sign in"
+            android:textAlignment="center" />
+
+    </android.support.v7.widget.CardView>
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="8dp"
+        app:cardElevation="5dp">
+
+        <TextView
             android:id="@+id/id_Feedback"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -31,6 +31,7 @@ import android.widget.TextView;
 import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.activities.AboutAppDetails;
+import com.agarwal.vinod.govindkigali.activities.AuthenticationScreen;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
 import com.agarwal.vinod.govindkigali.utils.Util;
 import com.google.firebase.database.DatabaseReference;
@@ -196,6 +197,13 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 setLanguageWithDialog(new PrefManager(getContext()));
+            }
+        });
+
+        ((TextView)settingsFragment.findViewById(R.id.id_signin)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), AuthenticationScreen.class));
             }
         });
 
