@@ -75,10 +75,17 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -97,8 +104,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String NOTIFY_PLAY = "com.com.agarwal.vinod.govindkigali.play";
     public static final String NOTIFY_NEXT = "com.com.agarwal.vinod.govindkigali.next";
 
-    RemoteViews simpleContentView;
-    RemoteViews expandedView;
+    static RemoteViews simpleContentView;
+    static RemoteViews expandedView;
+//    static RandomAccessFile file;
     Toolbar toolbar;
     Spinner spinnerToolbar;
     private ArrayList<Song> playList = new ArrayList<>();
@@ -216,6 +224,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(Color.parseColor("#ffffff"));
+
+//        Log.d(TAG, "onCreate: " + getFilesDir() + "");
+//        Log.d(TAG, "onCreate: " + getDir("darsh.txt", MODE_PRIVATE));
 
         setSupportActionBar(toolbar);
         spinnerToolbar = toolbar.findViewById(R.id.spinner_toolbar);
@@ -718,122 +729,138 @@ public class MainActivity extends AppCompatActivity {
             //Initializing media player object
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            final String filePath;
+            File fileTemp  = getDir("music", MODE_PRIVATE);
+            filePath = fileTemp.getPath() + "/" + SongAdapter.playList.get(value).getId();
+            Log.d(TAG, "preparePlayer: " + filePath);
 
-            try {
-                mediaPlayer.setDataSource(SongAdapter.playList.get(value).getStream_url() + client_id);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            mediaPlayer.prepareAsync();
-            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-
-                    //Changing visibility
-                    //as player loaded
-                    if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED) {
-                        pbLoading.setVisibility(View.GONE);
-                        ivPlayPause.setVisibility(View.VISIBLE);
-                    }
-                    f = false;
-                    generateNotification();
-                    adapter.updateImage(SongAdapter.playList);
-                    ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
-                    ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
-                    simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
-                    expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
-                    if (mNotificationManager != null) {
-                        mNotificationManager.notify(NOTIFICATION_ID, notification);
-                    }
-                    //after preparing media-player
-                    //launching player to play music
-                    mp.start();
-                    Log.d(TAG, "onPrepare1d: 111111111111111111111");
-                }
-            });
-
-            final Handler mHandler = new Handler();
-            //Make sure you update Seekbar on UI thread
-            MainActivity.this.runOnUiThread(new Runnable() {
-
-                @Override
+            DownloadMusic downloadMusic = new DownloadMusic();
+            downloadMusic.execute(filePath, SongAdapter.playList.get(value).getStream_url() + client_id);
+            Handler handler = new Handler();
+            Runnable r = new Runnable() {
                 public void run() {
-                    if(mediaPlayer != null){
-                        int num = mediaPlayer.getCurrentPosition() / 1000;
-//                        sbProgress.setProgress(num);
-                        discreteSeekBar.setProgress(num);
-                        pbProgress.setProgress(num);
-                        int hh = num / 3600;
-                        int mm = num / 60;
-                        int ss = num - (hh * 3600) - (mm * 60);
-                        String HH, MM, SS;
-                        if (hh >= 10) {
-                            HH ="" + hh;
-                        } else {
-                            HH = "0" + hh;
-                        }
-                        if (mm >= 10) {
-                            MM ="" + mm;
-                        } else {
-                            MM = "0" + mm;
-                        }
-                        if (ss >= 10) {
-                            SS ="" + ss;
-                        } else {
-                            SS = "0" + ss;
-                        }
-                        String time;
-                        if (hh != 0) {
-                            time = HH + ":" + MM + ":" + SS;
-                        } else {
-                            time = MM + ":" + SS;
-                        }
-                        tvStart.setText(time);
-                    }
-                    mHandler.postDelayed(this, 1000);
+                    //what ever you do here will be done after 3 seconds delay.
+                try {
+                    mediaPlayer.setDataSource(filePath);
+                    Log.d(TAG, "preparePlayer: providing filepath");
+    //                mediaPlayer.setDataSource(SongAdapter.playList.get(value).getStream_url() + client_id);
+                    mediaPlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            });
+    //            mediaPlayer.prepareAsync();
+                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
 
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    ConnectivityManager cm =
-                            (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                        //Changing visibility
+                        //as player loaded
+                        if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED) {
+                            pbLoading.setVisibility(View.GONE);
+                            ivPlayPause.setVisibility(View.VISIBLE);
+                        }
+                        f = false;
+                        generateNotification();
+                        adapter.updateImage(SongAdapter.playList);
+                        ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
+                        ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
+                        simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
+                        expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
+                        if (mNotificationManager != null) {
+                            mNotificationManager.notify(NOTIFICATION_ID, notification);
+                        }
+                        //after preparing media-player
+                        //launching player to play music
+                        mp.start();
+                        Log.d(TAG, "onPrepare1d: 111111111111111111111");
+                    }
+                });
 
-                    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-                    boolean isConnected = activeNetwork != null &&
-                            activeNetwork.isConnectedOrConnecting();
-                    if (isConnected) {
-                        if (!repeat) {
-                            if (value + 1 < SongAdapter.playList.size()) {
-                                value = value + 1;
-                                preparePlayer(value);
+                final Handler mHandler = new Handler();
+                //Make sure you update Seekbar on UI thread
+                MainActivity.this.runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if(mediaPlayer != null){
+                            int num = mediaPlayer.getCurrentPosition() / 1000;
+    //                        sbProgress.setProgress(num);
+                            discreteSeekBar.setProgress(num);
+                            pbProgress.setProgress(num);
+                            int hh = num / 3600;
+                            int mm = num / 60;
+                            int ss = num - (hh * 3600) - (mm * 60);
+                            String HH, MM, SS;
+                            if (hh >= 10) {
+                                HH ="" + hh;
                             } else {
-                                value = 0;
+                                HH = "0" + hh;
+                            }
+                            if (mm >= 10) {
+                                MM ="" + mm;
+                            } else {
+                                MM = "0" + mm;
+                            }
+                            if (ss >= 10) {
+                                SS ="" + ss;
+                            } else {
+                                SS = "0" + ss;
+                            }
+                            String time;
+                            if (hh != 0) {
+                                time = HH + ":" + MM + ":" + SS;
+                            } else {
+                                time = MM + ":" + SS;
+                            }
+                            tvStart.setText(time);
+                        }
+                        mHandler.postDelayed(this, 1000);
+                    }
+                });
+
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        ConnectivityManager cm =
+                                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                        boolean isConnected = activeNetwork != null &&
+                                activeNetwork.isConnectedOrConnecting();
+                        if (isConnected) {
+                            if (!repeat) {
+                                if (value + 1 < SongAdapter.playList.size()) {
+                                    value = value + 1;
+                                    preparePlayer(value);
+                                } else {
+                                    value = 0;
+                                    preparePlayer(value);
+                                }
+                                Log.d(TAG, "onClick: OnCreateView:" + value);
+                            } else {
                                 preparePlayer(value);
                             }
-                            Log.d(TAG, "onClick: OnCreateView:" + value);
-                        } else {
-                            preparePlayer(value);
+                        }else {
+                            if (repeat) {
+                                mediaPlayer.pause();
+                                mediaPlayer.start();
+                            } else {
+                                f = true;
+                                mediaPlayer.pause();
+                                ivPlayPause.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+                                ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+                                simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
+                                expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
+                                if (mNotificationManager != null) {
+                                    mNotificationManager.notify(NOTIFICATION_ID, notification);
+                                }                        }
+                            Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
                         }
-                    }else {
-                        if (repeat) {
-                            mediaPlayer.pause();
-                            mediaPlayer.start();
-                        } else {
-                            f = true;
-                            mediaPlayer.pause();
-                            ivPlayPause.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-                            ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-                            simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
-                            expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
-                            if (mNotificationManager != null) {
-                                mNotificationManager.notify(NOTIFICATION_ID, notification);
-                            }                        }
-                        Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
                     }
+                });
                 }
-            });
+            };
+            handler.postDelayed(r, 1000);
         }
     }
 
@@ -1204,7 +1231,7 @@ public class MainActivity extends AppCompatActivity {
 //        Log.d(TAG, "onDestroy: in destroy");
 //    }
 
-    class ImageLoader extends AsyncTask<String, Void, Bitmap> {
+    static class ImageLoader extends AsyncTask<String, Void, Bitmap> {
 
         @Override
         protected Bitmap doInBackground(String... params) {
@@ -1234,4 +1261,38 @@ public class MainActivity extends AppCompatActivity {
             expandedView.setImageViewBitmap(R.id.iv_not_image, bitmap);
         }
     }
+
+    static class DownloadMusic extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            Log.d(TAG, "doInBackground: Downloading music");
+            try {
+                RandomAccessFile file = new RandomAccessFile(strings[0], "rw");
+
+                URL url = new URL(strings[1]);
+                URLConnection conexion = url.openConnection();
+                conexion.connect();
+//                int lenghtOfFile = conexion.getContentLength();
+//                Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
+                InputStream input = new BufferedInputStream(url.openStream());
+//                OutputStream file = new FileOutputStream(strings[0]);
+                byte data[] = new byte[1024];
+//                long total = 0;
+                while (input.read(data) != -1) {
+//                    total += count;
+//                    publishProgress(""+(int)((total*100)/lenghtOfFile));
+                    file.write(data);
+//                    Log.d(TAG, "doInBackground: " + new String(data));
+                }
+                file.close();
+                Log.d(TAG, "doInBackground: download complete");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return  null;
+        }
+    }
+
 }
