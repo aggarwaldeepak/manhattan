@@ -53,6 +53,7 @@ public class AuthenticationScreen extends AppCompatActivity {
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("25611614140-msaag3cb2igdcbt62dsdqgdpdgc3k9qf.apps.googleusercontent.com")
+//                .requestIdToken("25611614140-msaag3cb2igdcbt62dsdqgdpdgc3k9qf.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
 
