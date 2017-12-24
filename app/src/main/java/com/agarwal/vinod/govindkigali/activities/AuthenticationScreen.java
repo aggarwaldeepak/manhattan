@@ -124,12 +124,12 @@ public class AuthenticationScreen extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.d(TAG, "onActivityResult: "+requestCode);
+        Log.d(TAG, "onActivityResult: " + requestCode);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            Log.d(TAG, "onActivityResult: "+result.toString());
+            Log.d(TAG, "onActivityResult: " + result.toString());
             Log.d(TAG, "onActivityResult: Yo " + result.getStatus().getStatusMessage());
             Log.d(TAG, "onActivityResult: Yo " + result.getStatus().hasResolution());
             if (result.isSuccess()) {
@@ -140,7 +140,7 @@ public class AuthenticationScreen extends AppCompatActivity {
             } else {
                 // Google Sign In failed, update UI appropriately
                 // ...
-                Log.d(TAG, "onActivityResult: "+"google_signin_failed");
+                Log.d(TAG, "onActivityResult: " + "google_signin_failed");
             }
         }
     }
