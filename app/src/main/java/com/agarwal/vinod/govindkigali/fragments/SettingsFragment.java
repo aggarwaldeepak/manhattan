@@ -230,8 +230,8 @@ public class SettingsFragment extends Fragment {
                 dialog.dismiss();
                 ((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
 //                MainActivity.recreate = true;
-                Intent i = new Intent("recreate");
-                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(i);
+                /*Intent i = new Intent("recreate");
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(i);*/
                 getActivity().recreate();
                 /*Intent refresh = new Intent(MainActivity.this, MainActivity.class);
                 startActivity(refresh);
@@ -255,8 +255,8 @@ public class SettingsFragment extends Fragment {
                 ((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
                /* rEditor.putString("language", languageToLoad);
                 rEditor.commit();*/
-                Intent i = new Intent("recreate");
-                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(i);
+                /*Intent i = new Intent("recreate");
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(i);*/
 //                MainActivity.recreate = true;
                 getActivity().recreate();
                /* Intent refresh = new Intent(MainActivity.this, MainActivity.class);

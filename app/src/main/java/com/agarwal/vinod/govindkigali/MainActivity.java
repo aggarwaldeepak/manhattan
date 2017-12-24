@@ -52,6 +52,7 @@ import com.agarwal.vinod.govindkigali.adapters.SongImageAdapter;
 import com.agarwal.vinod.govindkigali.fragments.MainFragment;
 import com.agarwal.vinod.govindkigali.fragments.MyMusicFragment;
 import com.agarwal.vinod.govindkigali.fragments.SettingsFragment;
+import com.agarwal.vinod.govindkigali.fragments.ThoughtFragment;
 import com.agarwal.vinod.govindkigali.fragments.UpcomingFragment;
 import com.agarwal.vinod.govindkigali.playerUtils.DownloadMusic;
 import com.agarwal.vinod.govindkigali.playerUtils.ImageLoader;
@@ -77,6 +78,17 @@ import java.util.Locale;
 import static android.view.View.GONE;
 
 public class MainActivity extends AppCompatActivity implements PlayerCommunication {
+    @Override
+    public void recreate() {
+        focus = true;
+        recreate = false;
+        fragmentCheck = 0;
+        releaseMediaPlayer();
+        if(mNotificationManager != null){
+            mNotificationManager.cancel(NOTIFICATION_ID);
+        }
+        super.recreate();
+    }
 
     public static final String NOTIFY_PREVIOUS = "com.com.agarwal.vinod.govindkigali.previous";
     public static final String NOTIFY_CLOSE = "com.com.agarwal.vinod.govindkigali.close";
@@ -167,6 +179,10 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                             .commit();
                     return true;
                 case R.id.navigation_thought:
+                    hideIt();
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fg,new ThoughtFragment())
+                            .commit();
                     return true;
                 case R.id.navigation_upcoming:
                     hideIt();
@@ -536,8 +552,8 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 //                getSupportFragmentManager().beginTransaction()
 //                        .remove(mainFragment)
 //                        .commit();
-                Intent i = new Intent("recreate");
-                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(i);
+                /*Intent i = new Intent("recreate");
+                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(i);*/
                 recreate();
                 /*Intent refresh = new Intent(MainActivity.this, MainActivity.class);
                 startActivity(refresh);
@@ -564,8 +580,8 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 //                        .remove(mainFragment)
 //                        .commit();
 //                recreate = true;
-                Intent i = new Intent("recreate");
-                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(i);
+                /*Intent i = new Intent("recreate");
+                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(i);*/
                 recreate();
                /* Intent refresh = new Intent(MainActivity.this, MainActivity.class);
                 startActivity(refresh);
@@ -588,8 +604,8 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         config.locale = locale;
         getBaseContext().getResources().updateConfiguration(config,
                 getBaseContext().getResources().getDisplayMetrics());
-        Intent i = new Intent("recreate");
-        LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+       /* Intent i = new Intent("recreate");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(i);*/
 //        recreate = true;
         recreate();
     }
