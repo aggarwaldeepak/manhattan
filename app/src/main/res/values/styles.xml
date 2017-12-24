@@ -63,4 +63,14 @@
         <item name="android:windowBackground">@color/windowBackgroundBlack</item>
     </style>
 
+    <style name="ThemeOverlay.AppCompat.navTheme">
+
+        <!-- Color of text and icon when SELECTED -->
+        <item name="colorPrimary">#FFFFFF</item>
+
+        <!-- Background color when SELECTED -->
+        <item name="colorControlHighlight">#FFFFFF</item>
+
+    </style>
+
 </resources>
