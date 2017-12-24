@@ -72,13 +72,18 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     public void filter(String text) {
         currentQuery = text;
         playListOnDisplay.clear();
+        notifyDataSetChanged();
         if(text.isEmpty()){
             playListOnDisplay.addAll(playList);
+            notifyDataSetChanged();
         } else{
             text = text.toLowerCase();
             for(Song item: playList){
-                if(item.getTitle().toLowerCase().contains(text) || item.getDescription().toLowerCase().contains(text)){
+//                if(item.getTitle().toLowerCase().contains(text) || item.getDescription().toLowerCase().contains(text)){
+                if(item.getTitle().toLowerCase().contains(text)){
                     playListOnDisplay.add(item);
+//                    notifyItemInserted(playListOnDisplay.size() - 1);
+
                 }
             }
         }

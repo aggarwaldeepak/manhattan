@@ -3,12 +3,15 @@ package com.agarwal.vinod.govindkigali.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.api.SongService;
@@ -51,6 +54,13 @@ public class MainFragment extends Fragment {
 
         adapter = new SongAdapter(getContext(), new ArrayList<Song>());
         rvPlayList.setAdapter(adapter);
+        rvPlayList.setItemAnimator(new DefaultItemAnimator() {
+            @Override
+            public void onAnimationFinished(RecyclerView.ViewHolder viewHolder) {
+                //Log.d(TAG, "onAnimationFinished: Fuck yrself");
+                //Toast.makeText(getContext(), "Fuccckkkkk", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         if (songlist.size() == 0) {
             Log.d(TAG, "onCreateView: ======== Empty");
