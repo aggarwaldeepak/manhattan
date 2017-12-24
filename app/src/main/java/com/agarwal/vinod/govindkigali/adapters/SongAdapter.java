@@ -33,18 +33,23 @@ import java.util.ArrayList;
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
 
     public static ArrayList<Song> playList = new ArrayList<>();
+    public static ArrayList<Song> playListOnDisplay = new ArrayList<>();
+    String currentQuery;
     private Context context;
     public static final String TAG = "SA";
 
     public SongAdapter(Context context, ArrayList<Song> playList) {
         this.context = context;
         SongAdapter.playList = playList;
+        playListOnDisplay.addAll(SongAdapter.playList);
+        currentQuery = "";
     }
 
     public void updateTracks(ArrayList<Song> playList) {
         Log.d(TAG, "updateNews: " + playList.size());
         SongAdapter.playList = playList;
         notifyDataSetChanged();
+        filter(currentQuery);
     }
 
     @Override
@@ -56,12 +61,28 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
     @Override
     public void onBindViewHolder(SongViewHolder holder, int position) {
-        holder.bindView(playList.get(position), position);
+        holder.bindView(playListOnDisplay.get(position), position);
     }
 
     @Override
     public int getItemCount() {
-        return playList.size();
+        return playListOnDisplay.size();
+    }
+
+    public void filter(String text) {
+        currentQuery = text;
+        playListOnDisplay.clear();
+        if(text.isEmpty()){
+            playListOnDisplay.addAll(playList);
+        } else{
+            text = text.toLowerCase();
+            for(Song item: playList){
+                if(item.getTitle().toLowerCase().contains(text) || item.getDescription().toLowerCase().contains(text)){
+                    playListOnDisplay.add(item);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 
     class SongViewHolder extends RecyclerView.ViewHolder {
@@ -107,7 +128,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                         MainActivity.focus = false;
                         Log.d(TAG, "onClick: checking loss first :)");
                         Intent i = new Intent("custom-message");
-                        i.putExtra("val", pos);
+                        i.putExtra("val", playList.indexOf(playListOnDisplay.get(pos)));
                         LocalBroadcastManager.getInstance(context).sendBroadcast(i);
                     } else {
                         Toast.makeText(context, "Internet not available!!", Toast.LENGTH_SHORT).show();

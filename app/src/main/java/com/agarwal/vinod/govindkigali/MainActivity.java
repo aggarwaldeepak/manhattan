@@ -174,8 +174,9 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             switch (item.getItemId()) {
                 case R.id.navigation_play:
                     hideIt();
+                    mainFragment = new MainFragment();
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fg, new MainFragment())
+                            .replace(R.id.fg, mainFragment)
                             .commit();
                     return true;
                 case R.id.navigation_thought:
@@ -477,20 +478,28 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+
+
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d("Yooo", "onQueryTextSubmit: " + query);
                 searchView.clearFocus();
-
+                /*if(mainFragment != null) {
+                    mainFragment.setSongAdapterFilter(query);
+                }*/
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.d("Yooo", "onQueryTextSubmit: " + newText);
-
+                if(mainFragment != null) {
+                    mainFragment.setSongAdapterFilter(newText);
+                }
                 return true;
             }
+
 
 
         });
@@ -498,7 +507,10 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                return false;
+                if(mainFragment != null) {
+                    mainFragment.setSongAdapterFilter("");
+                }
+                return true;
             }
         });
         return true;

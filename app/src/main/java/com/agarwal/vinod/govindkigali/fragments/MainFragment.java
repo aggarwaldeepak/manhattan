@@ -30,6 +30,7 @@ public class MainFragment extends Fragment {
     public RecyclerView rvPlayList;
     public static final String TAG = "MAIN";
     private static ArrayList<Song> songlist = new ArrayList<>();
+    SongAdapter adapter;
 
     public MainFragment() {
         // Required empty public constructor
@@ -47,7 +48,8 @@ public class MainFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvPlayList.setLayoutManager(layoutManager);
 
-        final SongAdapter adapter = new SongAdapter(getContext(), new ArrayList<Song>());
+
+        adapter = new SongAdapter(getContext(), new ArrayList<Song>());
         rvPlayList.setAdapter(adapter);
 
         if (songlist.size() == 0) {
@@ -70,5 +72,9 @@ public class MainFragment extends Fragment {
         }
 
         return mainFragment;
+    }
+
+    public void setSongAdapterFilter(String text){
+        adapter.filter(text);
     }
 }
