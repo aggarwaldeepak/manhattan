@@ -1,20 +1,13 @@
 package com.agarwal.vinod.govindkigali.fragments;
 
 
-import android.content.Context;
-import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -23,29 +16,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.TextSwitcher;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
-import com.agarwal.vinod.govindkigali.MainActivity;
-import com.agarwal.vinod.govindkigali.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.R;
-import com.agarwal.vinod.govindkigali.adapters.PlayListAdapter;
-import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
-import com.agarwal.vinod.govindkigali.models.Song;
-import com.agarwal.vinod.govindkigali.utils.CustomDialogClass;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
-import it.moondroid.coverflow.components.ui.containers.FeatureCoverFlow;
-
-import static android.view.View.GONE;
 
 /**
  * A simple {@link Fragment} subclass.

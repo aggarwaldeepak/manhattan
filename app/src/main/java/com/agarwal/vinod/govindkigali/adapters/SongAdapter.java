@@ -1,12 +1,10 @@
 package com.agarwal.vinod.govindkigali.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,9 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.agarwal.vinod.govindkigali.MainActivity;
-import com.agarwal.vinod.govindkigali.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.R;
-import com.agarwal.vinod.govindkigali.fragments.PlayerFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
 import com.bumptech.glide.Glide;
