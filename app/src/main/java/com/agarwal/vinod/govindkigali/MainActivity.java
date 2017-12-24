@@ -11,12 +11,10 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -24,8 +22,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,12 +32,10 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -59,13 +53,13 @@ import com.agarwal.vinod.govindkigali.fragments.MainFragment;
 import com.agarwal.vinod.govindkigali.fragments.MyMusicFragment;
 import com.agarwal.vinod.govindkigali.fragments.SettingsFragment;
 import com.agarwal.vinod.govindkigali.fragments.UpcomingFragment;
-import com.agarwal.vinod.govindkigali.models.Song;
+import com.agarwal.vinod.govindkigali.playerUtils.DownloadMusic;
+import com.agarwal.vinod.govindkigali.playerUtils.ImageLoader;
+import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.utils.BottomNavigationViewHelper;
 import com.agarwal.vinod.govindkigali.utils.CustomDialogClass;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
 import com.agarwal.vinod.govindkigali.utils.Util;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -75,42 +69,25 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.Locale;
-
-import me.crosswall.lib.coverflow.CoverFlow;
-import me.crosswall.lib.coverflow.core.PageItemClickListener;
-import me.crosswall.lib.coverflow.core.PagerContainer;
 
 import static android.view.View.GONE;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PlayerCommunication {
 
     public static final String NOTIFY_PREVIOUS = "com.com.agarwal.vinod.govindkigali.previous";
     public static final String NOTIFY_CLOSE = "com.com.agarwal.vinod.govindkigali.close";
     public static final String NOTIFY_PLAY = "com.com.agarwal.vinod.govindkigali.play";
     public static final String NOTIFY_NEXT = "com.com.agarwal.vinod.govindkigali.next";
 
-    static RemoteViews simpleContentView;
-    static RemoteViews expandedView;
-//    static RandomAccessFile file;
+    RemoteViews simpleContentView;
+    RemoteViews expandedView;
     Toolbar toolbar;
     Spinner spinnerToolbar;
-    private ArrayList<Song> playList = new ArrayList<>();
-    static SlidingUpPanelLayout slidingUpPanelLayout;
+    SlidingUpPanelLayout slidingUpPanelLayout;
     SearchView searchView;
     RelativeLayout rlPlayer, rlPlayerOptions;
     FrameLayout flPlayerOptions;
@@ -118,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     private AudioManager audioManager;
     ProgressBar pbLoading, pbProgress;
     ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivMore, ivFav, ivRepeat, ivDownload;
-    TextView tvSongName, tvStart, tvEnd, tvNotName;
+    TextView tvSongName, tvStart, tvEnd;
     SeekBar sbProgress;
     LinearLayout llProgress;
     private String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
@@ -128,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
     Boolean manual = true;
     Boolean fav = true;
     public static Boolean focus = true;
+    public static Boolean recreate = false;
     public static Integer fragmentCheck = 0;
     public static final String TAG = "MAIN";
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
@@ -137,8 +115,6 @@ public class MainActivity extends AppCompatActivity {
     int curVolume;
     RecyclerView recyclerView;
     SongImageAdapter adapter;
-    ViewPager viewPager;
-    PagerContainer container;
     BottomNavigationView navigation;
     NotificationManager mNotificationManager;
     Notification notification;
@@ -260,6 +236,11 @@ public class MainActivity extends AppCompatActivity {
         simpleContentView = new RemoteViews(getPackageName(), R.layout.layout_not_sm_player);
         expandedView = new RemoteViews(getPackageName(), R.layout.layout_not_player);
 
+        if (recreate) {
+            releaseMediaPlayer();
+            Log.d(TAG, "onCreate: HIDE");
+            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+        }
 
         setTitle(
                 Util.getLocalizedResources(MainActivity.this,
@@ -270,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
 
         mainFragment = new MainFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fg, mainFragment, "BSDK")
+                .replace(R.id.fg, mainFragment)
                 .commit();
 
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
@@ -322,40 +303,13 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).
                 registerReceiver(imageReceiver, new IntentFilter("custom-image"));
 
+        LocalBroadcastManager.getInstance(this).
+                registerReceiver(recreateReceiver, new IntentFilter("recreate"));
+
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_PLAY));
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_NEXT));
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_CLOSE));
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_PREVIOUS));
-
-//        For launching full screen player
-//        ivUpArrow.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                rlPlayer.setVisibility(View.VISIBLE);
-//                MainFragment.rvPlayList.setVisibility(GONE);
-//                flPlayerOptions.setVisibility(GONE);
-//            }
-//        });
-
-        //full screen player option to text-View to
-//        tvSongName.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                rlPlayer.setVisibility(View.VISIBLE);
-//                MainFragment.rvPlayList.setVisibility(GONE);
-//                flPlayerOptions.setVisibility(GONE);
-//            }
-//        });
-
-        //getting back to player bar(small player)
-//        ivClose.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                MainFragment.rvPlayList.setVisibility(View.VISIBLE);
-//                flPlayerOptions.setVisibility(View.VISIBLE);
-//                rlPlayer.setVisibility(GONE);
-//            }
-//        });
 
         //Pop up menu
         ivMore.setOnClickListener(new View.OnClickListener() {
@@ -472,7 +426,6 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         BottomNavigationViewHelper.disableShiftMode(navigation);
 
@@ -579,9 +532,12 @@ public class MainActivity extends AppCompatActivity {
                         getBaseContext().getResources().getDisplayMetrics());
                 prefManager.setLanguage("en");
                 dialog.dismiss();
-                getSupportFragmentManager().beginTransaction()
-                        .remove(mainFragment)
-                        .commit();
+//                recreate = true;
+//                getSupportFragmentManager().beginTransaction()
+//                        .remove(mainFragment)
+//                        .commit();
+                Intent i = new Intent("recreate");
+                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(i);
                 recreate();
                 /*Intent refresh = new Intent(MainActivity.this, MainActivity.class);
                 startActivity(refresh);
@@ -604,10 +560,12 @@ public class MainActivity extends AppCompatActivity {
                 dialog.dismiss();
                /* rEditor.putString("language", languageToLoad);
                 rEditor.commit();*/
-                getSupportFragmentManager().beginTransaction()
-                        .remove(mainFragment)
-                        .commit();
-
+//                getSupportFragmentManager().beginTransaction()
+//                        .remove(mainFragment)
+//                        .commit();
+//                recreate = true;
+                Intent i = new Intent("recreate");
+                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(i);
                 recreate();
                /* Intent refresh = new Intent(MainActivity.this, MainActivity.class);
                 startActivity(refresh);
@@ -630,9 +588,9 @@ public class MainActivity extends AppCompatActivity {
         config.locale = locale;
         getBaseContext().getResources().updateConfiguration(config,
                 getBaseContext().getResources().getDisplayMetrics());
-        getSupportFragmentManager().beginTransaction()
-                .remove(mainFragment)
-                .commit();
+        Intent i = new Intent("recreate");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+//        recreate = true;
         recreate();
     }
 
@@ -645,6 +603,20 @@ public class MainActivity extends AppCompatActivity {
 
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
             preparePlayer(pos);
+        }
+    };
+
+    public BroadcastReceiver recreateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            releaseMediaPlayer();
+            if (mNotificationManager != null ){
+                mNotificationManager.cancel(NOTIFICATION_ID);
+            }
+            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+//            getSupportFragmentManager().beginTransaction()
+//                    .remove(mainFragment)
+//                    .commit();
         }
     };
 
@@ -677,7 +649,7 @@ public class MainActivity extends AppCompatActivity {
 
         String imageurl = SongAdapter.playList.get(value).getArtwork_url();
         if (imageurl != null) {
-            new ImageLoader().execute(imageurl);
+            new ImageLoader(this).execute(imageurl);
         }
 
         releaseMediaPlayer();
@@ -694,7 +666,8 @@ public class MainActivity extends AppCompatActivity {
             loadImage();
             Integer num = SongAdapter.playList.get(value).getDuration() / 1000;
             int hh = num / 3600;
-            int mm = num / 60;
+            int mm = num / 60 - (hh * 60);
+            Log.d(TAG, "preparePlayer: " + hh + " ==== " + mm);
             int ss = num - (hh * 3600) - (mm * 60);
             String HH, MM, SS;
             if (hh >= 10) {
@@ -788,7 +761,7 @@ public class MainActivity extends AppCompatActivity {
                             discreteSeekBar.setProgress(num);
                             pbProgress.setProgress(num);
                             int hh = num / 3600;
-                            int mm = num / 60;
+                            int mm = num / 60 - (hh * 60);
                             int ss = num - (hh * 3600) - (mm * 60);
                             String HH, MM, SS;
                             if (hh >= 10) {
@@ -860,7 +833,7 @@ public class MainActivity extends AppCompatActivity {
                 });
                 }
             };
-            handler.postDelayed(r, 1000);
+            handler.postDelayed(r, 3000);
         }
     }
 
@@ -1221,6 +1194,12 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    public void uploadImage(Bitmap bitmap) {
+        simpleContentView.setImageViewBitmap(R.id.iv_not_image, bitmap);
+        expandedView.setImageViewBitmap(R.id.iv_not_image, bitmap);
+    }
+
 //    @Override
 //    public void onDestroy() {
 //        super.onDestroy();
@@ -1230,69 +1209,5 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //        Log.d(TAG, "onDestroy: in destroy");
 //    }
-
-    static class ImageLoader extends AsyncTask<String, Void, Bitmap> {
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            Log.d(TAG, "doInBackground: working...");
-            InputStream in = null;
-            try
-            {
-                Log.i("URL", params[0]);
-                URL url = new URL(params[0]);
-                URLConnection urlConn = url.openConnection();
-                HttpURLConnection httpConn = (HttpURLConnection) urlConn;
-                httpConn.connect();
-
-                in = httpConn.getInputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bitmap image = BitmapFactory.decodeStream(in);
-            return image;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-            Log.d(TAG, "onPostExecute: setting bitmap");
-            simpleContentView.setImageViewBitmap(R.id.iv_not_image, bitmap);
-            expandedView.setImageViewBitmap(R.id.iv_not_image, bitmap);
-        }
-    }
-
-    static class DownloadMusic extends AsyncTask<String, Void, Void> {
-
-        @Override
-        protected Void doInBackground(String... strings) {
-            Log.d(TAG, "doInBackground: Downloading music");
-            try {
-                RandomAccessFile file = new RandomAccessFile(strings[0], "rw");
-
-                URL url = new URL(strings[1]);
-                URLConnection conexion = url.openConnection();
-                conexion.connect();
-//                int lenghtOfFile = conexion.getContentLength();
-//                Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
-                InputStream input = new BufferedInputStream(url.openStream());
-//                OutputStream file = new FileOutputStream(strings[0]);
-                byte data[] = new byte[1024];
-//                long total = 0;
-                while (input.read(data) != -1) {
-//                    total += count;
-//                    publishProgress(""+(int)((total*100)/lenghtOfFile));
-                    file.write(data);
-//                    Log.d(TAG, "doInBackground: " + new String(data));
-                }
-                file.close();
-                Log.d(TAG, "doInBackground: download complete");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return  null;
-        }
-    }
 
 }

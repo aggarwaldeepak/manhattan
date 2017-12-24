@@ -27,7 +27,7 @@ import retrofit2.Response;
  */
 public class MainFragment extends Fragment {
 
-    public static RecyclerView rvPlayList;
+    public RecyclerView rvPlayList;
     public static final String TAG = "MAIN";
     private static ArrayList<Song> songlist = new ArrayList<>();
 

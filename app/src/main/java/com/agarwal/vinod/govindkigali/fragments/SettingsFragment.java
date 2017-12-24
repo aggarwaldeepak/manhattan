@@ -16,6 +16,7 @@ import android.os.StatFs;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
 import android.telephony.TelephonyManager;
@@ -228,6 +229,9 @@ public class SettingsFragment extends Fragment {
                 prefManager.setLanguage("en");
                 dialog.dismiss();
                 ((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
+//                MainActivity.recreate = true;
+                Intent i = new Intent("recreate");
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(i);
                 getActivity().recreate();
                 /*Intent refresh = new Intent(MainActivity.this, MainActivity.class);
                 startActivity(refresh);
@@ -251,8 +255,9 @@ public class SettingsFragment extends Fragment {
                 ((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
                /* rEditor.putString("language", languageToLoad);
                 rEditor.commit();*/
-
-
+                Intent i = new Intent("recreate");
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(i);
+//                MainActivity.recreate = true;
                 getActivity().recreate();
                /* Intent refresh = new Intent(MainActivity.this, MainActivity.class);
                 startActivity(refresh);
