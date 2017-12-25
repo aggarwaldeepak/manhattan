@@ -1,7 +1,9 @@
 package com.agarwal.vinod.govindkigali.adapters;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,13 +32,15 @@ public class PopListAdapter extends RecyclerView.Adapter<PopListAdapter.PopListV
     private ArrayList<String> playList = new ArrayList<>();
     private Context context;
     private Song song;
-    Boolean flag;
+    private Boolean flag;
+    private FragmentActivity activity;
     public static final String TAG = "POAD";
 
-    public PopListAdapter(Context context, Song song, Boolean flag) {
+    public PopListAdapter(Context context, Song song, Boolean flag, FragmentActivity activity) {
         this.context = context;
         this.song = song;
         this.flag = flag;
+        this.activity = activity;
     }
 
     public void updateList(ArrayList<String> playList) {
@@ -92,7 +96,7 @@ public class PopListAdapter extends RecyclerView.Adapter<PopListAdapter.PopListV
                         bundle.putString("Name", name);
                         fragment.setArguments(bundle);
                         ++MainActivity.fragmentCheck;
-                        MyMusicFragment.fragmentManager.beginTransaction()
+                        activity.getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.fg, fragment)
                                 .addToBackStack("remove2")
                                 .commit();

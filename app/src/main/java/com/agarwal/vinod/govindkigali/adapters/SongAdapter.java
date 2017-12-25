@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.models.Song;
+import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -32,26 +33,28 @@ import java.util.ArrayList;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
 
-    public static ArrayList<Song> playList = new ArrayList<>();
+    public ArrayList<Song> playList = new ArrayList<>();
     private Context context;
+    private PlayerCommunication playerCommunication;
     public static final String TAG = "SA";
 
-    public SongAdapter(Context context, ArrayList<Song> playList) {
+    public SongAdapter(Context context, ArrayList<Song> playList, PlayerCommunication playerCommunication) {
         this.context = context;
-        SongAdapter.playList = playList;
+        this.playList = playList;
+        this.playerCommunication = playerCommunication;
     }
 
     public void updateTracks(ArrayList<Song> playList) {
         Log.d(TAG, "updateNews: " + playList.size());
-        SongAdapter.playList = playList;
+        this.playList = playList;
         notifyDataSetChanged();
     }
 
     @Override
     public SongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        SongViewHolder songViewHolder  = new SongViewHolder(inflater.inflate(R.layout.layout_song, parent, false));
-        return songViewHolder ;
+        assert inflater != null;
+        return new SongViewHolder(inflater.inflate(R.layout.layout_song, parent, false));
     }
 
     @Override
@@ -99,16 +102,18 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                     ConnectivityManager cm =
                             (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
+                    assert cm != null;
                     NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
                     final boolean isConnected = activeNetwork != null &&
                             activeNetwork.isConnectedOrConnecting();
                     Log.d(TAG, "onClick: " + isConnected);
                     if (isConnected) {
                         MainActivity.focus = false;
+                        playerCommunication.playSong(playList, pos);
                         Log.d(TAG, "onClick: checking loss first :)");
-                        Intent i = new Intent("custom-message");
-                        i.putExtra("val", pos);
-                        LocalBroadcastManager.getInstance(context).sendBroadcast(i);
+//                        Intent i = new Intent("custom-message");
+//                        i.putExtra("val", pos);
+//                        LocalBroadcastManager.getInstance(context).sendBroadcast(i);
                     } else {
                         Toast.makeText(context, "Internet not available!!", Toast.LENGTH_SHORT).show();
                     }

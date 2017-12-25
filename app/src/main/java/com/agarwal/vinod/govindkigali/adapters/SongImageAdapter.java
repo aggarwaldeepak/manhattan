@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
-import com.agarwal.vinod.govindkigali.fragments.PlayerFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
