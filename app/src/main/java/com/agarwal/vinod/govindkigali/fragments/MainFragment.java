@@ -51,13 +51,7 @@ public class MainFragment extends Fragment {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvPlayList.setLayoutManager(layoutManager);
-
-//<<<<<<< HEAD
-//
-//        adapter = new SongAdapter(getContext(), new ArrayList<Song>());
-//=======
-        final SongAdapter adapter = new SongAdapter(getContext(), new ArrayList<Song>(), (PlayerCommunication) getActivity());
-//>>>>>>> player
+        adapter = new SongAdapter(getContext(), new ArrayList<Song>(), (PlayerCommunication) getActivity());
         rvPlayList.setAdapter(adapter);
         rvPlayList.setItemAnimator(new DefaultItemAnimator() {
             @Override
