@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.models.Song;
+import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -73,7 +74,7 @@ public class SubPlayListFragment extends Fragment {
         });
 
         rvsubList.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new SongAdapter(getContext(), new ArrayList<Song>());
+        adapter = new SongAdapter(getContext(), new ArrayList<Song>(), (PlayerCommunication) getActivity());
         rvsubList.setAdapter(adapter);
 
         return subFragment;

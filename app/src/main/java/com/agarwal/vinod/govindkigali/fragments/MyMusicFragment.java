@@ -21,7 +21,7 @@ import com.agarwal.vinod.govindkigali.fragments.mymusic.RecentsFragment;
 public class MyMusicFragment extends Fragment {
 
     TextView tvRecents, tvFav, tvPlaylists;
-    public static FragmentManager fragmentManager;
+    FragmentManager fragmentManager;
     public MyMusicFragment() {
         // Required empty public constructor
     }

@@ -16,6 +16,7 @@ import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.api.SongService;
 import com.agarwal.vinod.govindkigali.models.Song;
+import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -51,8 +52,12 @@ public class MainFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvPlayList.setLayoutManager(layoutManager);
 
-
-        adapter = new SongAdapter(getContext(), new ArrayList<Song>());
+//<<<<<<< HEAD
+//
+//        adapter = new SongAdapter(getContext(), new ArrayList<Song>());
+//=======
+        final SongAdapter adapter = new SongAdapter(getContext(), new ArrayList<Song>(), (PlayerCommunication) getActivity());
+//>>>>>>> player
         rvPlayList.setAdapter(adapter);
         rvPlayList.setItemAnimator(new DefaultItemAnimator() {
             @Override

@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,8 +18,6 @@ import android.widget.Toast;
 
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.PopListAdapter;
-import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
-import com.agarwal.vinod.govindkigali.fragments.PlayerFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,13 +40,15 @@ public class CustomDialogClass extends Dialog implements View.OnClickListener {
     private EditText etListName;
     private Button btCreate, btCancel;
     private Song song;
+    private FragmentActivity activity;
     private DatabaseReference popReference = FirebaseDatabase.getInstance().getReference("pop");
     private ArrayList<String> popupList = new ArrayList<>();
     public static final String TAG = "POP";
-    public CustomDialogClass(@NonNull Context context, Song song) {
+    public CustomDialogClass(@NonNull Context context, Song song, FragmentActivity activity) {
         super(context);
         this.context = context;
         this.song = song;
+        this.activity = activity;
     }
 
     @Override
@@ -90,7 +91,7 @@ public class CustomDialogClass extends Dialog implements View.OnClickListener {
         });
 
         rvPopPlayList.setLayoutManager(new LinearLayoutManager(context));
-        adapter = new PopListAdapter(context, song, true);
+        adapter = new PopListAdapter(context, song, true, activity);
         rvPopPlayList.setAdapter(adapter);
     }
 

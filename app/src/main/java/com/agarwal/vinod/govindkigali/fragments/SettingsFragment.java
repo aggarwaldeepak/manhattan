@@ -83,6 +83,10 @@ public class SettingsFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 prefManager.setNightModeEnabled(isChecked);
+                Intent i = getActivity().getBaseContext().getPackageManager()
+                        .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
                 getActivity().recreate();
 
             }
@@ -230,9 +234,19 @@ public class SettingsFragment extends Fragment {
                 dialog.dismiss();
                 ((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
 //                MainActivity.recreate = true;
+//<<<<<<< HEAD
                 /*Intent i = new Intent("recreate");
                 LocalBroadcastManager.getInstance(getContext()).sendBroadcast(i);*/
                 getActivity().recreate();
+//=======
+//                Intent i = new Intent("recreate");
+//                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(i);
+                Intent i = getActivity().getBaseContext().getPackageManager()
+                        .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+//                getActivity().recreate();
+//>>>>>>> player
                 /*Intent refresh = new Intent(MainActivity.this, MainActivity.class);
                 startActivity(refresh);
                 finish();*/
@@ -255,10 +269,19 @@ public class SettingsFragment extends Fragment {
                 ((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
                /* rEditor.putString("language", languageToLoad);
                 rEditor.commit();*/
+//<<<<<<< HEAD
                 /*Intent i = new Intent("recreate");
                 LocalBroadcastManager.getInstance(getContext()).sendBroadcast(i);*/
+//=======
+//                Intent i = new Intent("recreate");
+//                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(i);
+//>>>>>>> player
 //                MainActivity.recreate = true;
-                getActivity().recreate();
+                Intent i = getActivity().getBaseContext().getPackageManager()
+                        .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+//                getActivity().recreate();
                /* Intent refresh = new Intent(MainActivity.this, MainActivity.class);
                 startActivity(refresh);
                 finish();*/
