@@ -56,7 +56,6 @@ import com.agarwal.vinod.govindkigali.fragments.SettingsFragment;
 import com.agarwal.vinod.govindkigali.fragments.UpcomingFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
 import com.agarwal.vinod.govindkigali.playerUtils.DownloadMusic;
-import com.agarwal.vinod.govindkigali.playerUtils.DownloadPermMusic;
 import com.agarwal.vinod.govindkigali.playerUtils.ImageLoader;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.utils.BottomNavigationViewHelper;
@@ -98,10 +97,10 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     private MediaPlayer mediaPlayer;
     private AudioManager audioManager;
     private ProgressBar pbLoading, pbProgress;
-    private DownloadMusic downloadMusic;
+//    private DownloadMusic downloadMusic;
     private ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivMore, ivFav, ivRepeat, ivDownload;
     private TextView tvSongName, tvStart, tvEnd;
-//    private SeekBar sbProgress;
+    //    private SeekBar sbProgress;
     private LinearLayout llProgress;
     private String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
     private Integer value = 0;
@@ -138,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                 @Override
                 public void onAudioFocusChange(int i) {
                     if (i == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
-                        Log.d(TAG, "onAudioFocusChange: =========================================>" );
+                        Log.d(TAG, "onAudioFocusChange: =========================================>");
                         f = false;
                         manual = false;
                         playPause();
@@ -146,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                         Log.d(TAG, "onAudioFocusChange: ******************************************>");
                         maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
                         curVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int)(curVolume * 0.5), 0);
+                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) (curVolume * 0.5), 0);
                     } else if (i == AudioManager.AUDIOFOCUS_GAIN) {
                         Log.d(TAG, "onAudioFocusChange: ???????????????????????????????????????????>");
                         f = true;
@@ -193,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                 case R.id.navigation_settings:
                     hideIt();
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fg,new SettingsFragment())
+                            .replace(R.id.fg, new SettingsFragment())
                             .commit();
                     return true;
             }
@@ -290,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                     ivUpArrow.setImageResource(R.drawable.ic_close_white_24dp);
                     ivMore.setVisibility(View.VISIBLE);
                     ivDownload.setVisibility(View.VISIBLE);
-                } else if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED){
+                } else if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
                     ivUpArrow.setImageResource(R.drawable.ic_keyboard_arrow_up_white_24dp);
                     ivDownload.setVisibility(View.GONE);
                     ivMore.setVisibility(View.GONE);
@@ -359,6 +358,15 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             }
         });
 
+        ivDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Starting Download", Toast.LENGTH_SHORT).show();
+                file = new File(getDir("music", MODE_PRIVATE) + "/" + playlist.get(value).getId());
+                new DownloadMusic(MainActivity.this).execute(file.getPath(), playlist.get(value).getStream_url() + client_id);
+            }
+        });
+
         //now play pause button set-up
         ivPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -407,26 +415,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             @Override
             public void onProgressChanged(DiscreteSeekBar seekBar, final int i, boolean b) {
                 if (mediaPlayer != null && b) {
-                    if (!file.exists()) {
-                        f = false;
-                        playPause();
-                        downloadMusic.cancel(true);
-
-                        //taking download music instance
-                        downloadMusic = new DownloadMusic();
-                        downloadMusic.execute(filePath, playlist.get(value).getStream_url(), String.valueOf(i * 1000));
-                        Handler handler = new Handler();
-                        Runnable sk = new Runnable() {
-                            public void run() {
-                                f = true;
-                                playPause();
-                                mediaPlayer.seekTo(i * 1000);
-                            }
-                        };
-                        handler.postDelayed(sk, 2000);
-                    } else {
-                        mediaPlayer.seekTo(i * 1000);
-                    }
+                    mediaPlayer.seekTo(i * 1000);
                 }
             }
 
@@ -537,7 +526,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     public void onBackPressed() {
         if (!searchView.isIconified()) {
             searchView.setIconified(true);
-        } else if(slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+        } else if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         } else if (fragmentCheck > 0) {
             --fragmentCheck;
@@ -574,7 +563,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
 
                 Intent i = getBaseContext().getPackageManager()
-                        .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
 //                recreate();
@@ -608,7 +597,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
 
                 Intent i = getBaseContext().getPackageManager()
-                        .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
 //                recreate();
@@ -637,7 +626,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 //        LocalBroadcastManager.getInstance(this).sendBroadcast(i);
 //        recreate = true;
         Intent i = getBaseContext().getPackageManager()
-                .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+                .getLaunchIntentForPackage(getBaseContext().getPackageName());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
 //        recreate();
@@ -689,7 +678,8 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         }
 
         //taking download music instance
-        downloadMusic = new DownloadMusic();
+//        downloadMusic = new DownloadMusic();
+
         Log.d("SL", "preparePlayer: " + slidingUpPanelLayout.getPanelState());
 
         ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
@@ -756,155 +746,158 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-            fileTemp = new File(getDir("temp", MODE_PRIVATE) + "/" + playlist.get(pos).getId());
-            file = new File(getDir("music", MODE_PRIVATE) + "/" + playlist.get(pos).getId());
-            if (file.exists()) {
-                filePath = file.getPath();
-                Log.d(TAG, "preparePlayer: Path Exists");
-            } else {
-                filePath = fileTemp.getPath();
-//                fileTemp.deleteOnExit();
-                new DownloadPermMusic().execute(file.getPath(), playlist.get(pos).getStream_url() + client_id);
-                downloadMusic.execute(filePath, playlist.get(pos).getStream_url() + client_id, "0");
-                Log.d(TAG, "preparePlayer: Do not exist");
-            }
-            Log.d(TAG, "preparePlayer: " + filePath);
-            Handler handler = new Handler();
-            Runnable r = new Runnable() {
-                public void run() {
-                    //what ever you do here will be done after 3 seconds delay.
-                    try {
-                        mediaPlayer.reset();
-                        mediaPlayer.setDataSource(filePath);
-                        Log.d(TAG, "preparePlayer: providing filepath");
-                        //                mediaPlayer.setDataSource(SongAdapter.playList.get(pos).getStream_url() + client_id);
-                        mediaPlayer.prepare();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    //            mediaPlayer.prepareAsync();
-                    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        @Override
-                        public void onPrepared(MediaPlayer mp) {
+//            fileTemp = new File(getDir("temp", MODE_PRIVATE) + "/" + playlist.get(pos).getId());
+//            file = new File(getDir("music", MODE_PRIVATE) + "/" + playlist.get(pos).getId());
+//            if (file.exists()) {
+//                filePath = file.getPath();
+//                Log.d(TAG, "preparePlayer: Path Exists");
+//            } else {
+//                filePath = fileTemp.getPath();
+////                fileTemp.deleteOnExit();
+//                new DownloadPermMusic().execute(file.getPath(), playlist.get(pos).getStream_url() + client_id);
+//                downloadMusic.execute(filePath, playlist.get(pos).getStream_url() + client_id, "0");
+//                Log.d(TAG, "preparePlayer: Do not exist");
+//            }
+//            Log.d(TAG, "preparePlayer: " + filePath);
+//            Handler handler = new Handler();
+//            Runnable r = new Runnable() {
+//                public void run() {
+//                    //what ever you do here will be done after 3 seconds delay.
+//            try {
 
-                            //Changing visibility
-                            //as player loaded
-                            if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED) {
-                                pbLoading.setVisibility(View.GONE);
-                                ivPlayPause.setVisibility(View.VISIBLE);
+            mediaPlayer.reset();
+            try {
+                provideDataSource(mediaPlayer, pos);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+//                mediaPlayer.setDataSource(filePath);
+//                Log.d(TAG, "preparePlayer: providing filepath");
+                //                mediaPlayer.setDataSource(SongAdapter.playList.get(pos).getStream_url() + client_id);
+//                mediaPlayer.prepare();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+            //            mediaPlayer.prepareAsync();
+
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    //Changing visibility
+                    //as player loaded
+                    if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED) {
+                        pbLoading.setVisibility(View.GONE);
+                        ivPlayPause.setVisibility(View.VISIBLE);
+                    }
+                    f = false;
+                    generateNotification();
+                    adapter.updateImage(playlist);
+                    ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
+                    ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
+                    simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
+                    expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
+                    if (mNotificationManager != null) {
+                        mNotificationManager.notify(NOTIFICATION_ID, notification);
+                    }
+                    //after preparing media-player
+                    //launching player to play music
+                    mp.start();
+                    Log.d(TAG, "onPrepare1d: 111111111111111111111");
+                }
+            });
+
+            final Handler mHandler = new Handler();
+            //Make sure you update Seekbar on UI thread
+            MainActivity.this.runOnUiThread(new Runnable() {
+                 @Override
+                 public void run() {
+                     if (mediaPlayer != null) {
+                         int num = mediaPlayer.getCurrentPosition() / 1000;
+                         //                        sbProgress.setProgress(num);
+                         discreteSeekBar.setProgress(num);
+                         pbProgress.setProgress(num);
+                         int hh = num / 3600;
+                         int mm = num / 60 - (hh * 60);
+                         int ss = num - (hh * 3600) - (mm * 60);
+                         String HH, MM, SS;
+                         if (hh >= 10) {
+                             HH = "" + hh;
+                         } else {
+                             HH = "0" + hh;
+                         }
+                         if (mm >= 10) {
+                             MM = "" + mm;
+                         } else {
+                             MM = "0" + mm;
+                         }
+                         if (ss >= 10) {
+                             SS = "" + ss;
+                         } else {
+                             SS = "0" + ss;
+                         }
+                         String time;
+                         if (hh != 0) {
+                             time = HH + ":" + MM + ":" + SS;
+                         } else {
+                             time = MM + ":" + SS;
+                         }
+                         tvStart.setText(time);
+                     }
+                     mHandler.postDelayed(this, 1000);
+                 }
+            });
+
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                     if (discreteSeekBar.getProgress() < playlist.get(pos).getDuration()) {
+                         return;
+                     }
+                     ConnectivityManager cm =
+                             (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                     NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                    boolean isConnected = activeNetwork != null &&
+                            activeNetwork.isConnectedOrConnecting();
+                    if (isConnected) {
+                        if (!repeat) {
+                            if (value + 1 < playlist.size()) {
+                                value = value + 1;
+                                preparePlayer(value);
+                            } else {
+                                value = 0;
+                                preparePlayer(value);
                             }
-                            f = false;
-                            generateNotification();
-                            adapter.updateImage(playlist);
-                            ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
-                            ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
-                            simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
-                            expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
+                            Log.d(TAG, "onClick: OnCreateView:" + value);
+                        } else {
+                            preparePlayer(value);
+                        }
+                    } else {
+                        if (repeat) {
+                            mediaPlayer.pause();
+                            mediaPlayer.start();
+                        } else {
+                            f = true;
+                            mediaPlayer.pause();
+                            ivPlayPause.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+                            ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+                            simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
+                            expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
                             if (mNotificationManager != null) {
                                 mNotificationManager.notify(NOTIFICATION_ID, notification);
                             }
-                            //after preparing media-player
-                            //launching player to play music
-                            mp.start();
-                            Log.d(TAG, "onPrepare1d: 111111111111111111111");
                         }
-                    });
-
-                    final Handler mHandler = new Handler();
-                    //Make sure you update Seekbar on UI thread
-                    MainActivity.this.runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            if (mediaPlayer != null) {
-                                int num = mediaPlayer.getCurrentPosition() / 1000;
-                                //                        sbProgress.setProgress(num);
-                                discreteSeekBar.setProgress(num);
-                                pbProgress.setProgress(num);
-                                int hh = num / 3600;
-                                int mm = num / 60 - (hh * 60);
-                                int ss = num - (hh * 3600) - (mm * 60);
-                                String HH, MM, SS;
-                                if (hh >= 10) {
-                                    HH = "" + hh;
-                                } else {
-                                    HH = "0" + hh;
-                                }
-                                if (mm >= 10) {
-                                    MM = "" + mm;
-                                } else {
-                                    MM = "0" + mm;
-                                }
-                                if (ss >= 10) {
-                                    SS = "" + ss;
-                                } else {
-                                    SS = "0" + ss;
-                                }
-                                String time;
-                                if (hh != 0) {
-                                    time = HH + ":" + MM + ":" + SS;
-                                } else {
-                                    time = MM + ":" + SS;
-                                }
-                                tvStart.setText(time);
-                            }
-                            mHandler.postDelayed(this, 1000);
-                        }
-                    });
-
-                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mediaPlayer) {
-
-                            if (discreteSeekBar.getProgress() < playlist.get(pos).getDuration()) {
-                                return;
-                            }
-
-                            ConnectivityManager cm =
-                                    (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-                            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-                            boolean isConnected = activeNetwork != null &&
-                                    activeNetwork.isConnectedOrConnecting();
-                            if (isConnected) {
-                                if (!repeat) {
-                                    if (value + 1 < playlist.size()) {
-                                        value = value + 1;
-                                        preparePlayer(value);
-                                    } else {
-                                        value = 0;
-                                        preparePlayer(value);
-                                    }
-                                    Log.d(TAG, "onClick: OnCreateView:" + value);
-                                } else {
-                                    preparePlayer(value);
-                                }
-                            } else {
-                                if (repeat) {
-                                    mediaPlayer.pause();
-                                    mediaPlayer.start();
-                                } else {
-                                    f = true;
-                                    mediaPlayer.pause();
-                                    ivPlayPause.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-                                    ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-                                    simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
-                                    expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
-                                    if (mNotificationManager != null) {
-                                        mNotificationManager.notify(NOTIFICATION_ID, notification);
-                                    }
-                                }
-                                Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                        Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
+                    }
                 }
-            };
-            if (file.exists()) {
-                handler.postDelayed(r, 0);
-            } else {
-                handler.postDelayed(r, 3000);
-            }
+            });
+//                }
+//            };
+//            if (file.exists()) {
+//                handler.postDelayed(r, 0);
+//            } else {
+//                handler.postDelayed(r, 3000);
+//            }
         }
         Log.d("SL", "preparePlayer: " + slidingUpPanelLayout.getPanelState());
 
@@ -936,7 +929,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                 Log.d(TAG, "onMenuItemClick: " + item);
                 switch (item.getItemId()) {
                     case R.id.navigation_add_to_playlist:
-                        CustomDialogClass cdd=new CustomDialogClass(MainActivity.this, playlist.get(value), MainActivity.this);
+                        CustomDialogClass cdd = new CustomDialogClass(MainActivity.this, playlist.get(value), MainActivity.this);
                         cdd.show();
                         Log.d(TAG, "onMenuItemClick: jksahdkjsdhaksjhdaksjdhk");
                         break;
@@ -997,7 +990,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                     activeNetwork.isConnectedOrConnecting();
             if (isConnected) {
                 audioManager.abandonAudioFocus(audioFocusChangeListener);
-                downloadMusic.cancel(true);
+//                downloadMusic.cancel(true);
 
                 if (value + 1 < playlist.size()) {
                     value = value + 1;
@@ -1022,7 +1015,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             boolean isConnected = activeNetwork != null &&
                     activeNetwork.isConnectedOrConnecting();
             if (isConnected) {
-                downloadMusic.cancel(true);
+//                downloadMusic.cancel(true);
                 audioManager.abandonAudioFocus(audioFocusChangeListener);
                 if (value - 1 > 0) {
                     value = value - 1;
@@ -1091,7 +1084,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
     boolean currentVersionSupportBigNotification() {
         int sdkVersion = android.os.Build.VERSION.SDK_INT;
-        if(sdkVersion >= android.os.Build.VERSION_CODES.JELLY_BEAN){
+        if (sdkVersion >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
             return true;
         }
         return false;
@@ -1164,7 +1157,8 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                                 expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
                                 if (mNotificationManager != null) {
                                     mNotificationManager.notify(NOTIFICATION_ID, notification);
-                                }                            }
+                                }
+                            }
                             Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -1222,7 +1216,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     public BroadcastReceiver playerReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            switch(intent.getAction()) {
+            switch (intent.getAction()) {
                 case NOTIFY_PLAY:
                     Toast.makeText(context, "Play/Pause", Toast.LENGTH_SHORT).show();
                     manual = true;
@@ -1276,4 +1270,10 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         Log.d(TAG, "recreate: called :) :) :) :) :) :)");
         super.onDestroy();
     }
+
+    private void provideDataSource(MediaPlayer mediaPlayer, Integer pos) throws IOException {
+        mediaPlayer.setDataSource(playlist.get(pos).getStream_url() + client_id);
+        mediaPlayer.prepareAsync();
+    }
 }
+
