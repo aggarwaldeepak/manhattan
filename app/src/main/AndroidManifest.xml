@@ -22,6 +22,7 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/FeedActivityThemeLight">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,6 +52,8 @@
             <!-- </intent-filter> -->
         </activity>
         <activity android:name=".activities.FacebookActivity"></activity>
+        <activity android:name=".activities.SignInScreen" />
+        <activity android:name=".activities.MobileAuthenticationScreen"></activity>
     </application>
 
 </manifest>

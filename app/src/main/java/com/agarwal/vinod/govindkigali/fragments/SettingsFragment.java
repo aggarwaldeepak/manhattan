@@ -33,6 +33,7 @@ import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.activities.AboutAppDetails;
 import com.agarwal.vinod.govindkigali.activities.AuthenticationScreen;
+import com.agarwal.vinod.govindkigali.activities.SignInScreen;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
 import com.agarwal.vinod.govindkigali.utils.Util;
 import com.google.firebase.database.DatabaseReference;
@@ -208,7 +209,7 @@ public class SettingsFragment extends Fragment {
         ((TextView)settingsFragment.findViewById(R.id.id_signin)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), AuthenticationScreen.class));
+                startActivity(new Intent(getContext(), SignInScreen.class));
             }
         });
 
