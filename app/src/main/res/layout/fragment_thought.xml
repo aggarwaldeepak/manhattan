@@ -9,7 +9,7 @@
         android:id="@+id/viewPagerThought"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <LinearLayout
+    <!--<LinearLayout
         android:layout_gravity="bottom"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -25,7 +25,7 @@
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        
+
         <LinearLayout
             android:gravity="right"
             android:padding="10dp"
@@ -75,6 +75,6 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
-    </LinearLayout>
+    </LinearLayout>-->
 
 </FrameLayout>
