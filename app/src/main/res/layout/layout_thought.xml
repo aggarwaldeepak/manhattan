@@ -1,20 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    android:id="@+id/rootLayoutThought"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:id="@+id/rootLayoutThought"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <TextView
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        tools:text="Thought Text"
-        android:id="@+id/tv_thought_text"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <android.support.v7.widget.AppCompatImageView
+
+        android:id="@+id/ivBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/thought_background"
+        android:tint="#e1bfab"
+        android:tintMode="multiply" />
+
     <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_marginStart="10dp"
+            android:id="@+id/iv_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:src="@drawable/header" />
+
+        <FrameLayout
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="350dp">
+            <ScrollView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_thought_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="300dp"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    tools:text="Thought Text" />
+            </ScrollView>
+        </FrameLayout>
+
+
+
+        <ImageView
+            android:id="@+id/iv_footer"
+            android:layout_marginStart="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:src="@drawable/footer" />
+    </LinearLayout>
+
+
+    <!--<LinearLayout
         android:id="@+id/rootBottomLayout"
         android:layout_gravity="bottom"
         android:orientation="vertical"
@@ -81,5 +130,5 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </LinearLayout>-->
 </FrameLayout>
