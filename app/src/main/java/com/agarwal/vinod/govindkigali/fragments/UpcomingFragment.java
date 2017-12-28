@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import com.agarwal.vinod.govindkigali.R;
@@ -57,6 +58,11 @@ public class UpcomingFragment extends Fragment {
         initiateToolbar();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_upcoming, container, false);
+
+        final ProgressBar progressBar = view.findViewById(R.id.progress_bar);
+        progressBar.setIndeterminate(true);
+        progressBar.getIndeterminateDrawable().setColorFilter(0xFFFF0000, android.graphics.PorterDuff.Mode.MULTIPLY);
+
         rvUpcoming = view.findViewById(R.id.rvUpcoming);
         final UpcomingAdapter adapter = new UpcomingAdapter(getContext(),null);
         linearLayoutManager = new LinearLayoutManager(getContext());
@@ -71,6 +77,7 @@ public class UpcomingFragment extends Fragment {
                     }
                     feededUpcomings = response.body();
                     adapter.update(feededUpcomings);
+                    progressBar.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -81,6 +88,7 @@ public class UpcomingFragment extends Fragment {
             });
         } else {
             adapter.update(feededUpcomings);
+            progressBar.setVisibility(View.GONE);
         }
 
 

@@ -43,6 +43,12 @@ public class ThoughtAdapter extends PagerAdapter {
             Color.parseColor("#e1bfab")
     };
 
+    int[] bannerColor = {
+            Color.parseColor("#4d7942"),
+            Color.parseColor("#6b642a"),
+            Color.parseColor("#8e6044")
+    };
+
     int[] textColor = {
             WHITE,
             WHITE,
@@ -93,8 +99,8 @@ public class ThoughtAdapter extends PagerAdapter {
         ImageView header = view.findViewById(R.id.iv_header);
         ImageView footer = view.findViewById(R.id.iv_footer);
 
-        header.setColorFilter(backgroundColor[position % backgroundColor.length], PorterDuff.Mode.SRC_IN);
-        footer.setColorFilter(backgroundColor[position % backgroundColor.length], PorterDuff.Mode.SRC_IN);
+        header.setColorFilter(bannerColor[position % backgroundColor.length], PorterDuff.Mode.SRC_IN);
+        footer.setColorFilter(bannerColor[position % backgroundColor.length], PorterDuff.Mode.SRC_IN);
         frameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
