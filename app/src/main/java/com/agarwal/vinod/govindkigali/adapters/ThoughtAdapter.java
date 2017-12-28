@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.agarwal.vinod.govindkigali.R;
@@ -92,28 +93,32 @@ public class ThoughtAdapter extends PagerAdapter {
         tvThoughtText.setText(thoughtList.get(position).getText());
         tvThoughtText.setTextColor(context.getResources().getColor(textColor[position % textColor.length]));
         AppCompatImageView imageView = view.findViewById(R.id.ivBackground);
-       // final LinearLayout linearLayout = view.findViewById(R.id.rootBottomLayout);
+        final RelativeLayout bottomBarRL = view.findViewById(R.id.bottom_bar);
         imageView.setColorFilter(backgroundColor[position % backgroundColor.length], PorterDuff.Mode.MULTIPLY);
         FrameLayout frameLayout = view.findViewById(R.id.rootLayoutThought);
+        FrameLayout frameLayoutForClick = view.findViewById(R.id.emptyClickable);
+        LinearLayout thoughtContainerLL = view.findViewById(R.id.ll_thought_container);
 
         ImageView header = view.findViewById(R.id.iv_header);
         ImageView footer = view.findViewById(R.id.iv_footer);
 
         header.setColorFilter(bannerColor[position % backgroundColor.length], PorterDuff.Mode.SRC_IN);
         footer.setColorFilter(bannerColor[position % backgroundColor.length], PorterDuff.Mode.SRC_IN);
-        frameLayout.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener switcher = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               /* switch (linearLayout.getVisibility()){
+                switch (bottomBarRL.getVisibility()){
                     case View.GONE:
-                        linearLayout.setVisibility(View.VISIBLE);
+                        bottomBarRL.setVisibility(View.VISIBLE);
                         break;
                     case View.VISIBLE:
-                        linearLayout.setVisibility(View.GONE);
+                        bottomBarRL.setVisibility(View.GONE);
                         break;
-                }*/
+                }
             }
-        });
+        };
+        frameLayoutForClick.setOnClickListener(switcher);
+        tvThoughtText.setOnClickListener(switcher);
         container.addView(view);
 
 
