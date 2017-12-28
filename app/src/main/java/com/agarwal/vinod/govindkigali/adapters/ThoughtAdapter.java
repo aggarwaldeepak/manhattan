@@ -39,8 +39,10 @@ public class ThoughtAdapter extends PagerAdapter {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot dataSnap : dataSnapshot.getChildren()){
-                    Log.d("THOUGHT", "onDataChange: " + dataSnap.getValue(String.class));
-                    thoughtList.add(dataSnap.getValue(String.class));
+
+                    //TODO: Check it not working force closing APP
+//                    Log.d("THOUGHT", "onDataChange: " + dataSnap.getValue(String.class));
+//                    thoughtList.add(dataSnap.getValue(String.class));
                     notifyDataSetChanged();
                 }
             }
