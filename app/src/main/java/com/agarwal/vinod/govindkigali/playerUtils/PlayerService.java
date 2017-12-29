@@ -31,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -52,7 +53,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     private MainActivity activity;
     public MediaPlayer mediaPlayer;
     private AudioManager audioManager;
-    private NotificationManager mNotificationManager;
+    public NotificationManager mNotificationManager;
     private Notification notification;
     private RemoteViews simpleContentView;
     private RemoteViews expandedView;
@@ -65,7 +66,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     private Boolean fav = true;
     private Integer curVolume;
     private String CHANNEL_ID = "player_goving_ki_gali";
-    private Integer NOTIFICATION_ID = 50891387;
+    public Integer NOTIFICATION_ID = 50891387;
     private String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
     public static final String TAG = "PS";
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
@@ -137,6 +138,14 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+    /**
+     * method to download song
+     */
+    public void downloadSong() {
+        File file = new File(activity.getDir("music", MODE_PRIVATE) + "/" + playlist.get(value).getId());
+        new DownloadMusic(activity).execute(file.getPath(), playlist.get(value).getStream_url() + client_id);
     }
 
     /**

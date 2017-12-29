@@ -105,24 +105,12 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     static Boolean repeat = false;
     public static Integer fragmentCheck = 0;
     public static final String TAG = "MAIN";
-    DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-    DatabaseReference favRef = reference.child("fav");
-    DatabaseReference recentRef = reference.child("recents");
-    int maxVolume;
-    int curVolume;
-    String filePath;
-    File fileTemp;
-    File file;
     public RecyclerView recyclerView;
     public SongImageAdapter adapter;
     BottomNavigationView navigation;
-    NotificationManager mNotificationManager;
-    Notification notification;
     public DiscreteSeekBar discreteSeekBar;
     MainFragment mainFragment;
     public ArrayList<Song> playlist = new ArrayList<>();
-    String CHANNEL_ID = "player_goving_ki_gali";
-    Integer NOTIFICATION_ID = 50891387;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -222,14 +210,6 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         //setting panel to hidden when activity launches
         slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
 
-//        if (service.mediaPlayer != null && mediaPlayer.isPlaying()) {
-//            Log.d(TAG, "onCreate: 111111111111111111111111111111111111111 ");
-//            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-//        } else {
-//            Log.d(TAG, "onCreate: 222222222222222222222222222222222222222");
-//            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-//        }
-
         //setting panel states
         slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
@@ -264,12 +244,9 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
 
-//        LocalBroadcastManager.getInstance(this).
-//                registerReceiver(receiver, new IntentFilter("custom-message"));
-
         LocalBroadcastManager.getInstance(this).
                 registerReceiver(imageReceiver, new IntentFilter("custom-image"));
-//
+
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_PLAY));
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_NEXT));
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_CLOSE));
@@ -296,8 +273,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "Starting Download", Toast.LENGTH_SHORT).show();
-                file = new File(getDir("music", MODE_PRIVATE) + "/" + playlist.get(value).getId());
-                new DownloadMusic(MainActivity.this).execute(file.getPath(), playlist.get(value).getStream_url() + client_id);
+                service.downloadSong();
             }
         });
 
@@ -598,10 +574,6 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         });
     }
 
-//    void loadImage() {
-//        recyclerView.scrollToPosition(value);
-//    }
-
 //    @Override
 //    public void onPause() {
 //        super.onPause();
@@ -661,45 +633,6 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         }
     }
-
-//    public class SongImageAdapter extends PagerAdapter{
-//
-//        Integer pos;
-//        SongImageAdapter (Integer pos) {
-//            this.pos = pos;
-//        }
-//        LayoutInflater layoutInflater;
-//        @Override
-//        public Object instantiateItem(ViewGroup container, int position) {
-//            layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-//            View view = layoutInflater.inflate(R.layout.layout_image,container,false);
-//            ImageView im = view.findViewById(R.id.iv_Image);
-//            container.addView(view);
-//            RequestOptions requestOptions = new RequestOptions();
-//            requestOptions.placeholder(R.drawable.photo);
-//            requestOptions.error(R.drawable.photo);
-//            requestOptions.centerCrop();
-//            Glide.with(MainActivity.this).load(SongAdapter.playList.get(position).getArtwork_url()).apply(requestOptions).into(im);
-//            return view;
-//        }
-//
-//        @Override
-//        public int getCount() {
-//            return SongAdapter.playList.size();
-////            return Integer.MAX_VALUE;
-//        }
-//
-//        @Override
-//        public boolean isViewFromObject(View view, Object object) {
-//            return view == object;
-//        }
-//
-//        @Override
-//        public void destroyItem(ViewGroup container, int position, Object object) {
-//            View view = (View) object;
-//            container.removeView(view);
-//        }
-//    }
 
     public BroadcastReceiver playerReceiver = new BroadcastReceiver() {
         @Override
@@ -809,8 +742,8 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     @Override
     public void onDestroy() {
         service.releaseMediaPlayer();
-        if (mNotificationManager != null) mNotificationManager.cancel(NOTIFICATION_ID);
-        service.focus = true;
+        if (service.mNotificationManager != null) service.mNotificationManager.cancel(service.NOTIFICATION_ID);
+        PlayerService.focus = true;
         service.repeat = false;
         fragmentCheck = 0;
 //        unregisterReceiver(playerReceiver);
