@@ -1,13 +1,16 @@
 package com.agarwal.vinod.govindkigali;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Bitmap;
@@ -17,6 +20,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.NotificationCompat;
@@ -43,12 +47,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RemoteViews;
-import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.adapters.SongImageAdapter;
 import com.agarwal.vinod.govindkigali.fragments.MainFragment;
 import com.agarwal.vinod.govindkigali.fragments.MyMusicFragment;
@@ -95,22 +97,23 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     SearchView searchView;
     RelativeLayout rlPlayer, rlPlayerOptions;
     FrameLayout flPlayerOptions;
-    private MediaPlayer mediaPlayer;
-    private AudioManager audioManager;
-    private ProgressBar pbLoading, pbProgress;
+    public PlayerService service;
+    public MediaPlayer mediaPlayer;
+    public AudioManager audioManager;
+    public ProgressBar pbLoading, pbProgress;
 //    private DownloadMusic downloadMusic;
-    private ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivMore, ivFav, ivRepeat, ivDownload;
-    private TextView tvSongName, tvStart, tvEnd;
-    //    private SeekBar sbProgress;
-    private LinearLayout llProgress;
-    private String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
-    private Integer value = 0;
-    private Boolean f = false;
-    private Boolean manual = true;
-    private Boolean fav = true;
+    public ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivRepeat, ivFav;
+//    ivMore, ivDownload;
+    public TextView tvSongName, tvStart, tvEnd;
+    public LinearLayout llProgress;
+    public String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
+    public Integer value = 0;
+    public Boolean f = false;
+    public Boolean manual = true;
+    boolean mBound = false;
+    public Boolean fav = true;
     public static Boolean focus = true;
     static Boolean repeat = false;
-    //    public static Boolean recreate = false;
     public static Integer fragmentCheck = 0;
     public static final String TAG = "MAIN";
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
@@ -128,8 +131,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     Notification notification;
     DiscreteSeekBar discreteSeekBar;
     MainFragment mainFragment;
-    private ArrayList<Song> playlist = new ArrayList<>();
-    private ArrayList<Pair<Long, Long>> remaining = new ArrayList<>();
+    public ArrayList<Song> playlist = new ArrayList<>();
     String CHANNEL_ID = "player_goving_ki_gali";
     Integer NOTIFICATION_ID = 50891387;
 
@@ -236,9 +238,9 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         tvSongName = findViewById(R.id.tv_song);
         tvStart = findViewById(R.id.tv_start);
         tvEnd = findViewById(R.id.tv_end);
-        ivMore = findViewById(R.id.iv_more);
+//        ivMore = findViewById(R.id.iv_more);
         ivFav = findViewById(R.id.iv_fav);
-        ivDownload = findViewById(R.id.iv_download);
+//        ivDownload = findViewById(R.id.iv_download);
         ivRepeat = findViewById(R.id.iv_repeat);
         rlPlayerOptions = findViewById(R.id.rl_player_options);
         flPlayerOptions = findViewById(R.id.fl_player_options);
@@ -293,12 +295,12 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                     pbLoading.setVisibility(View.GONE);
                     pbProgress.setVisibility(View.GONE);
                     ivUpArrow.setImageResource(R.drawable.ic_close_white_24dp);
-                    ivMore.setVisibility(View.VISIBLE);
-                    ivDownload.setVisibility(View.VISIBLE);
+//                    ivMore.setVisibility(View.VISIBLE);
+//                    ivDownload.setVisibility(View.VISIBLE);
                 } else if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
                     ivUpArrow.setImageResource(R.drawable.ic_keyboard_arrow_up_white_24dp);
-                    ivDownload.setVisibility(View.GONE);
-                    ivMore.setVisibility(View.GONE);
+//                    ivDownload.setVisibility(View.GONE);
+//                    ivMore.setVisibility(View.GONE);
                     pbProgress.setVisibility(View.VISIBLE);
                     if (mediaPlayer != null && (mediaPlayer.isPlaying() || discreteSeekBar.getProgress() != 0)) {
                         ivPlayPause.setVisibility(View.VISIBLE);
@@ -322,21 +324,18 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         LocalBroadcastManager.getInstance(this).
                 registerReceiver(imageReceiver, new IntentFilter("custom-image"));
 
-//        LocalBroadcastManager.getInstance(this).
-//                registerReceiver(recreateReceiver, new IntentFilter("recreate"));
-
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_PLAY));
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_NEXT));
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_CLOSE));
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_PREVIOUS));
 
         //Pop up menu
-        ivMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showPopup(view);
-            }
-        });
+//        ivMore.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                showPopup(view);
+//            }
+//        });
 
         //fav goes to firebase as fav folder
         ivFav.setOnClickListener(new View.OnClickListener() {
@@ -364,14 +363,14 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             }
         });
 
-        ivDownload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Starting Download", Toast.LENGTH_SHORT).show();
-                file = new File(getDir("music", MODE_PRIVATE) + "/" + playlist.get(value).getId());
-                new DownloadMusic(MainActivity.this).execute(file.getPath(), playlist.get(value).getStream_url() + client_id);
-            }
-        });
+//        ivDownload.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(MainActivity.this, "Starting Download", Toast.LENGTH_SHORT).show();
+//                file = new File(getDir("music", MODE_PRIVATE) + "/" + playlist.get(value).getId());
+//                new DownloadMusic(MainActivity.this).execute(file.getPath(), playlist.get(value).getStream_url() + client_id);
+//            }
+//        });
 
         //now play pause button set-up
         ivPlayPause.setOnClickListener(new View.OnClickListener() {
@@ -666,32 +665,6 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 //        recreate();
     }
 
-//    public BroadcastReceiver receiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            releaseMediaPlayer();
-//            Integer pos = intent.getIntExtra("val", 0);
-//            Log.d(TAG, "onReceive: " + pos);
-//
-//            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-//            preparePlayer(pos);
-//        }
-//    };
-
-//    public BroadcastReceiver recreateReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            releaseMediaPlayer();
-//            if (mNotificationManager != null ){
-//                mNotificationManager.cancel(NOTIFICATION_ID);
-//            }
-//            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-////            getSupportFragmentManager().beginTransaction()
-////                    .remove(mainFragment)
-////                    .commit();
-//        }
-//    };
-
     public BroadcastReceiver imageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -707,8 +680,8 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                 || slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.HIDDEN) {
             pbLoading.setVisibility(View.VISIBLE);
             ivPlayPause.setVisibility(GONE);
-            ivMore.setVisibility(GONE);
-            ivDownload.setVisibility(GONE);
+//            ivMore.setVisibility(GONE);
+//            ivDownload.setVisibility(GONE);
         }
 
         //taking download music instance
@@ -800,11 +773,11 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 //            try {
 
             mediaPlayer.reset();
-            try {
-                provideDataSource(mediaPlayer, pos);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+////                provideDataSource(mediaPlayer, pos);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 //                mediaPlayer.setDataSource(filePath);
 //                Log.d(TAG, "preparePlayer: providing filepath");
                 //                mediaPlayer.setDataSource(SongAdapter.playList.get(pos).getStream_url() + client_id);
@@ -1148,59 +1121,59 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         recyclerView.scrollToPosition(value);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (!focus) {
-            audioManager.abandonAudioFocus(audioFocusChangeListener);
-        } else {
-            if (mediaPlayer != null) {
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-                        ConnectivityManager cm =
-                                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-                        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-                        boolean isConnected = activeNetwork != null &&
-                                activeNetwork.isConnectedOrConnecting();
-                        if (isConnected) {
-                            audioManager.abandonAudioFocus(audioFocusChangeListener);
-                            if (!repeat) {
-                                if (value + 1 < playlist.size()) {
-                                    value = value + 1;
-                                    preparePlayer(value);
-                                } else {
-                                    value = 0;
-                                    preparePlayer(value);
-                                }
-                                Log.d(TAG, "onClick: OnCreateView:" + value);
-                            } else {
-                                preparePlayer(value);
-                            }
-                        } else {
-                            if (repeat) {
-                                mediaPlayer.pause();
-                                mediaPlayer.start();
-                            } else {
-                                f = true;
-                                mediaPlayer.pause();
-                                ivPlayPause.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-                                ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-                                simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
-                                expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
-                                if (mNotificationManager != null) {
-                                    mNotificationManager.notify(NOTIFICATION_ID, notification);
-                                }
-                            }
-                            Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-            Log.d(TAG, "onPause: " + audioFocusChangeListener);
-        }
-    }
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        if (!focus) {
+//            audioManager.abandonAudioFocus(audioFocusChangeListener);
+//        } else {
+//            if (mediaPlayer != null) {
+//                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                    @Override
+//                    public void onCompletion(MediaPlayer mediaPlayer) {
+//                        ConnectivityManager cm =
+//                                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//
+//                        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+//                        boolean isConnected = activeNetwork != null &&
+//                                activeNetwork.isConnectedOrConnecting();
+//                        if (isConnected) {
+//                            audioManager.abandonAudioFocus(audioFocusChangeListener);
+//                            if (!repeat) {
+//                                if (value + 1 < playlist.size()) {
+//                                    value = value + 1;
+//                                    preparePlayer(value);
+//                                } else {
+//                                    value = 0;
+//                                    preparePlayer(value);
+//                                }
+//                                Log.d(TAG, "onClick: OnCreateView:" + value);
+//                            } else {
+//                                preparePlayer(value);
+//                            }
+//                        } else {
+//                            if (repeat) {
+//                                mediaPlayer.pause();
+//                                mediaPlayer.start();
+//                            } else {
+//                                f = true;
+//                                mediaPlayer.pause();
+//                                ivPlayPause.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+//                                ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+//                                simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
+//                                expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
+//                                if (mNotificationManager != null) {
+//                                    mNotificationManager.notify(NOTIFICATION_ID, notification);
+//                                }
+//                            }
+//                            Toast.makeText(MainActivity.this, "Internet not available!!!", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
+//            }
+//            Log.d(TAG, "onPause: " + audioFocusChangeListener);
+//        }
+//    }
 
     void hideIt() {
         if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
@@ -1282,13 +1255,27 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         expandedView.setImageViewBitmap(R.id.iv_not_image, bitmap);
     }
 
+    /** Interface function to get playlist and song id/number to play song */
     @Override
     public void playSong(ArrayList<Song> playlist, Integer value) {
         Log.d(TAG, "playSong: ---------------------------------------");
-        this.playlist = playlist;
-        this.value = value;
-        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-        preparePlayer(value);
+
+        //If Service is bounded correctly
+        if (mBound) {
+            //setting panel to COLLAPSED STATE
+            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+
+            //Providing playlist to service
+            service.updateplayList(playlist);
+
+            //Calling service method to start playing song
+            service.createPlayer(value);
+
+        } else {
+
+            //If not bounded correctly
+            Log.d(TAG, "playSong: not binding");
+        }
     }
 
     @Override
@@ -1305,9 +1292,55 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         super.onDestroy();
     }
 
-    private void provideDataSource(MediaPlayer mediaPlayer, Integer pos) throws IOException {
-        mediaPlayer.setDataSource(playlist.get(pos).getStream_url() + client_id);
-        mediaPlayer.prepareAsync();
+//    /** Function to provide data source to mediaplayer */
+//    public void provideDataSource(MediaPlayer mediaPlayer, Integer pos) throws IOException {
+//        mediaPlayer.setDataSource(playlist.get(pos).getStream_url() + client_id);
+//        mediaPlayer.prepareAsync();
+//    }
+
+    public String calculateTime() {
+        return null;
+    }
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder mService) {
+
+            // We've bound to PlayerService, cast the IBinder and get PlayerService instance
+            PlayerService.LocalBinder binder = (PlayerService.LocalBinder) mService;
+            service = binder.getService();
+
+            //Passing activity instance to PlayerService
+            service = new PlayerService(MainActivity.this);
+
+            //Check value to true
+            mBound = true;
+
+            Log.d(TAG, "onServiceConnected: Binding service");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
+
+    /** Creating Intent for service and calling bind service in onStart() */
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        //Creating Intent for service
+        Intent intent = new Intent(this, PlayerService.class);
+
+        //TODO: If background possible by startService()
+        //startService(intent);
+
+        //Binding service
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 }
 
