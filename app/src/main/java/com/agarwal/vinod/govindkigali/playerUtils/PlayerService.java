@@ -1,8 +1,5 @@
-package com.agarwal.vinod.govindkigali;
+package com.agarwal.vinod.govindkigali.playerUtils;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -14,12 +11,12 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
-import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.agarwal.vinod.govindkigali.MainActivity;
+import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.models.Song;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,10 +40,10 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     private AudioManager audioManager;
     private ArrayList<Song> playlist = new ArrayList<>();
     private Integer value = 0;
-    private Boolean focus = true;
-    private Boolean manual = true;
+    public Boolean focus = true;
+    public Boolean manual = true;
     private Boolean playpause = false;
-    private Boolean repeat = false;
+    public Boolean repeat = false;
     private Boolean fav = true;
     private String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
     public static final String TAG = "PS";
@@ -127,7 +124,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
      * runs in the same process as its clients, we don't need to deal with IPC.
      */
     public class LocalBinder extends Binder {
-        PlayerService getService() {
+        public PlayerService getService() {
             // Return this instance of PlayerService so clients can call public methods
             return PlayerService.this;
         }
@@ -154,10 +151,10 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             focus = true;
 
             //for recent songs
-            recentRef.child(activity.playlist.get(pos).getId()).setValue(activity.playlist.get(pos));
+            recentRef.child(playlist.get(pos).getId()).setValue(playlist.get(pos));
 
             //for fav songs
-            setFav(activity.playlist.get(pos).getId());
+            setFav(playlist.get(pos).getId());
 
             //setting if repeat or not
             setRepeat();
@@ -177,8 +174,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 //            expandedView.setTextViewText(R.id.tv_not_name, playlist.get(pos).getTitle());
 
             //Setting max value to seekbar
-            activity.discreteSeekBar.setMax(activity.playlist.get(pos).getDuration() / 1000);
-            activity.pbProgress.setMax(activity.playlist.get(pos).getDuration() / 1000);
+            activity.discreteSeekBar.setMax(playlist.get(pos).getDuration() / 1000);
+            activity.pbProgress.setMax(playlist.get(pos).getDuration() / 1000);
 
             //Initializing media player object
             mediaPlayer = new MediaPlayer();
@@ -285,7 +282,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     /**
      * Method to release all media resources before playing another song
      */
-    void releaseMediaPlayer() {
+    public void releaseMediaPlayer() {
         if (mediaPlayer != null) {
             Log.d(TAG, "releaseMediaPlayer: ----------------------------------------------");
 
@@ -317,7 +314,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     public void onCompletion(MediaPlayer mp) {
         //checking Internet connection
         ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
@@ -333,7 +330,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 }
                 Log.d(TAG, "onClick: OnCreateView:" + value);
             } else {
-                createPlayer(value);
+                mediaPlayer.pause();
+                mediaPlayer.start();
             }
         } else {
             if (repeat) {
@@ -357,7 +355,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     /**
      * Playing pausing audio playback
      */
-    void playPause() {
+    public void playPause() {
         Log.d(TAG, "playPause: " + playpause);
         if (mediaPlayer != null) {
             if (playpause) {
@@ -401,11 +399,11 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     /**
      * playing next audio
      */
-    void playNext() {
+    public void playNext() {
         if (mediaPlayer != null) {
             //Checking internet connection
             ConnectivityManager cm =
-                    (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                    (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
 
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
             boolean isConnected = activeNetwork != null &&
@@ -431,11 +429,11 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     /**
      * playing previous audio
      */
-    void playPrevious() {
+    public void playPrevious() {
         if (mediaPlayer != null) {
             //Checking internet connection
             ConnectivityManager cm =
-                    (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                    (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
 
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
             boolean isConnected = activeNetwork != null &&
@@ -457,6 +455,30 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         }
     }
 
+    /**
+     * Updating progress with seekbar
+     * @param i : current progress
+     * @param b : user change
+     */
+    public void progressChanged(Integer i, Boolean b) {
+        if (mediaPlayer != null && b) {
+            mediaPlayer.seekTo(i * 1000);
+        }
+    }
+
+    /**
+     * Updating repeat method
+     */
+    public void updatingRepeat() {
+        if (repeat) {
+            repeat = false;
+            activity.ivRepeat.setImageResource(R.drawable.ic_repeat_white_24dp);
+        } else {
+            repeat = true;
+            activity.ivRepeat.setImageResource(R.drawable.ic_repeat_one_white_24dp);
+        }
+    }
+
     void setFav(final String id) {
         favRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -475,6 +497,32 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 Log.d(TAG, "onCancelled: " + databaseError.getDetails());
             }
         });
+    }
+
+    /**
+     * method changing favourites in setOnClickListener()
+     */
+    public void changeFavourite() {
+        //Checking internet connection
+        ConnectivityManager cm =
+                (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        if (isConnected) {
+            if (!fav) {
+                fav = true;
+                favRef.child(playlist.get(value).getId()).setValue(playlist.get(value));
+                activity.ivFav.setImageResource(R.drawable.ic_favorite_white_24dp);
+            } else {
+                fav = false;
+                favRef.child(playlist.get(value).getId()).removeValue();
+                activity.ivFav.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+            }
+        } else {
+            Toast.makeText(activity, "Internet not available!!!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     void setRepeat() {
