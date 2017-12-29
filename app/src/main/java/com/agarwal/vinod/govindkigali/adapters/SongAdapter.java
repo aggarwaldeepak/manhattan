@@ -20,6 +20,7 @@ import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.models.Song;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
+import com.agarwal.vinod.govindkigali.playerUtils.PlayerService;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -134,18 +135,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                             activeNetwork.isConnectedOrConnecting();
                     Log.d(TAG, "onClick: " + isConnected);
                     if (isConnected) {
-                        MainActivity.focus = false;
+                        PlayerService.focus = false;
                         playerCommunication.playSong(playList, pos);
                         Log.d(TAG, "onClick: checking loss first :)");
-//<<<<<<< HEAD
-//                        Intent i = new Intent("custom-message");
-//                        i.putExtra("val", playList.indexOf(playListOnDisplay.get(pos)));
-//                        LocalBroadcastManager.getInstance(context).sendBroadcast(i);
-//=======
-//                        Intent i = new Intent("custom-message");
-//                        i.putExtra("val", pos);
-//                        LocalBroadcastManager.getInstance(context).sendBroadcast(i);
-//>>>>>>> player
                     } else {
                         Toast.makeText(context, "Internet not available!!", Toast.LENGTH_SHORT).show();
                     }

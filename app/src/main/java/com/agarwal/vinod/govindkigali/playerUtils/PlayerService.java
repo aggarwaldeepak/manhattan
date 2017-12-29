@@ -1,8 +1,12 @@
 package com.agarwal.vinod.govindkigali.playerUtils;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
@@ -11,8 +15,10 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.agarwal.vinod.govindkigali.MainActivity;
@@ -35,16 +41,31 @@ import static android.view.View.GONE;
  */
 public class PlayerService extends Service implements MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener {
 
+    /**
+     * Constants for notification fields
+     */
+    public static final String NOTIFY_PREVIOUS = "com.com.agarwal.vinod.govindkigali.previous";
+    public static final String NOTIFY_CLOSE = "com.com.agarwal.vinod.govindkigali.close";
+    public static final String NOTIFY_PLAY = "com.com.agarwal.vinod.govindkigali.play";
+    public static final String NOTIFY_NEXT = "com.com.agarwal.vinod.govindkigali.next";
+
     private MainActivity activity;
     public MediaPlayer mediaPlayer;
     private AudioManager audioManager;
+    private NotificationManager mNotificationManager;
+    private Notification notification;
+    private RemoteViews simpleContentView;
+    private RemoteViews expandedView;
     private ArrayList<Song> playlist = new ArrayList<>();
     private Integer value = 0;
-    public Boolean focus = true;
+    public static Boolean focus = true;
     public Boolean manual = true;
     private Boolean playpause = false;
     public Boolean repeat = false;
     private Boolean fav = true;
+    private Integer curVolume;
+    private String CHANNEL_ID = "player_goving_ki_gali";
+    private Integer NOTIFICATION_ID = 50891387;
     private String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
     public static final String TAG = "PS";
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
@@ -52,35 +73,34 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     DatabaseReference recentRef = reference.child("recents");
 
     /**
-     * Gaining audio focus for player
+     * Gaining audio focus for player for different cases
      */
     AudioManager.OnAudioFocusChangeListener audioFocusChangeListener =
             new AudioManager.OnAudioFocusChangeListener() {
                 @Override
                 public void onAudioFocusChange(int i) {
-                    /*if (i == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+                    if (i == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
                         Log.d(TAG, "onAudioFocusChange: AUDIOFOCUS_LOSS_TRANSIENT");
-                        f = false;
+                        playpause = false;
                         manual = false;
                         playPause();
                     } else if (i == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
                         Log.d(TAG, "onAudioFocusChange: AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
-                        maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
                         curVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
                         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) (curVolume * 0.5), 0);
                     } else if (i == AudioManager.AUDIOFOCUS_GAIN) {
                         Log.d(TAG, "onAudioFocusChange: AUDIOFOCUS_GAIN");
-                        f = true;
+                        playpause = true;
                         manual = false;
                         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, curVolume, 0);
                         playPause();
                     } else if (i == AudioManager.AUDIOFOCUS_LOSS) {
                         Log.d(TAG, "onAudioFocusChange: AUDIOFOCUS_LOSS");
                         curVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-                        f = false;
+                        playpause = false;
                         manual = false;
                         playPause();
-                    }*/
+                    }
                 }
             };
 
@@ -170,9 +190,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 
             //Assigning title of sing to textview
             activity.tvName.setText(playlist.get(pos).getTitle());
-            activity.tvSongName.setText(playlist.get(pos).getTitle());
-//            simpleContentView.setTextViewText(R.id.tv_not_name, playlist.get(pos).getTitle());
-//            expandedView.setTextViewText(R.id.tv_not_name, playlist.get(pos).getTitle());
+            simpleContentView.setTextViewText(R.id.tv_not_name, playlist.get(pos).getTitle());
+            expandedView.setTextViewText(R.id.tv_not_name, playlist.get(pos).getTitle());
 
             //Setting max value to seekbar
             activity.discreteSeekBar.setMax(playlist.get(pos).getDuration() / 1000);
@@ -269,8 +288,6 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         if (activity.slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED) {
             activity.pbLoading.setVisibility(View.GONE);
             activity.ivPlayPause.setVisibility(View.VISIBLE);
-            activity.ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
-            activity.ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
         }
     }
 
@@ -306,11 +323,17 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         setVisibilityWhenPrepared();
 
         //Starting notification for foreground
-        //generateNotification();
-        //TODO: Update Image
+        generateNotification();
+
+        //Downloading Image
+        new ImageLoader(activity);
 
         //starting media player when ready
         mp.start();
+        activity.ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
+        activity.ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
+        simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
+        expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
     }
 
     @Override
@@ -344,12 +367,12 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 playpause = true;
                 mediaPlayer.pause();
                 activity.ivPlayPause.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-//                ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-//                simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
-//                expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
-//                if (mNotificationManager != null) {
-//                    mNotificationManager.notify(NOTIFICATION_ID, notification);
-//                }
+                activity.ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+                simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
+                expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
+                if (mNotificationManager != null) {
+                    mNotificationManager.notify(NOTIFICATION_ID, notification);
+                }
             }
             Toast.makeText(activity, "Internet not available!!!", Toast.LENGTH_SHORT).show();
         }
@@ -365,11 +388,11 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 playpause = false;
                 activity.ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
                 activity.ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
-//                simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
-//                expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
-//                if (mNotificationManager != null) {
-//                    mNotificationManager.notify(NOTIFICATION_ID, notification);
-//                }
+                simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
+                expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_pause_white_48dp);
+                if (mNotificationManager != null) {
+                    mNotificationManager.notify(NOTIFICATION_ID, notification);
+                }
                 if (manual) {
                     int res = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
                     if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
@@ -383,11 +406,11 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 playpause = true;
                 activity.ivPlayPause.setImageResource(R.drawable.ic_play_arrow_white_48dp);
                 activity.ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-//                simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
-//                expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
-//                if (mNotificationManager != null) {
-//                    mNotificationManager.notify(NOTIFICATION_ID, notification);
-//                }
+                simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
+                expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
+                if (mNotificationManager != null) {
+                    mNotificationManager.notify(NOTIFICATION_ID, notification);
+                }
                 if (manual) {
                     audioManager.abandonAudioFocus(audioFocusChangeListener);
                     Log.d(TAG, "playPause: abondoned :)" + audioFocusChangeListener);
@@ -413,7 +436,6 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                     activeNetwork.isConnectedOrConnecting();
             if (isConnected) {
                 audioManager.abandonAudioFocus(audioFocusChangeListener);
-//                downloadMusic.cancel(true);
 
                 if (value + 1 < playlist.size()) {
                     value = value + 1;
@@ -535,63 +557,88 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             activity.ivRepeat.setImageResource(R.drawable.ic_repeat_one_white_24dp);
         }
     }
-//
-//    void generateNotification() {
-//        notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-//                .setSmallIcon(R.mipmap.ic_launcher_round)
-//                .setContentTitle("Song name")
-//                .setPriority(Notification.PRIORITY_MAX)
-//                .setOngoing(true)
-//                .build();
-//
-//        //Set Listeners
-//        setListeners(simpleContentView);
-//        setListeners(expandedView);
-//
-//        notification.contentView = simpleContentView;
-//        if (currentVersionSupportBigNotification()) {
-//            notification.bigContentView = expandedView;
-//        }
-//
-//        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//
-//        assert mNotificationManager != null;
-//        mNotificationManager.notify(NOTIFICATION_ID, notification);
-//    }
-//
-//    boolean currentVersionSupportBigNotification() {
-//        int sdkVersion = android.os.Build.VERSION.SDK_INT;
-//        if (sdkVersion >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-//            return true;
-//        }
-//        return false;
-//    }
-//
-//    public void setListeners(RemoteViews view) {
-//        Intent previous = new Intent(NOTIFY_PREVIOUS);
-//        Intent close = new Intent(NOTIFY_CLOSE);
-//        Intent next = new Intent(NOTIFY_NEXT);
-//        Intent play = new Intent(NOTIFY_PLAY);
-//        Log.d(TAG, "setListeners: entered in listener");
-//
-//        PendingIntent pPrevious = PendingIntent.getBroadcast(getApplicationContext(), 0, previous, PendingIntent.FLAG_UPDATE_CURRENT);
-//        view.setOnClickPendingIntent(R.id.btnPrevious, pPrevious);
-//
-//        PendingIntent pClose = PendingIntent.getBroadcast(getApplicationContext(), 0, close, PendingIntent.FLAG_UPDATE_CURRENT);
-//        view.setOnClickPendingIntent(R.id.btnClose, pClose);
-//
-//        PendingIntent pNext = PendingIntent.getBroadcast(getApplicationContext(), 0, next, PendingIntent.FLAG_UPDATE_CURRENT);
-//        view.setOnClickPendingIntent(R.id.btnNext, pNext);
-//
-//        PendingIntent pPlay = PendingIntent.getBroadcast(getApplicationContext(), 0, play, PendingIntent.FLAG_UPDATE_CURRENT);
-//        view.setOnClickPendingIntent(R.id.btnPlay, pPlay);
-//    }
-//
+
+    /**
+     * Method for generating notification
+     */
+    void generateNotification() {
+        notification = new NotificationCompat.Builder(activity, CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setContentText("Song Name")
+                .setPriority(Notification.PRIORITY_MAX)
+                .setOngoing(true)
+                .build();
+
+        //Set Listeners
+        setListeners(simpleContentView);
+        setListeners(expandedView);
+
+        notification.contentView = simpleContentView;
+        if (currentVersionSupportBigNotification()) {
+            notification.bigContentView = expandedView;
+        }
+
+        mNotificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        assert mNotificationManager != null;
+        mNotificationManager.notify(NOTIFICATION_ID, notification);
+    }
+
+    boolean currentVersionSupportBigNotification() {
+        int sdkVersion = android.os.Build.VERSION.SDK_INT;
+        if (sdkVersion >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            return true;
+        }
+        return false;
+    }
+
+    public void setListeners(RemoteViews view) {
+        Intent previous = new Intent(NOTIFY_PREVIOUS);
+        Intent close = new Intent(NOTIFY_CLOSE);
+        Intent next = new Intent(NOTIFY_NEXT);
+        Intent play = new Intent(NOTIFY_PLAY);
+        Log.d(TAG, "setListeners: entered in listener");
+
+        PendingIntent pPrevious = PendingIntent.getBroadcast(activity.getApplicationContext(), 0, previous, PendingIntent.FLAG_UPDATE_CURRENT);
+        view.setOnClickPendingIntent(R.id.btnPrevious, pPrevious);
+
+        PendingIntent pClose = PendingIntent.getBroadcast(activity.getApplicationContext(), 0, close, PendingIntent.FLAG_UPDATE_CURRENT);
+        view.setOnClickPendingIntent(R.id.btnClose, pClose);
+
+        PendingIntent pNext = PendingIntent.getBroadcast(activity.getApplicationContext(), 0, next, PendingIntent.FLAG_UPDATE_CURRENT);
+        view.setOnClickPendingIntent(R.id.btnNext, pNext);
+
+        PendingIntent pPlay = PendingIntent.getBroadcast(activity.getApplicationContext(), 0, play, PendingIntent.FLAG_UPDATE_CURRENT);
+        view.setOnClickPendingIntent(R.id.btnPlay, pPlay);
+    }
+
     void loadImage() {
         activity.adapter.updateImage(playlist);
         activity.recyclerView.scrollToPosition(value);
     }
-//
+
+    /**
+     * Method to cancel notification
+     */
+    public void cancelNotification() {
+        mNotificationManager.cancel(NOTIFICATION_ID);
+    }
+
+    /**
+     * Method to upload notification image
+     * @param bitmap bitmap object of image downloaded
+     */
+    public void imageUpload(Bitmap bitmap) {
+        simpleContentView.setImageViewBitmap(R.id.iv_not_image, bitmap);
+        expandedView.setImageViewBitmap(R.id.iv_not_image, bitmap);
+    }
+
+    public void setViews(){
+        simpleContentView = new RemoteViews(activity.getPackageName(), R.layout.layout_not_sm_player);
+        expandedView = new RemoteViews(activity.getPackageName(), R.layout.layout_not_player);
+    }
+
+    //
 //    @Override
 //    public void onPause() {
 //        super.onPause();

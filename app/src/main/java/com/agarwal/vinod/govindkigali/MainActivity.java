@@ -72,16 +72,14 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import static android.view.View.GONE;
+import static com.agarwal.vinod.govindkigali.playerUtils.PlayerService.NOTIFY_CLOSE;
+import static com.agarwal.vinod.govindkigali.playerUtils.PlayerService.NOTIFY_NEXT;
+import static com.agarwal.vinod.govindkigali.playerUtils.PlayerService.NOTIFY_PLAY;
+import static com.agarwal.vinod.govindkigali.playerUtils.PlayerService.NOTIFY_PREVIOUS;
 
 public class MainActivity extends AppCompatActivity implements PlayerCommunication {
 
-    public static final String NOTIFY_PREVIOUS = "com.com.agarwal.vinod.govindkigali.previous";
-    public static final String NOTIFY_CLOSE = "com.com.agarwal.vinod.govindkigali.close";
-    public static final String NOTIFY_PLAY = "com.com.agarwal.vinod.govindkigali.play";
-    public static final String NOTIFY_NEXT = "com.com.agarwal.vinod.govindkigali.next";
 
-    RemoteViews simpleContentView;
-    RemoteViews expandedView;
     Toolbar toolbar;
     Spinner spinnerToolbar;
     View includeHead, includePlayer;
@@ -95,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     public ProgressBar pbLoading, pbProgress;
     //    private DownloadMusic downloadMusic;
     public ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivRepeat, ivFav, ivMore, ivDownload;
-    public TextView tvSongName, tvStart, tvEnd, tvName;
+    public TextView tvStart, tvEnd, tvName;
     public LinearLayout llProgress, llPlayerOptions;
     public String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
     public Integer value = 0;
@@ -125,37 +123,6 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     public ArrayList<Song> playlist = new ArrayList<>();
     String CHANNEL_ID = "player_goving_ki_gali";
     Integer NOTIFICATION_ID = 50891387;
-
-//    AudioManager.OnAudioFocusChangeListener audioFocusChangeListener =
-//            new AudioManager.OnAudioFocusChangeListener() {
-//                @Override
-//                public void onAudioFocusChange(int i) {
-//                    if (i == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
-//                        Log.d(TAG, "onAudioFocusChange: =========================================>");
-//                        f = false;
-//                        manual = false;
-//                        playPause();
-//                    } else if (i == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
-//                        Log.d(TAG, "onAudioFocusChange: ******************************************>");
-//                        maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-//                        curVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-//                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) (curVolume * 0.5), 0);
-//                    } else if (i == AudioManager.AUDIOFOCUS_GAIN) {
-//                        Log.d(TAG, "onAudioFocusChange: ???????????????????????????????????????????>");
-//                        f = true;
-//                        manual = false;
-//                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, curVolume, 0);
-//                        playPause();
-//                    } else if (i == AudioManager.AUDIOFOCUS_LOSS) {
-//                        Log.d(TAG, "onAudioFocusChange: ------------------------------------------>");
-//                        curVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-//                        f = false;
-//                        manual = false;
-//                        playPause();
-//                    }
-//                }
-//            };
-
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -224,7 +191,6 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         ivUpArrow = findViewById(R.id.iv_up_arrow);
         ivUpArrow = findViewById(R.id.iv_up_arrow);
         tvName = findViewById(R.id.tv_song);
-        tvSongName = findViewById(R.id.tv_song_name);
         tvStart = findViewById(R.id.tv_start);
         tvEnd = findViewById(R.id.tv_end);
         ivMore = findViewById(R.id.iv_more);
@@ -240,8 +206,6 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         includeHead = findViewById(R.id.include_head);
         includePlayer = findViewById(R.id.include_player);
         navigation = findViewById(R.id.navigation);
-        simpleContentView = new RemoteViews(getPackageName(), R.layout.layout_not_sm_player);
-        expandedView = new RemoteViews(getPackageName(), R.layout.layout_not_player);
 
         setTitle(
                 Util.getLocalizedResources(MainActivity.this,
@@ -292,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         });
 
         //providing adapter to recycler views
-        adapter = new SongImageAdapter(this);
+        adapter = new SongImageAdapter(this, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recyclerView.setAdapter(adapter);
 
@@ -306,10 +270,10 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         LocalBroadcastManager.getInstance(this).
                 registerReceiver(imageReceiver, new IntentFilter("custom-image"));
 //
-//        registerReceiver(playerReceiver, new IntentFilter(NOTIFY_PLAY));
-//        registerReceiver(playerReceiver, new IntentFilter(NOTIFY_NEXT));
-//        registerReceiver(playerReceiver, new IntentFilter(NOTIFY_CLOSE));
-//        registerReceiver(playerReceiver, new IntentFilter(NOTIFY_PREVIOUS));
+        registerReceiver(playerReceiver, new IntentFilter(NOTIFY_PLAY));
+        registerReceiver(playerReceiver, new IntentFilter(NOTIFY_NEXT));
+        registerReceiver(playerReceiver, new IntentFilter(NOTIFY_CLOSE));
+        registerReceiver(playerReceiver, new IntentFilter(NOTIFY_PREVIOUS));
 
         //Pop up menu
         ivMore.setOnClickListener(new View.OnClickListener() {
@@ -634,57 +598,6 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         });
     }
 
-    void generateNotification() {
-        notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher_round)
-                .setContentTitle("Song name")
-                .setPriority(Notification.PRIORITY_MAX)
-                .setOngoing(true)
-                .build();
-
-        //Set Listeners
-        setListeners(simpleContentView);
-        setListeners(expandedView);
-
-        notification.contentView = simpleContentView;
-        if (currentVersionSupportBigNotification()) {
-            notification.bigContentView = expandedView;
-        }
-
-        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        assert mNotificationManager != null;
-        mNotificationManager.notify(NOTIFICATION_ID, notification);
-    }
-
-    boolean currentVersionSupportBigNotification() {
-        int sdkVersion = android.os.Build.VERSION.SDK_INT;
-        if (sdkVersion >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            return true;
-        }
-        return false;
-    }
-
-    public void setListeners(RemoteViews view) {
-        Intent previous = new Intent(NOTIFY_PREVIOUS);
-        Intent close = new Intent(NOTIFY_CLOSE);
-        Intent next = new Intent(NOTIFY_NEXT);
-        Intent play = new Intent(NOTIFY_PLAY);
-        Log.d(TAG, "setListeners: entered in listener");
-
-        PendingIntent pPrevious = PendingIntent.getBroadcast(getApplicationContext(), 0, previous, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.btnPrevious, pPrevious);
-
-        PendingIntent pClose = PendingIntent.getBroadcast(getApplicationContext(), 0, close, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.btnClose, pClose);
-
-        PendingIntent pNext = PendingIntent.getBroadcast(getApplicationContext(), 0, next, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.btnNext, pNext);
-
-        PendingIntent pPlay = PendingIntent.getBroadcast(getApplicationContext(), 0, play, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.btnPlay, pPlay);
-    }
-
 //    void loadImage() {
 //        recyclerView.scrollToPosition(value);
 //    }
@@ -788,39 +701,38 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 //        }
 //    }
 
-//    public BroadcastReceiver playerReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            switch (intent.getAction()) {
-//                case NOTIFY_PLAY:
-//                    Toast.makeText(context, "Play/Pause", Toast.LENGTH_SHORT).show();
-//                    manual = true;
-//                    playPause();
-//                    break;
-//
-//                case NOTIFY_NEXT:
-//                    Toast.makeText(context, "Next", Toast.LENGTH_SHORT).show();
-//                    playNext();
-//                    break;
-//
-//                case NOTIFY_PREVIOUS:
-//                    Toast.makeText(context, "Previous", Toast.LENGTH_SHORT).show();
-//                    playPrevious();
-//                    break;
-//
-//                case NOTIFY_CLOSE:
-//                    Toast.makeText(context, "Cancel", Toast.LENGTH_SHORT).show();
-//                    mNotificationManager.cancel(NOTIFICATION_ID);
-//                    break;
-//            }
-//            Toast.makeText(context, "Receiver :) ", Toast.LENGTH_SHORT).show();
-//        }
-//    };
+    public BroadcastReceiver playerReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case NOTIFY_PLAY:
+                    Toast.makeText(context, "Play/Pause", Toast.LENGTH_SHORT).show();
+                    manual = true;
+                    service.playPause();
+                    break;
+
+                case NOTIFY_NEXT:
+                    Toast.makeText(context, "Next", Toast.LENGTH_SHORT).show();
+                    service.playNext();
+                    break;
+
+                case NOTIFY_PREVIOUS:
+                    Toast.makeText(context, "Previous", Toast.LENGTH_SHORT).show();
+                    service.playPrevious();
+                    break;
+
+                case NOTIFY_CLOSE:
+                    Toast.makeText(context, "Cancel", Toast.LENGTH_SHORT).show();
+                    service.cancelNotification();
+                    break;
+            }
+            Toast.makeText(context, "Receiver :) ", Toast.LENGTH_SHORT).show();
+        }
+    };
 
     @Override
     public void uploadImage(Bitmap bitmap) {
-        simpleContentView.setImageViewBitmap(R.id.iv_not_image, bitmap);
-        expandedView.setImageViewBitmap(R.id.iv_not_image, bitmap);
+        service.imageUpload(bitmap);
     }
 
     /**
@@ -863,6 +775,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
             //Passing activity instance to PlayerService
             service = new PlayerService(MainActivity.this);
+            service.setViews();
 
             //Check value to true
             mBound = true;

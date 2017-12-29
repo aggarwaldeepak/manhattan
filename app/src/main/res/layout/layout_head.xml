@@ -47,7 +47,7 @@
             android:layout_gravity="center"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:paddingStart="5dp"
-            android:src="@drawable/ic_more_vert_white_24dp" />
+            android:src="@drawable/ic_more_vert_white_36dp" />
 
     </LinearLayout>
 

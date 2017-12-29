@@ -89,27 +89,33 @@
                 android:layout_below="@id/include_player"
                 android:visibility="gone" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_song_image"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@id/tv_song_name"
-                android:layout_below="@id/include_head"
-                tools:listitem="@layout/layout_image" />
-
-            <TextView
-                android:id="@+id/tv_song_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_above="@id/ll_progress"
-                android:gravity="center"
-                android:maxLines="1"
-                android:paddingBottom="40dp"
-                android:paddingEnd="20dp"
-                android:paddingStart="20dp"
-                android:text="@string/timeline"
-                android:textColor="@android:color/white"
-                android:textSize="20sp" />
+                android:layout_below="@id/include_head">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_song_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:listitem="@layout/layout_image" />
+
+                <ImageView
+                    android:id="@+id/previous"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start"
+                    android:src="@drawable/ic_navigate_before_grey_500_24dp" />
+
+                <ImageView
+                    android:id="@+id/next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:src="@drawable/ic_navigate_next_grey_500_24dp" />
+
+            </FrameLayout>
 
             <LinearLayout
                 android:id="@+id/ll_progress"
