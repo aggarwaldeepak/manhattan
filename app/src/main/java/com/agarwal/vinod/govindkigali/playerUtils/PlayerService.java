@@ -36,7 +36,7 @@ import static android.view.View.GONE;
 public class PlayerService extends Service implements MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener {
 
     private MainActivity activity;
-    private MediaPlayer mediaPlayer;
+    public MediaPlayer mediaPlayer;
     private AudioManager audioManager;
     private ArrayList<Song> playlist = new ArrayList<>();
     private Integer value = 0;
@@ -160,7 +160,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             setRepeat();
 
             //Setting Image to player
-//            loadImage();
+            loadImage();
 
             //Setting time to player
             //TODO: Create function for time
@@ -169,6 +169,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             Log.d(MainActivity.TAG, "preparePlayer: " + time);
 
             //Assigning title of sing to textview
+            activity.tvName.setText(playlist.get(pos).getTitle());
             activity.tvSongName.setText(playlist.get(pos).getTitle());
 //            simpleContentView.setTextViewText(R.id.tv_not_name, playlist.get(pos).getTitle());
 //            expandedView.setTextViewText(R.id.tv_not_name, playlist.get(pos).getTitle());
@@ -268,6 +269,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         if (activity.slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED) {
             activity.pbLoading.setVisibility(View.GONE);
             activity.ivPlayPause.setVisibility(View.VISIBLE);
+            activity.ivPlayPause.setImageResource(R.drawable.ic_pause_white_48dp);
+            activity.ivPlay.setImageResource(R.drawable.ic_pause_white_48dp);
         }
     }
 
@@ -584,9 +587,10 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 //        view.setOnClickPendingIntent(R.id.btnPlay, pPlay);
 //    }
 //
-//    void loadImage() {
-//        recyclerView.scrollToPosition(value);
-//    }
+    void loadImage() {
+        activity.adapter.updateImage(playlist);
+        activity.recyclerView.scrollToPosition(value);
+    }
 //
 //    @Override
 //    public void onPause() {

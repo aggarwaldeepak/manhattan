@@ -44,6 +44,7 @@ import android.widget.RelativeLayout;
 import android.widget.RemoteViews;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.agarwal.vinod.govindkigali.adapters.SongImageAdapter;
 import com.agarwal.vinod.govindkigali.fragments.MainFragment;
@@ -52,6 +53,7 @@ import com.agarwal.vinod.govindkigali.fragments.SettingsFragment;
 import com.agarwal.vinod.govindkigali.fragments.ThoughtFragment;
 import com.agarwal.vinod.govindkigali.fragments.UpcomingFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
+import com.agarwal.vinod.govindkigali.playerUtils.DownloadMusic;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayerService;
 import com.agarwal.vinod.govindkigali.utils.BottomNavigationViewHelper;
@@ -69,6 +71,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import static android.view.View.GONE;
+
 public class MainActivity extends AppCompatActivity implements PlayerCommunication {
 
     public static final String NOTIFY_PREVIOUS = "com.com.agarwal.vinod.govindkigali.previous";
@@ -80,19 +84,19 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     RemoteViews expandedView;
     Toolbar toolbar;
     Spinner spinnerToolbar;
+    View includeHead, includePlayer;
     public SlidingUpPanelLayout slidingUpPanelLayout;
     SearchView searchView;
-    RelativeLayout rlPlayer, rlPlayerOptions;
+    RelativeLayout rlPlayer;
     FrameLayout flPlayerOptions;
     public PlayerService service;
     public MediaPlayer mediaPlayer;
     public AudioManager audioManager;
     public ProgressBar pbLoading, pbProgress;
     //    private DownloadMusic downloadMusic;
-    public ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivRepeat, ivFav;
-    //    ivMore, ivDownload;
-    public TextView tvSongName, tvStart, tvEnd;
-    public LinearLayout llProgress;
+    public ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivRepeat, ivFav, ivMore, ivDownload;
+    public TextView tvSongName, tvStart, tvEnd, tvName;
+    public LinearLayout llProgress, llPlayerOptions;
     public String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
     public Integer value = 0;
     public Boolean f = false;
@@ -111,8 +115,8 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     String filePath;
     File fileTemp;
     File file;
-    RecyclerView recyclerView;
-    SongImageAdapter adapter;
+    public RecyclerView recyclerView;
+    public SongImageAdapter adapter;
     BottomNavigationView navigation;
     NotificationManager mNotificationManager;
     Notification notification;
@@ -203,14 +207,11 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(Color.parseColor("#ffffff"));
-
-//        Log.d(TAG, "onCreate: " + getFilesDir() + "");
-//        Log.d(TAG, "onCreate: " + getDir("darsh.txt", MODE_PRIVATE));
-
         setSupportActionBar(toolbar);
+
+        //providing ids to views
         spinnerToolbar = toolbar.findViewById(R.id.spinner_toolbar);
         spinnerToolbar.setVisibility(View.INVISIBLE);
         slidingUpPanelLayout = findViewById(R.id.sliding_layout);
@@ -222,31 +223,25 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         ivNext = findViewById(R.id.iv_next);
         ivUpArrow = findViewById(R.id.iv_up_arrow);
         ivUpArrow = findViewById(R.id.iv_up_arrow);
-        tvSongName = findViewById(R.id.tv_song);
+        tvName = findViewById(R.id.tv_song);
+        tvSongName = findViewById(R.id.tv_song_name);
         tvStart = findViewById(R.id.tv_start);
         tvEnd = findViewById(R.id.tv_end);
-//        ivMore = findViewById(R.id.iv_more);
+        ivMore = findViewById(R.id.iv_more);
         ivFav = findViewById(R.id.iv_fav);
-//        ivDownload = findViewById(R.id.iv_download);
+        ivDownload = findViewById(R.id.iv_download);
         ivRepeat = findViewById(R.id.iv_repeat);
-        rlPlayerOptions = findViewById(R.id.rl_player_options);
+        llPlayerOptions = findViewById(R.id.ll_player_options);
         flPlayerOptions = findViewById(R.id.fl_player_options);
         recyclerView = findViewById(R.id.rv_song_image);
         llProgress = findViewById(R.id.ll_progress);
-//        sbProgress = findViewById(R.id.sb_progress);
         discreteSeekBar = findViewById(R.id.dsb_progress);
         rlPlayer = findViewById(R.id.rl_player);
-//        container = findViewById(R.id.pager_container);
-//        viewPager = container.getViewPager();
+        includeHead = findViewById(R.id.include_head);
+        includePlayer = findViewById(R.id.include_player);
         navigation = findViewById(R.id.navigation);
         simpleContentView = new RemoteViews(getPackageName(), R.layout.layout_not_sm_player);
         expandedView = new RemoteViews(getPackageName(), R.layout.layout_not_player);
-
-//        if (recreate) {
-//            releaseMediaPlayer();
-//            Log.d(TAG, "onCreate: HIDE");
-//            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-//        }
 
         setTitle(
                 Util.getLocalizedResources(MainActivity.this,
@@ -260,16 +255,18 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                 .replace(R.id.fg, mainFragment)
                 .commit();
 
-        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-            Log.d(TAG, "onCreate: 111111111111111111111111111111111111111 ");
-            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-        } else {
-            Log.d(TAG, "onCreate: 222222222222222222222222222222222222222");
-            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-        }
+        //setting panel to hidden when activity launches
+        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
 
-        Log.d("SL", "onCreate: " + slidingUpPanelLayout.getPanelState());
+//        if (service.mediaPlayer != null && mediaPlayer.isPlaying()) {
+//            Log.d(TAG, "onCreate: 111111111111111111111111111111111111111 ");
+//            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+//        } else {
+//            Log.d(TAG, "onCreate: 222222222222222222222222222222222222222");
+//            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+//        }
 
+        //setting panel states
         slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
@@ -278,30 +275,28 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             @Override
             public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
                 if (newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
-                    ivPlayPause.setVisibility(View.GONE);
-                    pbLoading.setVisibility(View.GONE);
-                    pbProgress.setVisibility(View.GONE);
-                    ivUpArrow.setImageResource(R.drawable.ic_close_white_24dp);
-//                    ivMore.setVisibility(View.VISIBLE);
-//                    ivDownload.setVisibility(View.VISIBLE);
+                    includePlayer.setVisibility(GONE);
+                    includeHead.setVisibility(View.VISIBLE);
                 } else if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
-                    ivUpArrow.setImageResource(R.drawable.ic_keyboard_arrow_up_white_24dp);
-//                    ivDownload.setVisibility(View.GONE);
-//                    ivMore.setVisibility(View.GONE);
-                    pbProgress.setVisibility(View.VISIBLE);
-                    if (mediaPlayer != null && (mediaPlayer.isPlaying() || discreteSeekBar.getProgress() != 0)) {
+                    includePlayer.setVisibility(View.VISIBLE);
+                    includeHead.setVisibility(GONE);
+                    if (service.mediaPlayer != null && (service.mediaPlayer.isPlaying() || discreteSeekBar.getProgress() != 0)) {
                         ivPlayPause.setVisibility(View.VISIBLE);
-                    } else if (mediaPlayer != null) {
+                        pbLoading.setVisibility(View.GONE);
+                    } else if (service.mediaPlayer != null) {
                         pbLoading.setVisibility(View.VISIBLE);
+                        ivPlayPause.setVisibility(View.GONE);
                     }
                 }
             }
         });
 
-
+        //providing adapter to recycler views
         adapter = new SongImageAdapter(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recyclerView.setAdapter(adapter);
+
+        //snap helper to provide snaping in image scrolling
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
 
@@ -317,12 +312,12 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 //        registerReceiver(playerReceiver, new IntentFilter(NOTIFY_PREVIOUS));
 
         //Pop up menu
-//        ivMore.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showPopup(view);
-//            }
-//        });
+        ivMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPopup(view);
+            }
+        });
 
         //fav goes to firebase as fav folder
         ivFav.setOnClickListener(new View.OnClickListener() {
@@ -332,14 +327,15 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             }
         });
 
-//        ivDownload.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(MainActivity.this, "Starting Download", Toast.LENGTH_SHORT).show();
-//                file = new File(getDir("music", MODE_PRIVATE) + "/" + playlist.get(value).getId());
-//                new DownloadMusic(MainActivity.this).execute(file.getPath(), playlist.get(value).getStream_url() + client_id);
-//            }
-//        });
+        //download feature
+        ivDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Starting Download", Toast.LENGTH_SHORT).show();
+                file = new File(getDir("music", MODE_PRIVATE) + "/" + playlist.get(value).getId());
+                new DownloadMusic(MainActivity.this).execute(file.getPath(), playlist.get(value).getStream_url() + client_id);
+            }
+        });
 
         //now play pause button set-up
         ivPlayPause.setOnClickListener(new View.OnClickListener() {
@@ -689,9 +685,9 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         view.setOnClickPendingIntent(R.id.btnPlay, pPlay);
     }
 
-    void loadImage() {
-        recyclerView.scrollToPosition(value);
-    }
+//    void loadImage() {
+//        recyclerView.scrollToPosition(value);
+//    }
 
 //    @Override
 //    public void onPause() {
