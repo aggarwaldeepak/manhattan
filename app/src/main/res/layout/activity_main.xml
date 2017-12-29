@@ -116,7 +116,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_above="@id/ll_player_options"
-                android:padding="10dp">
+                android:layout_margin="10dp">
 
                 <TextView
                     android:id="@+id/tv_start"
@@ -162,8 +162,9 @@
                     android:id="@+id/iv_previous"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_skip_previous_white_48dp" />
+                    android:src="@drawable/ic_skip_previous_grey_500_36dp" />
 
                 <ImageView
                     android:id="@+id/iv_play"
@@ -176,8 +177,9 @@
                     android:id="@+id/iv_next"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_skip_next_white_48dp" />
+                    android:src="@drawable/ic_skip_next_grey_500_36dp" />
 
                 <ImageView
                     android:id="@+id/iv_fav"
