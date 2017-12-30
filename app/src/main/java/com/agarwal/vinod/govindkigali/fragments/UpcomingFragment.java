@@ -97,6 +97,7 @@ public class UpcomingFragment extends Fragment {
                 @Override
                 public void onScrollChange(View view, int i, int i1, int i2, int i3) {
                     int idx = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+                    if(toolbarSpinner != null)
                     toolbarSpinner.setSelection(UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(idx).getmMonth()));
                 }
             });
@@ -105,6 +106,7 @@ public class UpcomingFragment extends Fragment {
                 @Override
                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                     int idx = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+                    if(toolbarSpinner != null)
                     toolbarSpinner.setSelection(UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(idx).getmMonth()));
                     super.onScrollStateChanged(recyclerView, newState);
                 }
@@ -151,6 +153,7 @@ public class UpcomingFragment extends Fragment {
     public void onStop() {
         super.onStop();
         actionBar.setDisplayShowTitleEnabled(true);
+        if(toolbarSpinner != null)
         toolbarSpinner.setVisibility(View.GONE);
     }
 }

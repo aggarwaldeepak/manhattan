@@ -404,8 +404,8 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_notifications:
-                break;
+            /*case R.id.action_notifications:
+                break;*/
             case R.id.action_search:
                 break;
         }
