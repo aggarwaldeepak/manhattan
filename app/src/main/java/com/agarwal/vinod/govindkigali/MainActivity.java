@@ -1,8 +1,5 @@
 package com.agarwal.vinod.govindkigali;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -19,7 +16,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
@@ -41,7 +37,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.RemoteViews;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,20 +48,16 @@ import com.agarwal.vinod.govindkigali.fragments.SettingsFragment;
 import com.agarwal.vinod.govindkigali.fragments.ThoughtFragment;
 import com.agarwal.vinod.govindkigali.fragments.UpcomingFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
-import com.agarwal.vinod.govindkigali.playerUtils.DownloadMusic;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayerService;
 import com.agarwal.vinod.govindkigali.utils.BottomNavigationViewHelper;
 import com.agarwal.vinod.govindkigali.utils.CustomDialogClass;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
+import com.agarwal.vinod.govindkigali.utils.TerminationService;
 import com.agarwal.vinod.govindkigali.utils.Util;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
-
-import java.io.File;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -88,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     RelativeLayout rlPlayer;
     FrameLayout flPlayerOptions;
     public PlayerService service;
+    TerminationService terminateService;
     public MediaPlayer mediaPlayer;
     public AudioManager audioManager;
     public ProgressBar pbLoading, pbProgress;
@@ -246,6 +238,9 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
         LocalBroadcastManager.getInstance(this).
                 registerReceiver(imageReceiver, new IntentFilter("custom-image"));
+
+        LocalBroadcastManager.getInstance(this).
+                registerReceiver(terminateReciever, new IntentFilter("terminate"));
 
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_PLAY));
         registerReceiver(playerReceiver, new IntentFilter(NOTIFY_NEXT));
@@ -552,6 +547,14 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         }
     };
 
+    public BroadcastReceiver terminateReciever = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            service.stopNotificationPlayer();
+            Log.d("ClearFromRecentService", "onReceive: Notification Gone");
+        }
+    };
+
     void showPopup(View v) {
         PopupMenu popup = new PopupMenu(this, v);
         MenuInflater inflater = popup.getMenuInflater();
@@ -703,11 +706,11 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                                        IBinder mService) {
 
             // We've bound to PlayerService, cast the IBinder and get PlayerService instance
-            PlayerService.LocalBinder binder = (PlayerService.LocalBinder) mService;
+            PlayerService.PlayerBinder binder = (PlayerService.PlayerBinder) mService;
             service = binder.getService();
 
             //Passing activity instance to PlayerService
-            service = new PlayerService(MainActivity.this);
+            service.getActivtyContext(MainActivity.this);
             service.setViews();
 
             //Check value to true
@@ -737,6 +740,9 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
         //Binding service
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+        //Termination Service
+        startService(new Intent(getBaseContext(), TerminationService.class));
     }
 
     @Override

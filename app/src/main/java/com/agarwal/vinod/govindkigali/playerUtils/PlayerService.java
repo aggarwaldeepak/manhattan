@@ -106,7 +106,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             };
 
     // Binder given to clients
-    private final IBinder mBinder = new LocalBinder();
+    private final IBinder mBinder = new PlayerBinder();
 
     /**
      * Empty contructor
@@ -117,7 +117,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     /**
      * Constructor to get Activity Instance
      */
-    public PlayerService(MainActivity activity) {
+    public void getActivtyContext(MainActivity activity) {
         this.activity = activity;
     }
 
@@ -149,10 +149,17 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     }
 
     /**
+     * Player Notification Stop when activity gets killed
+     */
+    public void stopNotificationPlayer() {
+        mNotificationManager.cancel(NOTIFICATION_ID);
+    }
+
+    /**
      * Class used for the client Binder.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
      */
-    public class LocalBinder extends Binder {
+    public class PlayerBinder extends Binder {
         public PlayerService getService() {
             // Return this instance of PlayerService so clients can call public methods
             return PlayerService.this;
@@ -192,7 +199,6 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             loadImage();
 
             //Setting time to player
-            //TODO: Create function for time
             String time = calculateTime(playlist.get(pos).getDuration() / 1000);
             activity.tvEnd.setText(time);
             Log.d(MainActivity.TAG, "preparePlayer: " + time);
