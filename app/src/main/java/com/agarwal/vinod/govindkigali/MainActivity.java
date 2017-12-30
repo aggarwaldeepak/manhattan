@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     private MediaPlayer mediaPlayer;
     private AudioManager audioManager;
     private ProgressBar pbLoading, pbProgress;
-//    private DownloadMusic downloadMusic;
+    //    private DownloadMusic downloadMusic;
     private ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivMore, ivFav, ivRepeat, ivDownload;
     private TextView tvSongName, tvStart, tvEnd;
     //    private SeekBar sbProgress;
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                 case R.id.navigation_thought:
                     hideIt();
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fg,new ThoughtFragment())
+                            .replace(R.id.fg, new ThoughtFragment())
                             .commit();
                     return true;
                 case R.id.navigation_upcoming:
@@ -472,6 +472,9 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         }
     }
 
+    /**
+     * Code to initiate Language with/without dialog
+     */
     private void initiateFirstLaunch() {
 
         PrefManager prefManager = new PrefManager(this);
@@ -491,7 +494,6 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
 
-
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d("Yooo", "onQueryTextSubmit: " + query);
@@ -505,12 +507,11 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.d("Yooo", "onQueryTextSubmit: " + newText);
-                if(mainFragment != null) {
+                if (mainFragment != null) {
                     mainFragment.setSongAdapterFilter(newText);
                 }
                 return true;
             }
-
 
 
         });
@@ -518,7 +519,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                if(mainFragment != null) {
+                if (mainFragment != null) {
                     mainFragment.setSongAdapterFilter("");
                 }
                 return true;
@@ -556,11 +557,54 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
 
     public void setLanguageWithDialog(final PrefManager prefManager) {
+        final CharSequence[] items = {getString(R.string.english), getString(R.string.hindi)};
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setCancelable(false);
         builder.setTitle(R.string.languages);
-        // Add the buttons
-        builder.setPositiveButton(R.string.english, new DialogInterface.OnClickListener() {
+        builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0: {
+                        String languageToLoad = "en"; // your language
+                        Locale locale = new Locale(languageToLoad);
+                        Locale.setDefault(locale);
+                        Configuration config = new Configuration();
+                        config.locale = locale;
+                        getBaseContext().getResources().updateConfiguration(config,
+                                getBaseContext().getResources().getDisplayMetrics());
+                        prefManager.setLanguage("en");
+                        dialog.dismiss();
+                        Intent i = getBaseContext().getPackageManager()
+                                .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
+                        break;
+                    }
+                    case 1: {
+                        // User cancelled the dialog
+
+                        String languageToLoad = "hi"; // your language
+                        Locale locale = new Locale(languageToLoad);
+                        Locale.setDefault(locale);
+                        Configuration config = new Configuration();
+                        config.locale = locale;
+                        getBaseContext().getResources().updateConfiguration(config,
+                                getBaseContext().getResources().getDisplayMetrics());
+                        prefManager.setLanguage("hi");
+                        dialog.dismiss();
+                        Intent i = getBaseContext().getPackageManager()
+                                .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
+                        break;
+
+                    }
+                }
+            }
+        });
+
+        /*builder.setPositiveButton(R.string.english, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 String languageToLoad = "en"; // your language
                 Locale locale = new Locale(languageToLoad);
@@ -571,28 +615,10 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                         getBaseContext().getResources().getDisplayMetrics());
                 prefManager.setLanguage("en");
                 dialog.dismiss();
-//                recreate = true;
-//                getSupportFragmentManager().beginTransaction()
-//                        .remove(mainFragment)
-//                        .commit();
-//<<<<<<< HEAD
-                /*Intent i = new Intent("recreate");
-                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(i);*/
-//                recreate();
-//=======
-//                Intent i = new Intent("recreate");
-//                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(i);
-
-
                 Intent i = getBaseContext().getPackageManager()
                         .getLaunchIntentForPackage(getBaseContext().getPackageName());
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
-//                recreate();
-//>>>>>>> player
-                /*Intent refresh = new Intent(MainActivity.this, MainActivity.class);
-                startActivity(refresh);
-                finish();*/
 
             }
         });
@@ -609,33 +635,13 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                         getBaseContext().getResources().getDisplayMetrics());
                 prefManager.setLanguage("hi");
                 dialog.dismiss();
-               /* rEditor.putString("language", languageToLoad);
-                rEditor.commit();*/
-//                getSupportFragmentManager().beginTransaction()
-//                        .remove(mainFragment)
-//                        .commit();
-//                recreate = true;
-//<<<<<<< HEAD
-                /*Intent i = new Intent("recreate");
-                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(i);*/
-//                recreate();
-//=======
-//                Intent i = new Intent("recreate");
-//                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(i);
-
-
                 Intent i = getBaseContext().getPackageManager()
                         .getLaunchIntentForPackage(getBaseContext().getPackageName());
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
-//                recreate();
-//>>>>>>> player
-               /* Intent refresh = new Intent(MainActivity.this, MainActivity.class);
-                startActivity(refresh);
-                finish();*/
 
             }
-        });
+        });*/
 
         builder.create().show();
     }
@@ -651,46 +657,12 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         config.locale = locale;
         getBaseContext().getResources().updateConfiguration(config,
                 getBaseContext().getResources().getDisplayMetrics());
-//<<<<<<< HEAD
-       /* Intent i = new Intent("recreate");
-        LocalBroadcastManager.getInstance(this).sendBroadcast(i);*/
-//=======
-//        Intent i = new Intent("recreate");
-//        LocalBroadcastManager.getInstance(this).sendBroadcast(i);
-//>>>>>>> player
-//        recreate = true;
         Intent i = getBaseContext().getPackageManager()
                 .getLaunchIntentForPackage(getBaseContext().getPackageName());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
-//        recreate();
     }
 
-//    public BroadcastReceiver receiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            releaseMediaPlayer();
-//            Integer pos = intent.getIntExtra("val", 0);
-//            Log.d(TAG, "onReceive: " + pos);
-//
-//            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-//            preparePlayer(pos);
-//        }
-//    };
-
-//    public BroadcastReceiver recreateReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            releaseMediaPlayer();
-//            if (mNotificationManager != null ){
-//                mNotificationManager.cancel(NOTIFICATION_ID);
-//            }
-//            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-////            getSupportFragmentManager().beginTransaction()
-////                    .remove(mainFragment)
-////                    .commit();
-//        }
-//    };
 
     public BroadcastReceiver imageReceiver = new BroadcastReceiver() {
         @Override
@@ -807,7 +779,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             }
 //                mediaPlayer.setDataSource(filePath);
 //                Log.d(TAG, "preparePlayer: providing filepath");
-                //                mediaPlayer.setDataSource(SongAdapter.playList.get(pos).getStream_url() + client_id);
+            //                mediaPlayer.setDataSource(SongAdapter.playList.get(pos).getStream_url() + client_id);
 //                mediaPlayer.prepare();
 //            } catch (IOException e) {
 //                e.printStackTrace();
@@ -843,54 +815,54 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             final Handler mHandler = new Handler();
             //Make sure you update Seekbar on UI thread
             MainActivity.this.runOnUiThread(new Runnable() {
-                 @Override
-                 public void run() {
-                     if (mediaPlayer != null) {
-                         int num = mediaPlayer.getCurrentPosition() / 1000;
-                         //                        sbProgress.setProgress(num);
-                         discreteSeekBar.setProgress(num);
-                         pbProgress.setProgress(num);
-                         int hh = num / 3600;
-                         int mm = num / 60 - (hh * 60);
-                         int ss = num - (hh * 3600) - (mm * 60);
-                         String HH, MM, SS;
-                         if (hh >= 10) {
-                             HH = "" + hh;
-                         } else {
-                             HH = "0" + hh;
-                         }
-                         if (mm >= 10) {
-                             MM = "" + mm;
-                         } else {
-                             MM = "0" + mm;
-                         }
-                         if (ss >= 10) {
-                             SS = "" + ss;
-                         } else {
-                             SS = "0" + ss;
-                         }
-                         String time;
-                         if (hh != 0) {
-                             time = HH + ":" + MM + ":" + SS;
-                         } else {
-                             time = MM + ":" + SS;
-                         }
-                         tvStart.setText(time);
-                     }
-                     mHandler.postDelayed(this, 1000);
-                 }
+                @Override
+                public void run() {
+                    if (mediaPlayer != null) {
+                        int num = mediaPlayer.getCurrentPosition() / 1000;
+                        //                        sbProgress.setProgress(num);
+                        discreteSeekBar.setProgress(num);
+                        pbProgress.setProgress(num);
+                        int hh = num / 3600;
+                        int mm = num / 60 - (hh * 60);
+                        int ss = num - (hh * 3600) - (mm * 60);
+                        String HH, MM, SS;
+                        if (hh >= 10) {
+                            HH = "" + hh;
+                        } else {
+                            HH = "0" + hh;
+                        }
+                        if (mm >= 10) {
+                            MM = "" + mm;
+                        } else {
+                            MM = "0" + mm;
+                        }
+                        if (ss >= 10) {
+                            SS = "" + ss;
+                        } else {
+                            SS = "0" + ss;
+                        }
+                        String time;
+                        if (hh != 0) {
+                            time = HH + ":" + MM + ":" + SS;
+                        } else {
+                            time = MM + ":" + SS;
+                        }
+                        tvStart.setText(time);
+                    }
+                    mHandler.postDelayed(this, 1000);
+                }
             });
 
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                     if (discreteSeekBar.getProgress() < playlist.get(pos).getDuration()) {
-                         return;
-                     }
-                     ConnectivityManager cm =
-                             (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                    if (discreteSeekBar.getProgress() < playlist.get(pos).getDuration()) {
+                        return;
+                    }
+                    ConnectivityManager cm =
+                            (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-                     NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
                     boolean isConnected = activeNetwork != null &&
                             activeNetwork.isConnectedOrConnecting();
                     if (isConnected) {

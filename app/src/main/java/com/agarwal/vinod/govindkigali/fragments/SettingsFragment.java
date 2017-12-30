@@ -218,10 +218,57 @@ public class SettingsFragment extends Fragment {
     }
 
     public void setLanguageWithDialog(final PrefManager prefManager) {
+        final CharSequence[] items = {getString(R.string.english), getString(R.string.hindi)};
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setCancelable(true);
         builder.setTitle(R.string.languages);
-        // Add the buttons
+        builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0: {
+                        String languageToLoad = "en"; // your language
+                        Locale locale = new Locale(languageToLoad);
+                        Locale.setDefault(locale);
+                        Configuration config = new Configuration();
+                        config.locale = locale;
+                        getActivity().getBaseContext().getResources().updateConfiguration(config,
+                                getActivity().getBaseContext().getResources().getDisplayMetrics());
+                        prefManager.setLanguage("en");
+                        dialog.dismiss();
+                        ((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
+
+                        getActivity().recreate();
+                        Intent i = getActivity().getBaseContext().getPackageManager()
+                                .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
+                        break;
+                    }
+                    case 1: {
+                        // User cancelled the dialog
+
+                        String languageToLoad = "hi"; // your language
+                        Locale locale = new Locale(languageToLoad);
+                        Locale.setDefault(locale);
+                        Configuration config = new Configuration();
+                        config.locale = locale;
+                        getActivity().getBaseContext().getResources().updateConfiguration(config,
+                                getActivity().getBaseContext().getResources().getDisplayMetrics());
+                        prefManager.setLanguage("hi");
+                        dialog.dismiss();
+                        ((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
+                        Intent i = getActivity().getBaseContext().getPackageManager()
+                                .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
+                        break;
+
+                    }
+                }
+            }
+        });
+        /*// Add the buttons
         builder.setPositiveButton(R.string.english, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 String languageToLoad = "en"; // your language
@@ -234,23 +281,12 @@ public class SettingsFragment extends Fragment {
                 prefManager.setLanguage("en");
                 dialog.dismiss();
                 ((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
-//                MainActivity.recreate = true;
-//<<<<<<< HEAD
-                /*Intent i = new Intent("recreate");
-                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(i);*/
+
                 getActivity().recreate();
-//=======
-//                Intent i = new Intent("recreate");
-//                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(i);
                 Intent i = getActivity().getBaseContext().getPackageManager()
                         .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
-//                getActivity().recreate();
-//>>>>>>> player
-                /*Intent refresh = new Intent(MainActivity.this, MainActivity.class);
-                startActivity(refresh);
-                finish();*/
 
             }
         });
@@ -268,27 +304,12 @@ public class SettingsFragment extends Fragment {
                 prefManager.setLanguage("hi");
                 dialog.dismiss();
                 ((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
-               /* rEditor.putString("language", languageToLoad);
-                rEditor.commit();*/
-//<<<<<<< HEAD
-                /*Intent i = new Intent("recreate");
-                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(i);*/
-//=======
-//                Intent i = new Intent("recreate");
-//                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(i);
-//>>>>>>> player
-//                MainActivity.recreate = true;
                 Intent i = getActivity().getBaseContext().getPackageManager()
                         .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
-//                getActivity().recreate();
-               /* Intent refresh = new Intent(MainActivity.this, MainActivity.class);
-                startActivity(refresh);
-                finish();*/
-
             }
-        });
+        });*/
 
         builder.create().show();
     }

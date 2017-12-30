@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.models.Thought;
@@ -119,6 +120,24 @@ public class ThoughtAdapter extends PagerAdapter {
         };
         frameLayoutForClick.setOnClickListener(switcher);
         tvThoughtText.setOnClickListener(switcher);
+
+        ImageView ivComments = view.findViewById(R.id.ivComments);
+        ImageView ivLike = view.findViewById(R.id.ivLike);
+
+        ivComments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "Comment Button Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        ivLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "Like Button Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         container.addView(view);
 
 

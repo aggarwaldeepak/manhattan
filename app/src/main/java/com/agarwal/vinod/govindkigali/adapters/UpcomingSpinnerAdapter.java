@@ -70,7 +70,7 @@ public class UpcomingSpinnerAdapter extends BaseAdapter implements SpinnerAdapte
         tv.setTextColor(context.getResources().getColor(android.R.color.white));
         PrefManager prefManager = new PrefManager(context);
         if(prefManager.isNightModeEnabled2())
-            tv.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDarkTheme));
+            tv.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary_night_mode));
         else
             tv.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
         return tv;

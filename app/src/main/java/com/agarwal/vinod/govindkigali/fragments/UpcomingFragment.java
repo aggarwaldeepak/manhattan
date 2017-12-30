@@ -141,7 +141,7 @@ public class UpcomingFragment extends Fragment {
         }
         toolbarSpinner.setVisibility(View.VISIBLE);
         toolbarSpinner.setAdapter(new UpcomingSpinnerAdapter(getContext(),rvUpcoming));
-        toolbarSpinner.setEnabled(false);
+        //toolbarSpinner.setEnabled(false);
         toolbarSpinner.setClickable(true);
     }
 
