@@ -442,6 +442,9 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
      */
     public void playNext() {
         if (mediaPlayer != null) {
+            if (mNotificationManager != null) {
+                mNotificationManager.notify(NOTIFICATION_ID, notification);
+            }
             //Checking internet connection
             ConnectivityManager cm =
                     (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -471,6 +474,9 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
      */
     public void playPrevious() {
         if (mediaPlayer != null) {
+            if (mNotificationManager != null) {
+                mNotificationManager.notify(NOTIFICATION_ID, notification);
+            }
             //Checking internet connection
             ConnectivityManager cm =
                     (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
