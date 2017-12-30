@@ -1,5 +1,6 @@
 package com.agarwal.vinod.govindkigali;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
@@ -48,6 +50,7 @@ import com.agarwal.vinod.govindkigali.fragments.SettingsFragment;
 import com.agarwal.vinod.govindkigali.fragments.ThoughtFragment;
 import com.agarwal.vinod.govindkigali.fragments.UpcomingFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
+import com.agarwal.vinod.govindkigali.playerUtils.DownloadMusic;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayerService;
 import com.agarwal.vinod.govindkigali.utils.BottomNavigationViewHelper;
@@ -59,6 +62,13 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -79,22 +89,11 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     RelativeLayout rlPlayer;
     FrameLayout flPlayerOptions;
     public PlayerService service;
-    TerminationService terminateService;
-    public MediaPlayer mediaPlayer;
-    public AudioManager audioManager;
     public ProgressBar pbLoading, pbProgress;
-    //    private DownloadMusic downloadMusic;
-    public ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivRepeat, ivFav, ivMore, ivDownload;
+    public ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivRepeat, ivFav, ivMore;
     public TextView tvStart, tvEnd, tvName;
     public LinearLayout llProgress, llPlayerOptions;
-    public String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
-    public Integer value = 0;
-    public Boolean f = false;
-    public Boolean manual = true;
     boolean mBound = false;
-    public Boolean fav = true;
-    public static Boolean focus = true;
-    static Boolean repeat = false;
     public static Integer fragmentCheck = 0;
     public static final String TAG = "MAIN";
     public RecyclerView recyclerView;
@@ -175,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         tvEnd = findViewById(R.id.tv_end);
         ivMore = findViewById(R.id.iv_more);
         ivFav = findViewById(R.id.iv_fav);
-        ivDownload = findViewById(R.id.iv_download);
+//        ivDownload = findViewById(R.id.iv_download);
         ivRepeat = findViewById(R.id.iv_repeat);
         llPlayerOptions = findViewById(R.id.ll_player_options);
         flPlayerOptions = findViewById(R.id.fl_player_options);
@@ -264,13 +263,62 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         });
 
         //download feature
-        ivDownload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Starting Download", Toast.LENGTH_SHORT).show();
-                service.downloadSong();
-            }
-        });
+//        ivDownload.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(MainActivity.this, "Starting Download", Toast.LENGTH_SHORT).show();
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        File filepath = new File(getDir("music", MODE_PRIVATE) + "/" + service.getId());
+////                        Intent intent = new Intent(MainActivity.this, DownloadMusic.class);
+////                        Log.d(MainActivity.TAG, "downloadSong: Service called");
+////                        intent.putExtra("path", file.getPath());
+////                        intent.putExtra("url", service.getUrl());
+////                        startService(intent);
+//                        Log.d(MainActivity.TAG, "onStartCommand: ");
+//                        Log.d(MainActivity.TAG, "doInBackground: Downloading + playing music");
+////                        String path = intent.getStringExtra("path");
+////                        String urlString = intent.getStringExtra("url");
+//                        String path = filepath.getPath();
+//                        String urlString = service.getUrl();
+//                        try {
+//                            RandomAccessFile file = new RandomAccessFile(path, "rw");
+//                            //TODO: MAKE Activity run even after user kills the app
+//                            String CHANNEL_ID = "download govin ki gali";
+//                            Integer id = 50891350;
+//                            NotificationManager mNotifyManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+//                            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext(), CHANNEL_ID);
+//                            notificationBuilder.setContentText("Download in progress")
+//                                    .setSmallIcon(R.mipmap.ic_launcher_round)
+//                                    .setAutoCancel(true);
+//                            URL url = new URL(urlString);
+//                            URLConnection conexion = url.openConnection();
+//                            conexion.connect();
+//                            long lenghtOfFile = conexion.getContentLength();
+//                            Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
+//                            InputStream input = new BufferedInputStream(url.openStream());
+//                            byte data[] = new byte[1024];
+//                            long total = 0, count = 0;
+//                            while ((count = input.read(data)) != -1) {
+//                                total += count;
+//                                notificationBuilder.setProgress(100, (int)((total*100)/lenghtOfFile), false);
+//                                Log.d(MainActivity.TAG, "doInBackground: " + (int)((total*100)/lenghtOfFile));
+//                                // Displays the progress bar for the first time.
+//                                mNotifyManager.notify(id, notificationBuilder.build());
+//                                file.write(data);
+//                                Log.d("ANDRO_ASYNC", "doInBackground: " + total);
+//                            }
+//                            file.close();
+//                            mNotifyManager.cancel(id);
+//                            Log.d(MainActivity.TAG, "doInBackground: Download complete");
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }).start();
+//            }
+//        });
 
         //now play pause button set-up
         ivPlayPause.setOnClickListener(new View.OnClickListener() {
@@ -643,7 +691,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             switch (intent.getAction()) {
                 case NOTIFY_PLAY:
                     Toast.makeText(context, "Play/Pause", Toast.LENGTH_SHORT).show();
-                    manual = true;
+                    service.manual = true;
                     service.playPause();
                     break;
 

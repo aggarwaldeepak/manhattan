@@ -141,18 +141,18 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     }
 
     /**
-     * method to download song
-     */
-    public void downloadSong() {
-        File file = new File(activity.getDir("music", MODE_PRIVATE) + "/" + playlist.get(value).getId());
-        new DownloadMusic(activity).execute(file.getPath(), playlist.get(value).getStream_url() + client_id);
-    }
-
-    /**
      * Player Notification Stop when activity gets killed
      */
     public void stopNotificationPlayer() {
         mNotificationManager.cancel(NOTIFICATION_ID);
+    }
+
+    public String getUrl() {
+        return playlist.get(value).getStream_url() + client_id;
+    }
+
+    public String getId() {
+        return playlist.get(value).getId();
     }
 
     /**

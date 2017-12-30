@@ -15,7 +15,7 @@ import android.util.Log;
 
 public class TerminationService extends Service {
 
-    TerminationService(){
+    public TerminationService(){
     }
 
     @Nullable

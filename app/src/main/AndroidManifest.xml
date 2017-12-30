@@ -56,6 +56,7 @@
         <activity android:name=".activities.MobileAuthenticationScreen"></activity>
 
         <service android:name=".playerUtils.PlayerService"/>
+        <service android:name=".playerUtils.DownloadMusic"/>
         <service android:name=".utils.TerminationService" />
     </application>
 
