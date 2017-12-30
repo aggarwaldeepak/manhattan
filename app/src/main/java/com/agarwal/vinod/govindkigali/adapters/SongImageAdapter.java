@@ -12,11 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.models.Song;
+import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
+import com.agarwal.vinod.govindkigali.playerUtils.PlayerService;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
@@ -31,8 +34,11 @@ public class SongImageAdapter extends RecyclerView.Adapter<SongImageAdapter.Song
     Context context;
     ArrayList<Song> playList = new ArrayList<>();
     public static final String TAG = "SIA";
-    public SongImageAdapter(Context context) {
+    private PlayerCommunication playerCommunication;
+
+    public SongImageAdapter(Context context, PlayerCommunication playerCommunication) {
         this.context = context;
+        this.playerCommunication = playerCommunication;
     }
 
     public void updateImage(ArrayList<Song> playList) {
@@ -59,9 +65,12 @@ public class SongImageAdapter extends RecyclerView.Adapter<SongImageAdapter.Song
     class SongImageviewHolder extends RecyclerView.ViewHolder {
 
         ImageView ivImage;
+        TextView tvName;
+
         SongImageviewHolder(View itemView) {
             super(itemView);
             ivImage = itemView.findViewById(R.id.iv_Image);
+            tvName = itemView.findViewById(R.id.tv_song_name);
         }
 
         void bindView(Song song, final Integer pos) {
@@ -82,16 +91,16 @@ public class SongImageAdapter extends RecyclerView.Adapter<SongImageAdapter.Song
                             activeNetwork.isConnectedOrConnecting();
                     Log.d(TAG, "onClick: " + isConnected);
                     if (isConnected) {
-                        MainActivity.focus = false;
+                        PlayerService.focus = false;
+                        playerCommunication.playSong(playList, pos);
                         Log.d(TAG, "onClick: checking loss first :)");
-                        Intent i = new Intent("custom-image");
-                        i.putExtra("val", pos);
-                        LocalBroadcastManager.getInstance(context).sendBroadcast(i);
                     } else {
                         Toast.makeText(context, "Internet not available!!", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
+
+            tvName.setText(song.getTitle());
 
         }
     }

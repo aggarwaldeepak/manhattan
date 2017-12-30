@@ -54,6 +54,9 @@
         <activity android:name=".activities.FacebookActivity"></activity>
         <activity android:name=".activities.SignInScreen" />
         <activity android:name=".activities.MobileAuthenticationScreen"></activity>
+
+        <service android:name=".playerUtils.PlayerService"/>
+        <service android:name=".utils.TerminationService" />
     </application>
 
 </manifest>

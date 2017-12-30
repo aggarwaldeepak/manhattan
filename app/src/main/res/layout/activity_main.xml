@@ -29,8 +29,7 @@
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    >
+                    android:layout_height="?attr/actionBarSize">
                     <!--android:background="?attr/colorPrimary"
                     app:popupTheme="@style/AppTheme.PopupOverlay"-->
 
@@ -38,7 +37,6 @@
                         android:id="@+id/spinner_toolbar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
                         />
                 </android.support.v7.widget.Toolbar>
 
@@ -69,231 +67,136 @@
                 <!--</FrameLayout>-->
 
             </FrameLayout>
+
         </FrameLayout>
 
-        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
+        <RelativeLayout
+            android:id="@+id/rl_player"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#4a4359"
+            tools:context="com.agarwal.vinod.govindkigali.MainActivity">
 
-            <RelativeLayout
-                android:id="@+id/rl_player"
+            <include
+                android:id="@+id/include_player"
+                layout="@layout/layout_sm_player" />
+
+            <include
+                android:id="@+id/include_head"
+                layout="@layout/layout_head"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_below="@id/include_player"
+                android:visibility="gone" />
+
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#4a4359"
-                tools:context="com.agarwal.vinod.govindkigali.MainActivity">
-
-                <FrameLayout
-                    android:id="@+id/fl_player_options"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:background="@color/colorPrimaryDarkTheme"
-                        android:orientation="horizontal"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp">
-
-                        <ImageView
-                            android:id="@+id/iv_up_arrow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:paddingEnd="10dp"
-                            android:src="@drawable/ic_keyboard_arrow_up_white_24dp" />
-
-                        <TextView
-                            android:id="@+id/tv_song"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_weight="1"
-                            android:maxLines="1"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:textColor="@android:color/white"
-                            android:text="SWAG Se Swagat: Tiger Zinda Hai"
-                            android:textStyle="bold" />
-
-                        <ProgressBar
-                            android:id="@+id/pb_loading"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_gravity="center" />
-
-                        <ImageView
-                            android:id="@+id/iv_play_pause"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:src="@drawable/ic_play_arrow_white_48dp" />
-
-                        <ImageView
-                            android:id="@+id/iv_download"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:src="@drawable/ic_file_download_white_24dp" />
-
-                        <ImageView
-                            android:id="@+id/iv_more"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:paddingStart="5dp"
-                            android:src="@drawable/ic_more_vert_white_24dp" />
-
-                    </LinearLayout>
-
-                    <ProgressBar
-                        android:id="@+id/pb_progress"
-                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="-8dp"
-                        android:layout_marginTop="-8dp" />
-
-                </FrameLayout>
-
-                <View
-                    android:id="@+id/divider"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_below="@id/fl_player_options"
-                    android:background="@android:color/white" />
-
-                <!--&lt;!&ndash;<it.moondroid.coverflow.components.ui.containers.FeatureCoverFlow&ndash;&gt;-->
-                <!--&lt;!&ndash;android:id="@+id/cf_list"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_above="@id/ll_progress"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_below="@id/divider"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
-                <!--&lt;!&ndash;app:coverHeight="200dp"&ndash;&gt;-->
-                <!--&lt;!&ndash;app:coverWidth="140dp"&ndash;&gt;-->
-                <!--&lt;!&ndash;app:maxScaleFactor="1.5"&ndash;&gt;-->
-                <!--&lt;!&ndash;app:reflectionGap="0px"&ndash;&gt;-->
-                <!--&lt;!&ndash;app:adjustPositionMultiplier="0.5"&ndash;&gt;-->
-                <!--&lt;!&ndash;app:rotationThreshold="0.5"&ndash;&gt;-->
-                <!--&lt;!&ndash;app:scalingThreshold="0.5"&ndash;&gt;-->
-                <!--&lt;!&ndash;app:spacing="0.6"/>&ndash;&gt;-->
+                android:layout_above="@id/ll_progress"
+                android:layout_below="@id/include_head">
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_song_image"
-                    android:layout_above="@id/ll_progress"
-                    android:layout_below="@id/divider"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    tools:listitem="@layout/layout_image"/>
+                    tools:listitem="@layout/layout_image" />
 
-                <!--<me.crosswall.lib.coverflow.core.PagerContainer-->
-                    <!--android:id="@+id/pager_container"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:layout_above="@id/ll_progress"-->
-                    <!--android:layout_below="@id/divider">-->
+                <ImageView
+                    android:id="@+id/previous"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start"
+                    android:src="@drawable/ic_navigate_before_grey_500_24dp" />
 
-                    <!--<android.support.v4.view.ViewPager-->
-                        <!--android:id="@+id/vp_Image"-->
-                        <!--android:layout_width="300dp"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--android:layout_gravity="center" />-->
+                <ImageView
+                    android:id="@+id/next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:src="@drawable/ic_navigate_next_grey_500_24dp" />
 
-                <!--</me.crosswall.lib.coverflow.core.PagerContainer>-->
+            </FrameLayout>
 
-                <LinearLayout
-                    android:id="@+id/ll_progress"
-                    android:layout_width="match_parent"
+            <LinearLayout
+                android:id="@+id/ll_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/ll_player_options"
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:id="@+id/tv_start"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_above="@id/rl_player_options"
-                    android:padding="10dp">
+                    android:text="@string/timeline"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
 
-                    <TextView
-                        android:id="@+id/tv_start"
-                        android:textColor="@android:color/white"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/timeline" />
+                <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+                    android:id="@+id/dsb_progress"
+                    android:layout_width="0dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1" />
 
-                    <!--<SeekBar-->
-                    <!--android:id="@+id/sb_progress"-->
-                    <!--android:layout_width="0dp"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_weight="1" />-->
-
-                    <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
-                        android:id="@+id/dsb_progress"
-                        android:layout_width="0dp"
-                        android:layout_height="10dp"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        app:dsb_trackHeight="5dp" />
-
-                    <TextView
-                        android:id="@+id/tv_end"
-                        android:textColor="@android:color/white"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/timeline" />
-
-                </LinearLayout>
-
-                <RelativeLayout
-                    android:id="@+id/rl_player_options"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/tv_end"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:padding="10dp">
+                    android:text="@string/timeline"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
 
-                    <ImageView
-                        android:id="@+id/iv_repeat"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_repeat_white_24dp" />
+            </LinearLayout>
 
-                    <ImageView
-                        android:id="@+id/iv_previous"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toStartOf="@id/iv_play"
-                        android:src="@drawable/ic_skip_previous_white_48dp" />
+            <LinearLayout
+                android:id="@+id/ll_player_options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:padding="10dp"
+                android:paddingBottom="40dp">
 
-                    <ImageView
-                        android:id="@+id/iv_play"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/ic_play_arrow_white_48dp" />
+                <ImageView
+                    android:id="@+id/iv_repeat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_repeat_white_24dp" />
 
-                    <ImageView
-                        android:id="@+id/iv_next"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toEndOf="@id/iv_play"
-                        android:src="@drawable/ic_skip_next_white_48dp" />
+                <ImageView
+                    android:id="@+id/iv_previous"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_skip_previous_grey_500_36dp" />
 
-                    <ImageView
-                        android:id="@+id/iv_fav"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_favorite_border_white_24dp" />
+                <ImageView
+                    android:id="@+id/iv_play"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_play_arrow_white_48dp" />
 
-                </RelativeLayout>
+                <ImageView
+                    android:id="@+id/iv_next"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_skip_next_grey_500_36dp" />
 
-            </RelativeLayout>
+                <ImageView
+                    android:id="@+id/iv_fav"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_favorite_border_white_24dp" />
 
-        </FrameLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
 
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 

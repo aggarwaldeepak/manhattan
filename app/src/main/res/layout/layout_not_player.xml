@@ -54,7 +54,7 @@
 
             <ImageView
                 android:id="@+id/btnPlay"
-                android:src="@drawable/ic_play_arrow_white_48dp"
+                android:src="@drawable/ic_pause_white_48dp"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
