@@ -139,10 +139,12 @@ public class UpcomingFragment extends Fragment {
         if (toolbarSpinner == null){
             toolbarSpinner = toolbar.findViewById(R.id.spinner_toolbar);
         }
-        toolbarSpinner.setVisibility(View.VISIBLE);
-        toolbarSpinner.setAdapter(new UpcomingSpinnerAdapter(getContext(),rvUpcoming));
-        //toolbarSpinner.setEnabled(false);
-        toolbarSpinner.setClickable(true);
+        if(toolbarSpinner !=null) {
+            toolbarSpinner.setVisibility(View.VISIBLE);
+            toolbarSpinner.setAdapter(new UpcomingSpinnerAdapter(getContext(), rvUpcoming));
+            //toolbarSpinner.setEnabled(false);
+            toolbarSpinner.setClickable(true);
+        }
     }
 
     @Override

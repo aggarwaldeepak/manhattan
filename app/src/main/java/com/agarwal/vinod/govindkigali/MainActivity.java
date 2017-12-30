@@ -451,6 +451,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                         Intent i = getBaseContext().getPackageManager()
                                 .getLaunchIntentForPackage(getBaseContext().getPackageName());
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(i);
                         break;
                     }
@@ -469,6 +470,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                         Intent i = getBaseContext().getPackageManager()
                                 .getLaunchIntentForPackage(getBaseContext().getPackageName());
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(i);
                         break;
 
@@ -635,6 +637,13 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         }
+    }
+
+
+    @Override
+    protected void onResume() {
+        overridePendingTransition(0, 0);
+        super.onResume();
     }
 
     public BroadcastReceiver playerReceiver = new BroadcastReceiver() {
