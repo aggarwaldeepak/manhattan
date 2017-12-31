@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
+import com.agarwal.vinod.govindkigali.LinearLayoutManagerWithSmoothScroller;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.UpcomingAdapter;
 import com.agarwal.vinod.govindkigali.adapters.UpcomingSpinnerAdapter;
@@ -42,7 +43,7 @@ public class UpcomingFragment extends Fragment {
     Toolbar toolbar;
     Spinner toolbarSpinner;
     RecyclerView rvUpcoming;
-    LinearLayoutManager linearLayoutManager;
+    LinearLayoutManagerWithSmoothScroller linearLayoutManager;
     boolean animateSpinner = true;
     public static ArrayList<Upcoming> feededUpcomings = null;
 
@@ -69,7 +70,7 @@ public class UpcomingFragment extends Fragment {
 
         rvUpcoming = view.findViewById(R.id.rvUpcoming);
         final UpcomingAdapter adapter = new UpcomingAdapter(getContext(),null);
-        linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager = new LinearLayoutManagerWithSmoothScroller(getContext());
         rvUpcoming.setLayoutManager(linearLayoutManager);
         rvUpcoming.setAdapter(adapter);
         if(feededUpcomings == null){
