@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,7 +47,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
     Context context;
     Spinner spinner;
     ArrayList<Upcoming> upcomings;
-    ArrayList<Integer> startIndices;
+    ArrayList<Pair<Integer, String> > startIndices;
     public UpcomingAdapter(Context context, ArrayList<Upcoming> upcomings) {
         this.context = context;
         this.upcomings = upcomings;
@@ -70,6 +71,16 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
         this.spinner = spinner;
     }
 
+    public int viewPosToArrayListPos(int viewPos){
+        int count = 0;
+        for (int i = 0;i < startIndices.size(); ++i) {
+            if(startIndices.get(i).first.compareTo(viewPos) < 0){
+                count++;
+            }
+        }
+        return viewPos - count;
+    }
+
     public void update(@NonNull ArrayList<Upcoming> upcomings){
         this.upcomings = upcomings;
         updateStartIndices();
@@ -81,7 +92,9 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
         startIndices = new ArrayList<>();
         for (int i = 0;i < upcomings.size() - 1 ; ++i){
             if(!upcomings.get(i).getmMonth().equals(upcomings.get(i+1).getmMonth())){
-                startIndices.add(i + 1 + startIndices.size());
+                startIndices.add(
+                        new Pair<>(i + 1 + startIndices.size(), upcomings.get(i+1).getmMonth())
+                        );
                 notifyDataSetChanged();
             }
         }
@@ -89,28 +102,31 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
 
     @Override
     public int getItemViewType(int position) {
-        if(startIndices.contains(position))return TYPE_BANNER;
-        else return TYPE_ENTRY;
+
+        for (int i = 0;i<startIndices.size();++i){
+            if(startIndices.get(i).first.equals(position))
+                return TYPE_BANNER;
+        }
+        //if(startIndices.contains(position))return TYPE_BANNER;
+        return TYPE_ENTRY;
         //return super.getItemViewType(position);
     }
 
     @Override
     public UpcomingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(viewType == TYPE_BANNER){
+        if(viewType == TYPE_ENTRY){
             return new UpcomingViewHolder(inflater.inflate(R.layout.layout_upcoming,parent,false), viewType);
-        } else {
+        } else if(viewType == TYPE_BANNER){
+            Toast.makeText(context, "fffff", Toast.LENGTH_SHORT).show();
             return new UpcomingViewHolder(inflater.inflate(R.layout.layout_upcoming_month_heading_banner,parent,false), viewType);
         }
+        return null;
     }
 
     @Override
     public void onBindViewHolder(UpcomingViewHolder holder, int position) {
-        if (holder.getViewType() == TYPE_ENTRY) {
             holder.bindView(position);
-        }
-
-
     }
 
 
@@ -124,7 +140,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
         return upcomings;
     }
 
-    public int getNextEventPos(){
+    /*public int getNextEventPos(){
         if(upcomings.size()>0){
             Date currentDate = new Date();
             Log.d("CURDATE", "getNextEventPos: " + currentDate);
@@ -141,12 +157,14 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
         }
         return 0;
 
-    }
+    }*/
 
     class UpcomingViewHolder extends RecyclerView.ViewHolder {
         TextView tvMonth,tvDayNumber,tvWeekDay,tvVenue,tvTime;
         ImageView btnOptions;
         int viewType;
+
+        TextView tvBannerHeading;
 
 
         public UpcomingViewHolder(View itemView, int viewType) {
@@ -160,12 +178,13 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
                 tvTime = itemView.findViewById(R.id.tv_time);
                 btnOptions = itemView.findViewById(R.id.btn_options);
             } else if(viewType == TYPE_BANNER) {
-
+                tvBannerHeading = itemView.findViewById(R.id.tvMonthHead);
             }
         }
 
-        public void bindView(final int position){
+        public void bindView(final int pos){
             if (viewType == TYPE_ENTRY) {
+                int position = viewPosToArrayListPos(pos);
                 final String venue = upcomings.get(position).getmVenue();
                 final String time = upcomings.get(position).getmTime();
                 final int day = upcomings.get(position).getmDate();
@@ -242,7 +261,14 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
 
 
             } else if (viewType == TYPE_BANNER) {
-
+                Pair<Integer, String> curPair = null;
+                for (int i = 0;i<startIndices.size();++i){
+                    curPair = startIndices.get(i);
+                    if(curPair.first.equals(pos)){
+                        break;
+                    }
+                }
+                tvBannerHeading.setText(curPair.second);
             }
         }
 

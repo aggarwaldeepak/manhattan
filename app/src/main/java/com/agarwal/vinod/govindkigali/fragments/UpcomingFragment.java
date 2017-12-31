@@ -81,8 +81,8 @@ public class UpcomingFragment extends Fragment {
                     }
                     feededUpcomings = response.body();
                     adapter.update(feededUpcomings);
-                    Log.d("UPCOMING", "onResponse: " + adapter.getNextEventPos());
-                    rvUpcoming.smoothScrollToPosition(adapter.getNextEventPos());
+//                    Log.d("UPCOMING", "onResponse: " + adapter.getNextEventPos());
+//                    rvUpcoming.smoothScrollToPosition(adapter.getNextEventPos());
                     progressBar.setVisibility(View.GONE);
                 }
 
@@ -98,7 +98,7 @@ public class UpcomingFragment extends Fragment {
         }
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             rvUpcoming.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
                 public void onScrollChange(View view, int i, int i1, int i2, int i3) {
@@ -114,7 +114,7 @@ public class UpcomingFragment extends Fragment {
                         toolbarSpinner.setSelection(UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(idx).getmMonth()),true);
                         Log.d("TOOLBAR", "onScrollChange: gggggggggggggggggggg");
                     }
-                    /*if(animateSpinner && toolbarSpinner != null) {
+                    *//*if(animateSpinner && toolbarSpinner != null) {
                         toolbarSpinner.setSelection(UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(idx).getmMonth()),true);
                         animateSpinner = false;
                         new Thread(new Runnable() {
@@ -128,7 +128,7 @@ public class UpcomingFragment extends Fragment {
                                 }
                             }
                         }).start();
-                    }*/
+                    }*//*
                 }
             });
         } else {
@@ -152,7 +152,7 @@ public class UpcomingFragment extends Fragment {
             public void onClick(View v) {
                 toolbarSpinner.setSelection(5,true);
             }
-        });
+        });*/
         return view;
     }
 

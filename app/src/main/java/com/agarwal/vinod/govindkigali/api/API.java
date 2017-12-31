@@ -2,15 +2,14 @@ package com.agarwal.vinod.govindkigali.api;
 
 import com.agarwal.vinod.govindkigali.models.Song;
 import com.agarwal.vinod.govindkigali.models.Upcoming;
+import com.agarwal.vinod.govindkigali.models.upcomings.Year;
 
 import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 
-/**
- * Created by darsh on 11/12/17.
- */
+
 
 public interface API {
 
@@ -22,4 +21,7 @@ public interface API {
 
     @GET("bins/uz8qr")
     Call<ArrayList<Upcoming>> getUpcomings();
+
+    @GET("bins/11avcb")
+    Call<ArrayList<Year>> getUpcomingYears();
 }
