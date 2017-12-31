@@ -81,8 +81,14 @@ public class UpcomingFragment extends Fragment {
                     }
                     feededUpcomings = response.body();
                     adapter.update(feededUpcomings);
-//                    Log.d("UPCOMING", "onResponse: " + adapter.getNextEventPos());
-//                    rvUpcoming.smoothScrollToPosition(adapter.getNextEventPos());
+                    Log.d("UPCOMING", "onResponse: " + adapter.getNextEventPos());
+                    //rvUpcoming.smoothScrollToPosition(adapter.getNextEventPos());
+                    rvUpcoming.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            rvUpcoming.smoothScrollToPosition(adapter.getNextEventPos());
+                        }
+                    });
                     progressBar.setVisibility(View.GONE);
                 }
 
@@ -94,27 +100,40 @@ public class UpcomingFragment extends Fragment {
             });
         } else {
             adapter.update(feededUpcomings);
+            rvUpcoming.post(new Runnable() {
+                @Override
+                public void run() {
+                    rvUpcoming.smoothScrollToPosition(adapter.getNextEventPos());
+                }
+            });
             progressBar.setVisibility(View.GONE);
         }
 
 
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             rvUpcoming.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
                 public void onScrollChange(View view, int i, int i1, int i2, int i3) {
-                    Log.d("TOOLBAR", "onScrollChange: " + i + " " + i1 + " " + i2 + " " + i3);
-                    int idx = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
-                    if(toolbarSpinner.getSelectedItemPosition() ==
+                    int idx = linearLayoutManager.findFirstVisibleItemPosition();
+                    if ((toolbarSpinner != null) && (adapter.getItemViewType(idx) == UpcomingAdapter.TYPE_BANNER)) {
+                            toolbarSpinner.setSelection(
+                                    UpcomingAdapter.monthsLong.indexOf((adapter.onCreateViewHolder(null, UpcomingAdapter.TYPE_BANNER)).getMonthTitleatPos(idx)),
+                                    true
+                            );
+                            return;
+                    }
+                    /*if(toolbarSpinner.getSelectedItemPosition() ==
                             UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(idx).getmMonth()))
                     {
                         Log.d("TOOLBAR", "onScrollChange: ffffffffffffffff");
                         return;
-                    }
+                    }*/
                     if(toolbarSpinner != null){
-                        toolbarSpinner.setSelection(UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(idx).getmMonth()),true);
+                        int newIdx = adapter.viewPosToArrayListPos(idx);
+                        toolbarSpinner.setSelection(UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(newIdx).getmMonth()),true);
                         Log.d("TOOLBAR", "onScrollChange: gggggggggggggggggggg");
                     }
-                    *//*if(animateSpinner && toolbarSpinner != null) {
+                    /*if(animateSpinner && toolbarSpinner != null) {
                         toolbarSpinner.setSelection(UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(idx).getmMonth()),true);
                         animateSpinner = false;
                         new Thread(new Runnable() {
@@ -128,10 +147,11 @@ public class UpcomingFragment extends Fragment {
                                 }
                             }
                         }).start();
-                    }*//*
+                    }*/
                 }
             });
-        } else {
+        }
+        /* else {
             rvUpcoming.setOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -147,12 +167,7 @@ public class UpcomingFragment extends Fragment {
                 }
             });
         }
-        ((Button)view.findViewById(R.id.btn)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toolbarSpinner.setSelection(5,true);
-            }
-        });*/
+        */
         return view;
     }
 
@@ -184,6 +199,7 @@ public class UpcomingFragment extends Fragment {
             toolbarSpinner.setAdapter(new UpcomingSpinnerAdapter(getContext(), rvUpcoming));
             //toolbarSpinner.setEnabled(false);
             toolbarSpinner.setClickable(true);
+
         }
     }
 

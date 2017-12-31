@@ -26,8 +26,10 @@ import com.agarwal.vinod.govindkigali.utils.Util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -36,10 +38,10 @@ import java.util.Date;
 
 public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.UpcomingViewHolder> {
 
-    static ArrayList<String> weekDaysLong;
-    static ArrayList<String> weekDaysShort;
-    static ArrayList<String> monthsLong;
-    static ArrayList<String> monthsShort;
+    public static ArrayList<String> weekDaysLong;
+    public static ArrayList<String> weekDaysShort;
+    public static ArrayList<String> monthsLong;
+    public static ArrayList<String> monthsShort;
     public static final int TYPE_BANNER = 1;
     public static final int TYPE_ENTRY = 2;
 
@@ -90,6 +92,9 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
 
     private void updateStartIndices(){
         startIndices = new ArrayList<>();
+        if (upcomings.size() == 0)return;
+        startIndices.add(new Pair<Integer, String>(0, upcomings.get(0).getmMonth()));
+        notifyDataSetChanged();
         for (int i = 0;i < upcomings.size() - 1 ; ++i){
             if(!upcomings.get(i).getmMonth().equals(upcomings.get(i+1).getmMonth())){
                 startIndices.add(
@@ -118,7 +123,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
         if(viewType == TYPE_ENTRY){
             return new UpcomingViewHolder(inflater.inflate(R.layout.layout_upcoming,parent,false), viewType);
         } else if(viewType == TYPE_BANNER){
-            Toast.makeText(context, "fffff", Toast.LENGTH_SHORT).show();
+            Log.d("hhhhh", "onCreateViewHolder: Doooooooo");
             return new UpcomingViewHolder(inflater.inflate(R.layout.layout_upcoming_month_heading_banner,parent,false), viewType);
         }
         return null;
@@ -140,8 +145,21 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
         return upcomings;
     }
 
-    /*public int getNextEventPos(){
-        if(upcomings.size()>0){
+    public int getNextEventPos(){
+        java.util.Date date= new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int month = cal.get(Calendar.MONTH);
+        while (month <= 11) {
+            String monthName = (new DateFormatSymbols().getMonths())[month];
+            for (int i = 0;i<startIndices.size();++i){
+                Pair<Integer, String> curPair = startIndices.get(i);
+                if(curPair.second.equals(monthName)) return curPair.first;
+            }
+            month++;
+        }
+        return 0;
+        /*if(upcomings.size()>0){
             Date currentDate = new Date();
             Log.d("CURDATE", "getNextEventPos: " + currentDate);
             Date answer = new Date(0);
@@ -155,11 +173,11 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
             }
             return upcomings.indexOf(ans);
         }
-        return 0;
+        return 0;*/
 
-    }*/
+    }
 
-    class UpcomingViewHolder extends RecyclerView.ViewHolder {
+    public class UpcomingViewHolder extends RecyclerView.ViewHolder {
         TextView tvMonth,tvDayNumber,tvWeekDay,tvVenue,tvTime;
         ImageView btnOptions;
         int viewType;
@@ -261,15 +279,20 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
 
 
             } else if (viewType == TYPE_BANNER) {
-                Pair<Integer, String> curPair = null;
-                for (int i = 0;i<startIndices.size();++i){
-                    curPair = startIndices.get(i);
-                    if(curPair.first.equals(pos)){
-                        break;
-                    }
-                }
-                tvBannerHeading.setText(curPair.second);
+
+                tvBannerHeading.setText(getMonthTitleatPos(pos));
             }
+        }
+
+        public String getMonthTitleatPos(int pos){
+            Pair<Integer, String> curPair = null;
+            for (int i = 0;i<startIndices.size();++i){
+                curPair = startIndices.get(i);
+                if(curPair.first.equals(pos)){
+                    break;
+                }
+            }
+            return curPair.second;
         }
 
         int getViewType(){
