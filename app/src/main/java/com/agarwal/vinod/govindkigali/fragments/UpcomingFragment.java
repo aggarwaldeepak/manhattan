@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.RotateAnimation;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
@@ -41,7 +43,7 @@ public class UpcomingFragment extends Fragment {
     Spinner toolbarSpinner;
     RecyclerView rvUpcoming;
     LinearLayoutManager linearLayoutManager;
-
+    boolean animateSpinner = true;
     public static ArrayList<Upcoming> feededUpcomings = null;
 
     public UpcomingFragment() {
@@ -58,6 +60,8 @@ public class UpcomingFragment extends Fragment {
         initiateToolbar();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_upcoming, container, false);
+
+
 
         final ProgressBar progressBar = view.findViewById(R.id.progress_bar);
         progressBar.setIndeterminate(true);
@@ -77,6 +81,8 @@ public class UpcomingFragment extends Fragment {
                     }
                     feededUpcomings = response.body();
                     adapter.update(feededUpcomings);
+                    Log.d("UPCOMING", "onResponse: " + adapter.getNextEventPos());
+                    rvUpcoming.smoothScrollToPosition(adapter.getNextEventPos());
                     progressBar.setVisibility(View.GONE);
                 }
 
@@ -96,9 +102,33 @@ public class UpcomingFragment extends Fragment {
             rvUpcoming.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
                 public void onScrollChange(View view, int i, int i1, int i2, int i3) {
+                    Log.d("TOOLBAR", "onScrollChange: " + i + " " + i1 + " " + i2 + " " + i3);
                     int idx = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
-                    if(toolbarSpinner != null)
-                    toolbarSpinner.setSelection(UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(idx).getmMonth()));
+                    if(toolbarSpinner.getSelectedItemPosition() ==
+                            UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(idx).getmMonth()))
+                    {
+                        Log.d("TOOLBAR", "onScrollChange: ffffffffffffffff");
+                        return;
+                    }
+                    if(toolbarSpinner != null){
+                        toolbarSpinner.setSelection(UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(idx).getmMonth()),true);
+                        Log.d("TOOLBAR", "onScrollChange: gggggggggggggggggggg");
+                    }
+                    /*if(animateSpinner && toolbarSpinner != null) {
+                        toolbarSpinner.setSelection(UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(idx).getmMonth()),true);
+                        animateSpinner = false;
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(3000);
+                                    animateSpinner = true;
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
+                    }*/
                 }
             });
         } else {
@@ -117,6 +147,12 @@ public class UpcomingFragment extends Fragment {
                 }
             });
         }
+        ((Button)view.findViewById(R.id.btn)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toolbarSpinner.setSelection(5,true);
+            }
+        });
         return view;
     }
 
@@ -133,7 +169,9 @@ public class UpcomingFragment extends Fragment {
             toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         }
 
-        actionBar.setDisplayShowTitleEnabled(false);
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
         setupSpinner();
     }
 

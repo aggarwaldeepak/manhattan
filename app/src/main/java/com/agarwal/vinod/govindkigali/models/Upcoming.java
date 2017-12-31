@@ -3,20 +3,22 @@ package com.agarwal.vinod.govindkigali.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+
 /**
  * Created by Anirudh Gupta on 12/13/2017.
  */
 
 public class Upcoming {
 
-    public Upcoming(int mDate, String mDay, String mMonth, String mTime, String mVenue, int mYear) {
-        this.mDate = mDate;
-        this.mDay = mDay;
-        this.mMonth = mMonth;
-        this.mTime = mTime;
-        this.mVenue = mVenue;
-        this.mYear = mYear;
-    }
+    static ArrayList<String> monthsLong = new ArrayList<>(Arrays.asList("January" , "February" , "March" , "April", "May",
+            "June", "July", "August", "September", "October",
+            "November", "December"));;
+    static ArrayList<String> monthsShort = new ArrayList<>(Arrays.asList("Jan" , "Feb" , "March" , "April", "May",
+            "June", "July", "Aug", "Sept", "Oct",
+            "Nov", "Dec"));;
 
     @SerializedName("Date")
     @Expose
@@ -41,6 +43,21 @@ public class Upcoming {
     @SerializedName("Year")
     @Expose
     int mYear;
+
+    public Upcoming(int mDate, String mDay, String mMonth, String mTime, String mVenue, int mYear) {
+        this.mDate = mDate;
+        this.mDay = mDay;
+        this.mMonth = mMonth;
+        this.mTime = mTime;
+        this.mVenue = mVenue;
+        this.mYear = mYear;
+        /*monthsLong = new ArrayList<>(Arrays.asList("January" , "February" , "March" , "April", "May",
+                "June", "July", "August", "September", "October",
+                "November", "December"));
+        monthsShort = new ArrayList<>(Arrays.asList("Jan" , "Feb" , "March" , "April", "May",
+                "June", "July", "Aug", "Sept", "Oct",
+                "Nov", "Dec"));*/
+    }
 
     public void setmDate(int mDate) {
         this.mDate = mDate;
@@ -88,5 +105,9 @@ public class Upcoming {
 
     public int getmYear() {
         return mYear;
+    }
+
+    public Date getDateObject(){
+        return new Date(mYear - 1900,monthsLong.indexOf(mMonth),mDate);
     }
 }

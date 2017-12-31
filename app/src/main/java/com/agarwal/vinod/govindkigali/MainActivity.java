@@ -751,7 +751,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
         //Termination Service
-        startService(new Intent(getBaseContext(), TerminationService.class));
+        startService(new Intent(this, TerminationService.class));
     }
 
     @Override
