@@ -10,18 +10,33 @@
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
         android:layout_width="match_parent"
-        android:layout_marginTop="100dp"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp" />
+
+    <Button
+        android:id="@+id/sign_out_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sign_in_button"
+        android:visibility="invisible"
+        android:text="Google Sign out" />
 
     <Button
         android:id="@+id/MobileRegistration_Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/sign_in_button"
-        android:layout_marginTop="20dp"
-        android:layout_weight="1"
+        android:layout_below="@id/sign_out_button"
         android:gravity="center_horizontal"
         android:text="Mobile Registration" />
+
+
+    <Button
+        android:id="@+id/log_out_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/MobileRegistration_Button"
+        android:text="Log Out"
+        android:visibility="invisible" />
 
 
 </RelativeLayout>

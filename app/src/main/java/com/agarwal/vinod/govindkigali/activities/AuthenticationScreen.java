@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.agarwal.vinod.govindkigali.utils.PrefManager;
 import com.google.android.gms.auth.api.Auth;
 import com.agarwal.vinod.govindkigali.R;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -19,8 +20,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -72,8 +71,8 @@ public class AuthenticationScreen extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                signInButton.setVisibility(View.GONE);
-                signOutButton.setVisibility(View.VISIBLE);
+//                signInButton.setVisibility(View.GONE);
+//                signOutButton.setVisibility(View.VISIBLE);
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
@@ -85,7 +84,6 @@ public class AuthenticationScreen extends AppCompatActivity {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
-                // ...
             }
         };
 
@@ -95,6 +93,7 @@ public class AuthenticationScreen extends AppCompatActivity {
                 signIn();
             }
         });
+        /*
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,8 +109,7 @@ public class AuthenticationScreen extends AppCompatActivity {
                             }
                         });
             }
-            // ..
-        });
+        });*/
 
     }
 
@@ -148,12 +146,6 @@ public class AuthenticationScreen extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
-//        if (currentUser == null) {
-//            Intent intent = new Intent(AuthenticationScreen.this, AuthenticationScreen.class);
-//            startActivity(intent);
-//            finish();
-//        }
         mAuth.addAuthStateListener(mAuthListener);
     }
 
@@ -171,6 +163,9 @@ public class AuthenticationScreen extends AppCompatActivity {
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+
+                    PrefManager prefManager = new PrefManager(getApplicationContext());
+
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
@@ -190,6 +185,14 @@ public class AuthenticationScreen extends AppCompatActivity {
                             String email = user.getEmail();
                             Uri photoUrl = user.getPhotoUrl();
                             Log.d(TAG, "onComplete: " + name + email + photoUrl);
+
+                            prefManager.setLoggedInViagmail(true);
+                            signInButton.setVisibility(View.INVISIBLE);
+
+                            Toast.makeText(AuthenticationScreen.this, name+"\n"+user.getEmail()+"\nLogged In", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(AuthenticationScreen.this, SignInScreen.class);
+                            startActivity(intent);
+                            finish();
                             //  updateUI(user);
                         }
                     }

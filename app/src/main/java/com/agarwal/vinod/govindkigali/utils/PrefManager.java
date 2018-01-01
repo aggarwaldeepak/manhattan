@@ -31,6 +31,8 @@ public class PrefManager {
     private static final String USER_LANGUAGE= "UserLanguage";
     private static final String THEME_PREFERNCE = "theme_preference";
     private static final String NIGHT_MODE = "nightmode";
+    private static final String GMAIL_LOGIN  = "gmail_logged_in";
+    private static final String MOBILE_REGISTRATION  = "mobile_registration";
 
     public PrefManager(Context context) {
         this._context = context;
@@ -82,5 +84,19 @@ public class PrefManager {
         return pref.getBoolean(NIGHT_MODE, false);
     }
 
+    public void setLoggedInViagmail(boolean isGmailLogin){
+        editor.putBoolean(GMAIL_LOGIN,isGmailLogin);
+        editor.commit();
+    }
+    public void setMobileNumberRegistered(boolean isMobileNumberRegistered){
+        editor.putBoolean(MOBILE_REGISTRATION,isMobileNumberRegistered);
+        editor.commit();
+    }
+    public  boolean isLoggedInViaGmail(){
+        return pref.getBoolean(GMAIL_LOGIN,false);
+    }
+    public boolean isRegisteredMobileNumber(){
+        return pref.getBoolean(MOBILE_REGISTRATION,false);
+    }
 
 }

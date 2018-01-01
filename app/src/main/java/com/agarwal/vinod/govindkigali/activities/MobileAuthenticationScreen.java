@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
+import com.agarwal.vinod.govindkigali.utils.PrefManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -29,8 +30,8 @@ public class MobileAuthenticationScreen extends AppCompatActivity {
     String mVerificationId;
     PhoneAuthProvider.ForceResendingToken mResendToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
-    EditText contact_et, verify_et;
-    Button contact_btn, verify_btn;
+    EditText contact_et, verification_code_et;
+    Button verification_btn;
     private FirebaseAuth mAuth;
     private int btn_type = 0;
     private static final String TAG = "MobileAuthentication";
@@ -41,16 +42,18 @@ public class MobileAuthenticationScreen extends AppCompatActivity {
         setContentView(R.layout.activity_mobile_authentication_screen);
 
         contact_et = findViewById(R.id.contact);
-        contact_btn = findViewById(R.id.contact_btn);
-        verify_et = findViewById(R.id.verify);
-//        verify_btn = findViewById(R.id.verify_btn);
+        verification_code_et = findViewById(R.id.verify);
+        verification_btn = findViewById(R.id.verification_btn);
         mAuth = FirebaseAuth.getInstance();
 
-        contact_btn.setOnClickListener(new View.OnClickListener() {
+        verification_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 if (btn_type == 0) {
+                    contact_et.setEnabled(false);
+                    verification_btn.setEnabled(false);
+
                     String mobile_number = contact_et.getText().toString();
                     PhoneAuthProvider.getInstance().verifyPhoneNumber(mobile_number, 60, TimeUnit.SECONDS, MobileAuthenticationScreen.this, new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                         @Override
@@ -72,11 +75,17 @@ public class MobileAuthenticationScreen extends AppCompatActivity {
                             mVerificationId = verificationId;
                             mResendToken = token;
 
+                            contact_et.setVisibility(View.INVISIBLE);
+                            verification_code_et.setVisibility(View.VISIBLE);
+                            verification_btn.setText("Verify Code");
+                            verification_btn.setEnabled(true);
+
                         }
                     });
                 } else {
 
-                    String verification_code = verify_et.getText().toString();
+                    verification_btn.setEnabled(false);
+                    String verification_code = verification_code_et.getText().toString();
                     PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, verification_code);
                     signInWithPhoneAuthCredential(credential);
                 }
@@ -87,18 +96,24 @@ public class MobileAuthenticationScreen extends AppCompatActivity {
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+
+                    PrefManager prefManager = new PrefManager(getApplicationContext());
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-//                            Intent intent = new Intent(MobileAuthenticationScreen.this, MainActivity.class);
-//                            startActivity(intent);
-//                            finish();
+
                             FirebaseUser user = task.getResult().getUser();
                             Log.d(TAG, "onComplete: " + user.getPhoneNumber() + user.getDisplayName() + user.getProviderId());
                             Toast.makeText(MobileAuthenticationScreen.this, user.getPhoneNumber() + "Has Been Verified", Toast.LENGTH_SHORT).show();
-                            // ...
+
+                            prefManager.setMobileNumberRegistered(true);
+
+                            Intent intent = new Intent(MobileAuthenticationScreen.this, SignInScreen.class);
+                            startActivity(intent);
+                            finish();
+
                         } else {
                             // Sign in failed, display a message and update the UI
                             Log.w(TAG, "signInWithCredential:failure", task.getException());

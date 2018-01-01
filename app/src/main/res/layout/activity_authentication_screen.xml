@@ -15,16 +15,14 @@
             android:id="@+id/name_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Hello User" />
+            android:layout_marginTop="10dp" />
 
         <TextView
             android:id="@+id/email_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="50dp"
-            android:layout_marginTop="10dp"
-            android:text="admin@androidtutorialpoint.com" />
+            android:layout_marginTop="10dp" />
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"

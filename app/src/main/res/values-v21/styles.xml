@@ -23,6 +23,7 @@
         <item name="backgroundCardColor">#acacac</item>
         <item name="dividerColor">#F2F2F3</item>
         <item name="textColor">@color/primaryTextColor_night_mode</item>
+        <item name="iconTint">@color/colorPrimary</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
