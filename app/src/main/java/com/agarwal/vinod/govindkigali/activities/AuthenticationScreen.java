@@ -78,7 +78,7 @@ public class AuthenticationScreen extends AppCompatActivity {
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     if (user.getDisplayName() != null)
                         nameTextView.setText("HI " + user.getDisplayName().toString());
-                    emailTextView.setText(user.getEmail().toString());
+//                    emailTextView.setText(user.getEmail().toString());
 
                 } else {
                     // User is signed out
