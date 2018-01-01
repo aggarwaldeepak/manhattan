@@ -16,9 +16,11 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.RotateAnimation;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.agarwal.vinod.govindkigali.LinearLayoutManagerWithSmoothScroller;
 import com.agarwal.vinod.govindkigali.R;
@@ -26,6 +28,7 @@ import com.agarwal.vinod.govindkigali.adapters.UpcomingAdapter;
 import com.agarwal.vinod.govindkigali.adapters.UpcomingSpinnerAdapter;
 import com.agarwal.vinod.govindkigali.api.UpcomingService;
 import com.agarwal.vinod.govindkigali.models.Upcoming;
+import com.agarwal.vinod.govindkigali.utils.PrefManager;
 
 import java.util.ArrayList;
 
@@ -38,7 +41,7 @@ import retrofit2.Response;
  */
 public class UpcomingFragment extends Fragment {
 
-
+    boolean userSpinnerSelected = false;
     ActionBar actionBar;
     Toolbar toolbar;
     Spinner toolbarSpinner;
@@ -110,6 +113,25 @@ public class UpcomingFragment extends Fragment {
             progressBar.setVisibility(View.GONE);
         }
 
+        /*toolbarSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(userSpinnerSelected) {
+                    Toast.makeText(getContext(), "jkjkjkjkj", Toast.LENGTH_SHORT).show();
+                    int idx = adapter.getStartIndexOfMonth(UpcomingSpinnerAdapter.months.get(position));
+                    if (idx == -1) {
+                        Toast.makeText(getContext(), "No Events for selected Month", Toast.LENGTH_SHORT).show();
+                    } else {
+                        rvUpcoming.smoothScrollToPosition(idx);
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });*/
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             rvUpcoming.setOnScrollChangeListener(new View.OnScrollChangeListener() {
@@ -117,11 +139,14 @@ public class UpcomingFragment extends Fragment {
                 public void onScrollChange(View view, int i, int i1, int i2, int i3) {
                     int idx = linearLayoutManager.findFirstVisibleItemPosition();
                     if ((toolbarSpinner != null) && (adapter.getItemViewType(idx) == UpcomingAdapter.TYPE_BANNER)) {
-                            toolbarSpinner.setSelection(
+
+                        userSpinnerSelected = false;
+                        toolbarSpinner.setSelection(
                                     UpcomingAdapter.monthsLong.indexOf((adapter.onCreateViewHolder(null, UpcomingAdapter.TYPE_BANNER)).getMonthTitleatPos(idx)),
                                     true
                             );
-                            return;
+                        userSpinnerSelected = true;
+                        return;
                     }
                     /*if(toolbarSpinner.getSelectedItemPosition() ==
                             UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(idx).getmMonth()))
@@ -131,7 +156,9 @@ public class UpcomingFragment extends Fragment {
                     }*/
                     if(toolbarSpinner != null){
                         int newIdx = adapter.viewPosToArrayListPos(idx);
+                        userSpinnerSelected = false;
                         toolbarSpinner.setSelection(UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(newIdx).getmMonth()),true);
+                        userSpinnerSelected = true;
                         Log.d("TOOLBAR", "onScrollChange: gggggggggggggggggggg");
                     }
                     /*if(animateSpinner && toolbarSpinner != null) {
@@ -198,8 +225,14 @@ public class UpcomingFragment extends Fragment {
         if(toolbarSpinner !=null) {
             toolbarSpinner.setVisibility(View.VISIBLE);
             toolbarSpinner.setAdapter(new UpcomingSpinnerAdapter(getContext(), rvUpcoming));
-            //toolbarSpinner.setEnabled(false);
-            toolbarSpinner.setClickable(true);
+
+            toolbarSpinner.setEnabled(false);
+            toolbarSpinner.setClickable(false);
+
+            if(new PrefManager(getContext()).isNightModeEnabled2())
+                toolbarSpinner.setBackgroundColor(getContext().getResources().getColor(R.color.colorPrimary_night_mode));
+            else
+                toolbarSpinner.setBackgroundColor(getContext().getResources().getColor(R.color.colorPrimary));
 
         }
     }

@@ -177,6 +177,15 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
 
     }
 
+    public int getStartIndexOfMonth(String month){
+        for (int i = 0; i<startIndices.size();++i){
+            Pair<Integer,String> curPair = startIndices.get(i);
+            if (curPair.second.equals(month))return curPair.first;
+        }
+        return -1;
+    }
+
+
     public class UpcomingViewHolder extends RecyclerView.ViewHolder {
         TextView tvMonth,tvDayNumber,tvWeekDay,tvVenue,tvTime;
         ImageView btnOptions;
