@@ -230,13 +230,18 @@ public class UpcomingFragment extends Fragment {
 
             toolbarSpinner.setEnabled(false);
             toolbarSpinner.setClickable(false);
-
             if(new PrefManager(getContext()).isNightModeEnabled2())
                 toolbarSpinner.setBackgroundColor(getContext().getResources().getColor(R.color.colorPrimary_night_mode));
             else
                 toolbarSpinner.setBackgroundColor(getContext().getResources().getColor(R.color.colorPrimary));
 
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initiateToolbar();
     }
 
     @Override
