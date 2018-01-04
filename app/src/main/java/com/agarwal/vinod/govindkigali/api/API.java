@@ -19,9 +19,12 @@ public interface API {
     @GET("users/17410596/tracks?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J")
     Call<ArrayList<Song>> getTracks();
 
-    @GET("bins/uz8qr")
+    @GET("bins/7wsaj")
     Call<ArrayList<Upcoming>> getUpcomings();
 
+    @GET("bins/uz8qr")
+    Call<ArrayList<Upcoming>> getUpcomingsOldOrig();
+
     @GET("bins/11avcb")
-    Call<ArrayList<Year>> getUpcomingYears();
+    Call<ArrayList<Year>> getUpcomingYearsModulated();
 }

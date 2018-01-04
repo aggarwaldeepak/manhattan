@@ -44,6 +44,22 @@ public class Upcoming {
     @Expose
     int mYear;
 
+
+    public Upcoming(String mMonth, int mYear) {
+        this.mDate = 0;
+        this.mDay = "";
+        this.mMonth = mMonth;
+        this.mTime = "";
+        this.mVenue = "";
+        this.mYear = mYear;
+        /*monthsLong = new ArrayList<>(Arrays.asList("January" , "February" , "March" , "April", "May",
+                "June", "July", "August", "September", "October",
+                "November", "December"));
+        monthsShort = new ArrayList<>(Arrays.asList("Jan" , "Feb" , "March" , "April", "May",
+                "June", "July", "Aug", "Sept", "Oct",
+                "Nov", "Dec"));*/
+    }
+
     public Upcoming(int mDate, String mDay, String mMonth, String mTime, String mVenue, int mYear) {
         this.mDate = mDate;
         this.mDay = mDay;

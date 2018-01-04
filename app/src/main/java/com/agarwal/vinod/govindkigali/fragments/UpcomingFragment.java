@@ -85,14 +85,13 @@ public class UpcomingFragment extends Fragment {
                     }
                     feededUpcomings = response.body();
                     adapter.update(feededUpcomings);
-                    Log.d("UPCOMING", "onResponse: " + adapter.getNextEventPos());
                     //rvUpcoming.smoothScrollToPosition(adapter.getNextEventPos());
-                    rvUpcoming.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            rvUpcoming.smoothScrollToPosition(adapter.getNextEventPos());
-                        }
-                    });
+//                    rvUpcoming.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            rvUpcoming.smoothScrollToPosition(adapter.getNextEventPos());
+//                        }
+//                    });
                     progressBar.setVisibility(View.GONE);
                 }
 
@@ -142,7 +141,9 @@ public class UpcomingFragment extends Fragment {
 
                         userSpinnerSelected = false;
                         toolbarSpinner.setSelection(
-                                    UpcomingAdapter.monthsLong.indexOf((adapter.onCreateViewHolder(null, UpcomingAdapter.TYPE_BANNER)).getMonthTitleatPos(idx)),
+
+                                    UpcomingAdapter.monthsLong.indexOf(adapter.getUpcomings().get(idx).getmMonth()),
+//                                    UpcomingAdapter.monthsLong.indexOf((adapter.onCreateViewHolder(null, UpcomingAdapter.TYPE_BANNER)).getMonthTitleatPos(idx)),
                                     true
                             );
                         userSpinnerSelected = true;
@@ -155,10 +156,11 @@ public class UpcomingFragment extends Fragment {
                         return;
                     }*/
                     if(toolbarSpinner != null){
-                        int newIdx = adapter.viewPosToArrayListPos(idx);
-                        userSpinnerSelected = false;
-                        toolbarSpinner.setSelection(UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(newIdx).getmMonth()),true);
-                        userSpinnerSelected = true;
+//                        int newIdx = adapter.viewPosToArrayListPos(idx);
+//                        userSpinnerSelected = false;
+                        toolbarSpinner.setSelection(UpcomingAdapter.monthsLong.indexOf(adapter.getUpcomings().get(idx).getmMonth()),true);
+//                        toolbarSpinner.setSelection(UpcomingSpinnerAdapter.months.indexOf(adapter.getUpcomings().get(newIdx).getmMonth()),true);
+//                        userSpinnerSelected = true;
                         Log.d("TOOLBAR", "onScrollChange: gggggggggggggggggggg");
                     }
                     /*if(animateSpinner && toolbarSpinner != null) {

@@ -49,20 +49,24 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
     Context context;
     Spinner spinner;
     ArrayList<Upcoming> upcomings;
-    ArrayList<Pair<Integer, String> > startIndices;
+    ArrayList<Integer> upcomingType;
+    //ArrayList<Pair<Integer, String> > startIndices;
     public UpcomingAdapter(Context context, ArrayList<Upcoming> upcomings) {
         this.context = context;
         this.upcomings = upcomings;
         if(this.upcomings == null){
             this.upcomings = new ArrayList<>();
         }
-        updateStartIndices();
+        updateUpcomingTypes();
+        if(weekDaysLong == null)
         weekDaysLong = new ArrayList<>(Arrays.asList("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"));
+        if(weekDaysShort == null)
         weekDaysShort = new ArrayList<>(Arrays.asList("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"));
-
+        if(monthsLong == null)
         monthsLong = new ArrayList<>(Arrays.asList("January" , "February" , "March" , "April", "May",
                 "June", "July", "August", "September", "October",
                 "November", "December"));
+        if(monthsShort == null)
         monthsShort = new ArrayList<>(Arrays.asList("Jan" , "Feb" , "March" , "April", "May",
                 "June", "July", "Aug", "Sept", "Oct",
                 "Nov", "Dec"));
@@ -73,7 +77,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
         this.spinner = spinner;
     }
 
-    public int viewPosToArrayListPos(int viewPos){
+    /*public int viewPosToArrayListPos(int viewPos){
         int count = 0;
         for (int i = 0;i < startIndices.size(); ++i) {
             if(startIndices.get(i).first.compareTo(viewPos) < 0){
@@ -81,16 +85,38 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
             }
         }
         return viewPos - count;
-    }
+    }*/
 
     public void update(@NonNull ArrayList<Upcoming> upcomings){
         this.upcomings = upcomings;
-        updateStartIndices();
+        updateUpcomingTypes();
         notifyDataSetChanged();
 
     }
 
-    private void updateStartIndices(){
+    private void updateUpcomingTypes(){
+        upcomingType = new ArrayList<>();
+        if(upcomings.size() > 0) {
+            upcomingType.add(TYPE_BANNER);
+            upcomings.add(0, new Upcoming(upcomings.get(0).getmMonth(), upcomings.get(0).getmYear()));
+            notifyDataSetChanged();
+        }
+        for (int i = 1;i < upcomings.size(); ++i){
+
+            if( (!upcomings.get(i-1).getmMonth().equals(upcomings.get(i).getmMonth())) ||
+                    (upcomings.get(i-1).getmYear() != upcomings.get(i).getmYear())) {
+                upcomings.add(i, new Upcoming(upcomings.get(i).getmMonth(), upcomings.get(i).getmYear()));
+                upcomingType.add(TYPE_BANNER);
+                notifyDataSetChanged();
+            } else {
+                upcomingType.add(TYPE_ENTRY);
+            }
+        }
+
+
+
+    }
+    /*private void updateStartIndices(){
         startIndices = new ArrayList<>();
         if (upcomings.size() == 0)return;
         startIndices.add(new Pair<Integer, String>(0, upcomings.get(0).getmMonth()));
@@ -99,22 +125,23 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
             if(!upcomings.get(i).getmMonth().equals(upcomings.get(i+1).getmMonth())){
                 startIndices.add(
                         new Pair<>(i + 1 + startIndices.size(), upcomings.get(i+1).getmMonth())
-                        );
+                );
                 notifyDataSetChanged();
             }
         }
-    }
+    }*/
 
     @Override
     public int getItemViewType(int position) {
 
-        for (int i = 0;i<startIndices.size();++i){
+        return upcomingType.get(position);
+        /*for (int i = 0;i<startIndices.size();++i){
             if(startIndices.get(i).first.equals(position))
                 return TYPE_BANNER;
         }
         //if(startIndices.contains(position))return TYPE_BANNER;
         return TYPE_ENTRY;
-        //return super.getItemViewType(position);
+        //return super.getItemViewType(position);*/
     }
 
     @Override
@@ -138,7 +165,8 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
 
     @Override
     public int getItemCount() {
-        return upcomings.size() + startIndices.size();
+        return upcomings.size();
+//        return upcomings.size() + startIndices.size();
     }
 
     public ArrayList<Upcoming> getUpcomings(){
@@ -152,10 +180,15 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
         int month = cal.get(Calendar.MONTH);
         while (month <= 11) {
             String monthName = (new DateFormatSymbols().getMonths())[month];
-            for (int i = 0;i<startIndices.size();++i){
+            for (int i = 0;i < upcomings.size();i++) {
+                if(upcomingType.get(i)==TYPE_BANNER) {
+                    if(upcomings.get(i).getmMonth().equals(monthName)) return i;
+                }
+            }
+            /*for (int i = 0;i<startIndices.size();++i){
                 Pair<Integer, String> curPair = startIndices.get(i);
                 if(curPair.second.equals(monthName)) return curPair.first;
-            }
+            }*/
             month++;
         }
         return 0;
@@ -177,13 +210,13 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
 
     }
 
-    public int getStartIndexOfMonth(String month){
+    /*public int getStartIndexOfMonth(String month){
         for (int i = 0; i<startIndices.size();++i){
             Pair<Integer,String> curPair = startIndices.get(i);
             if (curPair.second.equals(month))return curPair.first;
         }
         return -1;
-    }
+    }*/
 
 
     public class UpcomingViewHolder extends RecyclerView.ViewHolder {
@@ -209,9 +242,9 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
             }
         }
 
-        public void bindView(final int pos){
+        public void bindView(final int position){
             if (viewType == TYPE_ENTRY) {
-                int position = viewPosToArrayListPos(pos);
+                //int position = viewPosToArrayListPos(pos);
                 final String venue = upcomings.get(position).getmVenue();
                 final String time = upcomings.get(position).getmTime();
                 final int day = upcomings.get(position).getmDate();
@@ -220,6 +253,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
                 //tvDate.setText(new StringBuilder().append(month).append(" ").append(day).append("\n").append(year).toString());
                 tvDayNumber.setText(String.valueOf(upcomings.get(position).getmDate()));
 
+                Log.d("DAY", "bindView: " + position + upcomings.get(position).getmDay());
                 tvWeekDay.setText(
                         weekDaysShort.get(weekDaysLong.indexOf(upcomings.get(position).getmDay()))
                 );
@@ -289,11 +323,11 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
 
             } else if (viewType == TYPE_BANNER) {
 
-                tvBannerHeading.setText(getMonthTitleatPos(pos));
+                tvBannerHeading.setText(upcomings.get(position).getmMonth() + " " + upcomings.get(position).getmYear());
             }
         }
 
-        public String getMonthTitleatPos(int pos){
+        /*public String getMonthTitleatPos(int pos){
             Pair<Integer, String> curPair = null;
             for (int i = 0;i<startIndices.size();++i){
                 curPair = startIndices.get(i);
@@ -302,7 +336,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
                 }
             }
             return curPair.second;
-        }
+        }*/
 
         int getViewType(){
             return viewType;

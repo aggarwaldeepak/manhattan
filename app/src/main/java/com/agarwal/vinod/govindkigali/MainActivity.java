@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
         mainFragment = new MainFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fg, mainFragment)
+                .replace(R.id.fg, new UpcomingFragment())
                 .commit();
 
         //setting panel to hidden when activity launches
