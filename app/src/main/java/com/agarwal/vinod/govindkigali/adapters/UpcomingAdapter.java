@@ -53,8 +53,10 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
     //ArrayList<Pair<Integer, String> > startIndices;
     public UpcomingAdapter(Context context, ArrayList<Upcoming> upcomings) {
         this.context = context;
-        this.upcomings = upcomings;
-        if(this.upcomings == null){
+        if (upcomings != null) {
+            this.upcomings = new ArrayList<>(upcomings);
+        }
+        else {
             this.upcomings = new ArrayList<>();
         }
         updateUpcomingTypes();
@@ -88,7 +90,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
     }*/
 
     public void update(@NonNull ArrayList<Upcoming> upcomings){
-        this.upcomings = upcomings;
+        this.upcomings = new ArrayList<>(upcomings);
         updateUpcomingTypes();
         notifyDataSetChanged();
 

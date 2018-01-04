@@ -86,12 +86,12 @@ public class UpcomingFragment extends Fragment {
                     feededUpcomings = response.body();
                     adapter.update(feededUpcomings);
                     //rvUpcoming.smoothScrollToPosition(adapter.getNextEventPos());
-//                    rvUpcoming.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            rvUpcoming.smoothScrollToPosition(adapter.getNextEventPos());
-//                        }
-//                    });
+                    rvUpcoming.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            rvUpcoming.smoothScrollToPosition(adapter.getNextEventPos());
+                        }
+                    });
                     progressBar.setVisibility(View.GONE);
                 }
 
