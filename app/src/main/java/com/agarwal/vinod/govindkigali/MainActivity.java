@@ -70,7 +70,8 @@ import static com.agarwal.vinod.govindkigali.playerUtils.PlayerService.NOTIFY_PR
 
 public class MainActivity extends AppCompatActivity implements PlayerCommunication {
 
-
+    public static String FRAGMENT_TO_LAUNCH = "FRAGMENT_TO_LAUNCH";
+    public static String SETTING_FRAGMENT = "SETTING_FRAGMENT";
     Toolbar toolbar;
     Spinner spinnerToolbar;
     View includeHead, includePlayer;
@@ -330,8 +331,15 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         BottomNavigationViewHelper.disableShiftMode(navigation);
 
-        //navigation.setSelectedItemId(R.id.navigation_upcoming); //TODO: REMOVE
+        launchFragmentFromBundle();
 
+    }
+
+    private void launchFragmentFromBundle() {
+        String action = getIntent().getExtras().getString(FRAGMENT_TO_LAUNCH);
+        if(action!=null && action.equals(SETTING_FRAGMENT)) {
+            navigation.setSelectedItemId(R.id.navigation_settings);
+        }
     }
 
     private void initiateNightMode() {

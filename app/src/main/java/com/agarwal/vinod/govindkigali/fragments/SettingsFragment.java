@@ -44,6 +44,8 @@ import java.util.Locale;
 
 public class SettingsFragment extends Fragment {
 
+
+
     DatabaseReference feedRefrence = FirebaseDatabase.getInstance().getReference("feed");
     public static final String TAG = "SETT";
 
@@ -84,11 +86,7 @@ public class SettingsFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 prefManager.setNightModeEnabled(isChecked);
-                Intent i = getActivity().getBaseContext().getPackageManager()
-                        .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
-                getActivity().recreate();
+                restartSettingsFrag();
 
             }
         });
@@ -236,15 +234,9 @@ public class SettingsFragment extends Fragment {
                                 getActivity().getBaseContext().getResources().getDisplayMetrics());
                         prefManager.setLanguage("en");
                         dialog.dismiss();
-                        ((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
+                        //((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
+                        restartSettingsFrag();
 
-                        getActivity().recreate();
-                        Intent i = getActivity().getBaseContext().getPackageManager()
-                                .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
-                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(i);
-                        getActivity().overridePendingTransition(0, 0);
                         break;
                     }
                     case 1: {
@@ -259,14 +251,8 @@ public class SettingsFragment extends Fragment {
                                 getActivity().getBaseContext().getResources().getDisplayMetrics());
                         prefManager.setLanguage("hi");
                         dialog.dismiss();
-                        ((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
-                        Intent i = getActivity().getBaseContext().getPackageManager()
-                                .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
-                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-
-                        startActivity(i);
-                        getActivity().overridePendingTransition(0, 0);
+                       //((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
+                        restartSettingsFrag();
                         break;
 
                     }
@@ -317,6 +303,17 @@ public class SettingsFragment extends Fragment {
         });*/
 
         builder.create().show();
+    }
+
+    void restartSettingsFrag(){
+
+        Intent i = getActivity().getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        i.putExtra(MainActivity.FRAGMENT_TO_LAUNCH, MainActivity.SETTING_FRAGMENT);
+        startActivity(i);
+        getActivity().overridePendingTransition(0, 0);
     }
 }
 
