@@ -3,96 +3,95 @@ package com.agarwal.vinod.govindkigali.activities;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.agarwal.vinod.govindkigali.R;
-import com.agarwal.vinod.govindkigali.utils.PrefManager;
-import com.google.android.gms.common.SignInButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.facebook.accountkit.AccountKit;
+import com.facebook.accountkit.AccountKitLoginResult;
+import com.facebook.accountkit.ui.AccountKitActivity;
+import com.facebook.accountkit.ui.AccountKitConfiguration;
+import com.facebook.accountkit.ui.LoginType;
 
-public class SignInScreen extends AppCompatActivity implements View.OnClickListener {
+
+//https://code.tutsplus.com/tutorials/quick-tip-passwordless-authentication-with-account-kit--cms-28033
+//http://www.vishweshshetty.com/facebook-account-kit-sms-authentication-android-tutorial-demo-sample/
+
+public class SignInScreen extends AppCompatActivity {
 
 
-    private com.google.android.gms.common.SignInButton signInButton;
     Button mobile_registration_btn, logOut_btn, signOut_btn;
-    FirebaseAuth auth;
     String TAG = "SignInScreen";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AccountKit.initialize(this);
         setContentView(R.layout.activity_sign_in_screen);
 
-        signInButton = (com.google.android.gms.common.SignInButton) findViewById(R.id.sign_in_button);
-        mobile_registration_btn = findViewById(R.id.MobileRegistration_Button);
-        logOut_btn = findViewById(R.id.log_out_btn);
-        signOut_btn = findViewById(R.id.sign_out_button);
-
-        auth = FirebaseAuth.getInstance();
-
-        signInButton.setOnClickListener(this);
-        mobile_registration_btn.setOnClickListener(this);
-        logOut_btn.setOnClickListener(this);
-        signOut_btn.setOnClickListener(this);
+    }
 
 
-        PrefManager prefManager = new PrefManager(this);
+    public void onSMSLoginFlow(View view) {
+        final Intent intent = new Intent(this, AccountKitActivity.class);
+        AccountKitConfiguration.AccountKitConfigurationBuilder configurationBuilder =
+                new AccountKitConfiguration.AccountKitConfigurationBuilder(
+                        LoginType.PHONE,
+                        AccountKitActivity.ResponseType.CODE); // or .ResponseType.TOKEN
+        // ... perform additional configuration ...
+        intent.putExtra(
+                AccountKitActivity.ACCOUNT_KIT_ACTIVITY_CONFIGURATION,
+                configurationBuilder.build());
+        startActivityForResult(intent, 101);
+    }
 
-        if (prefManager.isLoggedInViaGmail()) {
-            signInButton.setVisibility(View.INVISIBLE);
-            signOut_btn.setVisibility(View.VISIBLE);
-        }
-        if (prefManager.isRegisteredMobileNumber()) {
-            mobile_registration_btn.setVisibility(View.INVISIBLE);
-            logOut_btn.setVisibility(View.VISIBLE);
-        }
 
+    public void onEmailLoginFlow(View view) {
+        final Intent intent = new Intent(this, AccountKitActivity.class);
+        AccountKitConfiguration.AccountKitConfigurationBuilder configurationBuilder =
+                new AccountKitConfiguration.AccountKitConfigurationBuilder(
+                        LoginType.EMAIL,
+                        AccountKitActivity.ResponseType.CODE); // or .ResponseType.TOKEN
+        // ... perform additional configuration ...
+        intent.putExtra(
+                AccountKitActivity.ACCOUNT_KIT_ACTIVITY_CONFIGURATION,
+                configurationBuilder.build());
+        startActivityForResult(intent, 101);
     }
 
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = auth.getCurrentUser();
-        Log.d(TAG, "onStart:currentUser " + currentUser);
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-//        if (currentUser == null){
-//        signInButton.setOnClickListener(this);
-//        mobile_registration_btn.setOnClickListener(this);
-//        finish();
+        if (requestCode == 101) { // confirm that this response matches your request
+            AccountKitLoginResult loginResult = data.getParcelableExtra(AccountKitLoginResult.RESULT_KEY);
+            String toastMessage;
+            if (loginResult.getError() != null) {
+                toastMessage = loginResult.getError().getErrorType().getMessage();
+//                showErrorActivity(loginResult.getError());
+            } else if (loginResult.wasCancelled()) {
+                toastMessage = "Login Cancelled";
+            } else {
+                if (loginResult.getAccessToken() != null) {
+                    toastMessage = "Success:" + loginResult.getAccessToken().getAccountId();
+                } else {
+                    toastMessage = String.format(
+                            "Success:%s...",
+                            loginResult.getAuthorizationCode().substring(0, 10));
+                }
 
-    }
+                // If you have an authorization code, retrieve it from
+                 loginResult.getAuthorizationCode();
+                // and pass it to your server and exchange it for an access token.
 
-    @Override
-    public void onClick(View v) {
+                // Success! Start your next activity...
+//                goToMyLoggedInActivity();
+            }
 
-        int id = v.getId();
-        PrefManager prefManager = new PrefManager(this);
-        if (id == R.id.sign_in_button) {
-            Intent intent = new Intent(SignInScreen.this, AuthenticationScreen.class);
-            startActivity(intent);
-            finish();
-        } else if (id == R.id.MobileRegistration_Button) {
-            Intent intent = new Intent(SignInScreen.this, MobileAuthenticationScreen.class);
-            startActivity(intent);
-            finish();
-        } else if (id == R.id.log_out_btn) {
-//            auth.signOut();
-            prefManager.setMobileNumberRegistered(false);
-            logOut_btn.setVisibility(View.INVISIBLE);
-            mobile_registration_btn.setVisibility(View.VISIBLE);
-        } else if (id == R.id.sign_out_button) {
-            Log.d(TAG, "onClick: "+auth.getCurrentUser().getDisplayName());
-            Toast.makeText(this, auth.getCurrentUser().getDisplayName()+" Successfully Logged Out", Toast.LENGTH_SHORT).show();
-            auth.signOut();
-            prefManager.setLoggedInViagmail(false);
-            signOut_btn.setVisibility(View.INVISIBLE);
-            signInButton.setVisibility(View.VISIBLE);
+            // Surface the result to your user in an appropriate way.
+            Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show();
         }
     }
 }
