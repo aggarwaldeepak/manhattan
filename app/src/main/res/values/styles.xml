@@ -11,13 +11,13 @@
 
     <!-- Light base activity theme -->
     <style name="ActivityTheme.Primary.Base.Light" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="primaryTextColor">@color/primaryTextColor</item>
         <item name="secondaryTextColor">@color/secondaryTextColor</item>
         <item name="backgroundCardColor">#FFFF</item>
         <item name="dividerColor">@color/dividerColor</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
         <item name="textColorPrimary">@color/primaryTextColor</item>
         <item name="textColorSecondary">@color/secondaryTextColor</item>
         <item name="windowActionBar">false</item>
@@ -29,6 +29,7 @@
         <item name="colorPrimary">@color/colorPrimary_night_mode</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_night_mode</item>
         <item name="colorAccent">@color/colorAccent_night_mode</item>
+        <item name="colorButtonNormal">#ffffff</item>
         <item name="backgroundCardColor">#acacac</item>
         <item name="dividerColor">#F2F2F3</item>
         <item name="android:background">#000000</item>
