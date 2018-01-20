@@ -13,7 +13,6 @@ import android.widget.AdapterView;
 /**
  * Used this to differentiate between user selected and prorammatically selected
  * Call {@link Spinner#programmaticallySetPosition} to use this feature.
- * Created by vedant on 6/1/15.
  */
 public class Spinner extends android.support.v7.widget.AppCompatSpinner implements AdapterView.OnItemSelectedListener {
 
