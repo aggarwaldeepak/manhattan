@@ -19,8 +19,8 @@ import android.widget.Toast;
 import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.models.Song;
+import com.agarwal.vinod.govindkigali.playerUtils.PlayBack;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
-import com.agarwal.vinod.govindkigali.playerUtils.PlayerService;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -135,7 +135,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                             activeNetwork.isConnectedOrConnecting();
                     Log.d(TAG, "onClick: " + isConnected);
                     if (isConnected) {
-                        PlayerService.focus = false;
+                        PlayBack.focus = false;
                         playerCommunication.playSong(playList, pos);
                         Log.d(TAG, "onClick: checking loss first :)");
                     } else {
