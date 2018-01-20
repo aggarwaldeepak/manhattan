@@ -67,7 +67,7 @@ public class MainFragment extends Fragment {
                 @Override
                 public void onResponse(Call<ArrayList<Song>> call, Response<ArrayList<Song>> response) {
                     songlist = response.body();
-                    Log.d(TAG, "onResponse: " + songlist.get(0).getTitle());
+//                    Log.d(TAG, "onResponse: " + songlist.get(0).getTitle());
                     adapter.updateTracks(response.body());
                 }
 

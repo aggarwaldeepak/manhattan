@@ -67,7 +67,7 @@ public class PlayBack implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     private Integer curVolume;
     private String CHANNEL_ID = "player_goving_ki_gali";
     public Integer NOTIFICATION_ID = 50891387;
-    private String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
+    private String client_id = "?client_id=DQskPX1pntALRzMp4HSxya3Mc0AO66Ro";
     public static final String TAG = "PS";
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
     DatabaseReference favRef = reference.child("fav");
