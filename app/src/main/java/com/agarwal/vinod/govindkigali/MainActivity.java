@@ -1,5 +1,6 @@
 package com.agarwal.vinod.govindkigali;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
@@ -48,8 +50,9 @@ import com.agarwal.vinod.govindkigali.fragments.SettingsFragment;
 import com.agarwal.vinod.govindkigali.fragments.ThoughtFragment;
 import com.agarwal.vinod.govindkigali.fragments.UpcomingFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
+import com.agarwal.vinod.govindkigali.playerUtils.DownloadMusic;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
-import com.agarwal.vinod.govindkigali.playerUtils.PlayerService;
+import com.agarwal.vinod.govindkigali.playerUtils.PlayBack;
 import com.agarwal.vinod.govindkigali.utils.BottomNavigationViewHelper;
 import com.agarwal.vinod.govindkigali.utils.CustomDialogClass;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
@@ -63,10 +66,10 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import static android.view.View.GONE;
-import static com.agarwal.vinod.govindkigali.playerUtils.PlayerService.NOTIFY_CLOSE;
-import static com.agarwal.vinod.govindkigali.playerUtils.PlayerService.NOTIFY_NEXT;
-import static com.agarwal.vinod.govindkigali.playerUtils.PlayerService.NOTIFY_PLAY;
-import static com.agarwal.vinod.govindkigali.playerUtils.PlayerService.NOTIFY_PREVIOUS;
+import static com.agarwal.vinod.govindkigali.playerUtils.PlayBack.NOTIFY_CLOSE;
+import static com.agarwal.vinod.govindkigali.playerUtils.PlayBack.NOTIFY_NEXT;
+import static com.agarwal.vinod.govindkigali.playerUtils.PlayBack.NOTIFY_PLAY;
+import static com.agarwal.vinod.govindkigali.playerUtils.PlayBack.NOTIFY_PREVIOUS;
 
 public class MainActivity extends AppCompatActivity implements PlayerCommunication {
 
@@ -79,23 +82,11 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     SearchView searchView;
     RelativeLayout rlPlayer;
     FrameLayout flPlayerOptions;
-    public PlayerService service;
-    TerminationService terminateService;
-    public MediaPlayer mediaPlayer;
-    public AudioManager audioManager;
-    public ProgressBar pbLoading, pbProgress;
-    //    private DownloadMusic downloadMusic;
-    public ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivRepeat, ivFav, ivMore, ivDownload;
+    public PlayBack playBack;
+    public ProgressBar pbLoading, pbProgress, pbLoadingMain;
+    public ImageView ivPlayPause, ivUpArrow, ivPlay, ivNext, ivPrevious, ivRepeat, ivFav, ivMore;
     public TextView tvStart, tvEnd, tvName;
     public LinearLayout llProgress, llPlayerOptions;
-    public String client_id = "?client_id=iq13rThQx5jx9KWaOY8oGgg1PUm9vp3J";
-    public Integer value = 0;
-    public Boolean f = false;
-    public Boolean manual = true;
-    boolean mBound = false;
-    public Boolean fav = true;
-    public static Boolean focus = true;
-    static Boolean repeat = false;
     public static Integer fragmentCheck = 0;
     public static final String TAG = "MAIN";
     public RecyclerView recyclerView;
@@ -103,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     BottomNavigationView navigation;
     public DiscreteSeekBar discreteSeekBar;
     MainFragment mainFragment;
-    public ArrayList<Song> playlist = new ArrayList<>();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -165,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         slidingUpPanelLayout = findViewById(R.id.sliding_layout);
         pbLoading = findViewById(R.id.pb_loading);
         pbProgress = findViewById(R.id.pb_progress);
+        pbLoadingMain = findViewById(R.id.pb_loading_main);
         ivPlayPause = findViewById(R.id.iv_play_pause);
         ivPlay = findViewById(R.id.iv_play);
         ivPrevious = findViewById(R.id.iv_previous);
@@ -176,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         tvEnd = findViewById(R.id.tv_end);
         ivMore = findViewById(R.id.iv_more);
         ivFav = findViewById(R.id.iv_fav);
-        ivDownload = findViewById(R.id.iv_download);
         ivRepeat = findViewById(R.id.iv_repeat);
         llPlayerOptions = findViewById(R.id.ll_player_options);
         flPlayerOptions = findViewById(R.id.fl_player_options);
@@ -202,25 +192,47 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
         //setting panel to hidden when activity launches
         slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-
+        final float[] slideOffsetOld = {0};
         //setting panel states
         slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
+                Log.d(TAG, "onPanelSlide: " + slideOffset);
+                if (slideOffsetOld[0] < slideOffset) {
+                    includeHead.setAlpha(slideOffset);
+                    includePlayer.setAlpha(1 - slideOffset);
+                    slideOffsetOld[0] = slideOffset;
+                    Log.d(TAG, "onPanelSlide: ================================");
+                } else {
+                    includeHead.setAlpha(slideOffset);
+                    includePlayer.setAlpha(1 - slideOffset);
+                    slideOffsetOld[0] = slideOffset;
+                    Log.d(TAG, "onPanelSlide: -------------------------------");
+                }
+
+                if (slideOffset <= 0.2f) {
+                    includeHead.setVisibility(GONE);
+                } else {
+                    includeHead.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
             public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
                 if (newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
-                    includePlayer.setVisibility(GONE);
-                    includeHead.setVisibility(View.VISIBLE);
+//                    includePlayer.setVisibility(GONE);
+//                    includeHead.setVisibility(View.VISIBLE);
+                    includePlayer.setAlpha(0f);
+                    includeHead.setAlpha(1f);
                 } else if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
-                    includePlayer.setVisibility(View.VISIBLE);
-                    includeHead.setVisibility(GONE);
-                    if (service.mediaPlayer != null && (service.mediaPlayer.isPlaying() || discreteSeekBar.getProgress() != 0)) {
+//                    includePlayer.setVisibility(View.VISIBLE);
+//                    includeHead.setVisibility(GONE);
+                    includePlayer.setAlpha(1f);
+                    includeHead.setAlpha(0f);
+                    if (playBack.mediaPlayer != null && (playBack.mediaPlayer.isPlaying() || discreteSeekBar.getProgress() != 0)) {
                         ivPlayPause.setVisibility(View.VISIBLE);
                         pbLoading.setVisibility(View.GONE);
-                    } else if (service.mediaPlayer != null) {
+                    } else if (playBack.mediaPlayer != null) {
                         pbLoading.setVisibility(View.VISIBLE);
                         ivPlayPause.setVisibility(View.GONE);
                     }
@@ -229,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         });
 
         //providing adapter to recycler views
-        adapter = new SongImageAdapter(this, this);
+        adapter = new SongImageAdapter(this, this, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recyclerView.setAdapter(adapter);
 
@@ -260,61 +272,110 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         ivFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                service.changeFavourite();
+                playBack.changeFavourite();
             }
         });
 
         //download feature
-        ivDownload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Starting Download", Toast.LENGTH_SHORT).show();
-                service.downloadSong();
-            }
-        });
+//        ivDownload.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(MainActivity.this, "Starting Download", Toast.LENGTH_SHORT).show();
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        File filepath = new File(getDir("music", MODE_PRIVATE) + "/" + service.getId());
+////                        Intent intent = new Intent(MainActivity.this, DownloadMusic.class);
+////                        Log.d(MainActivity.TAG, "downloadSong: Service called");
+////                        intent.putExtra("path", file.getPath());
+////                        intent.putExtra("url", service.getUrl());
+////                        startService(intent);
+//                        Log.d(MainActivity.TAG, "onStartCommand: ");
+//                        Log.d(MainActivity.TAG, "doInBackground: Downloading + playing music");
+////                        String path = intent.getStringExtra("path");
+////                        String urlString = intent.getStringExtra("url");
+//                        String path = filepath.getPath();
+//                        String urlString = service.getUrl();
+//                        try {
+//                            RandomAccessFile file = new RandomAccessFile(path, "rw");
+//                            //TODO: MAKE Activity run even after user kills the app
+//                            String CHANNEL_ID = "download govin ki gali";
+//                            Integer id = 50891350;
+//                            NotificationManager mNotifyManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+//                            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext(), CHANNEL_ID);
+//                            notificationBuilder.setContentText("Download in progress")
+//                                    .setSmallIcon(R.mipmap.ic_launcher_round)
+//                                    .setAutoCancel(true);
+//                            URL url = new URL(urlString);
+//                            URLConnection conexion = url.openConnection();
+//                            conexion.connect();
+//                            long lenghtOfFile = conexion.getContentLength();
+//                            Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
+//                            InputStream input = new BufferedInputStream(url.openStream());
+//                            byte data[] = new byte[1024];
+//                            long total = 0, count = 0;
+//                            while ((count = input.read(data)) != -1) {
+//                                total += count;
+//                                notificationBuilder.setProgress(100, (int)((total*100)/lenghtOfFile), false);
+//                                Log.d(MainActivity.TAG, "doInBackground: " + (int)((total*100)/lenghtOfFile));
+//                                // Displays the progress bar for the first time.
+//                                mNotifyManager.notify(id, notificationBuilder.build());
+//                                file.write(data);
+//                                Log.d("ANDRO_ASYNC", "doInBackground: " + total);
+//                            }
+//                            file.close();
+//                            mNotifyManager.cancel(id);
+//                            Log.d(MainActivity.TAG, "doInBackground: Download complete");
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }).start();
+//            }
+//        });
 
         //now play pause button set-up
         ivPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                service.manual = true;
-                service.playPause();
+                playBack.manual = true;
+                playBack.playPause();
             }
         });
 
         ivPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                service.manual = true;
-                service.playPause();
+                playBack.manual = true;
+                playBack.playPause();
             }
         });
 
         ivPrevious.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                service.playPrevious();
+                playBack.playPrevious();
             }
         });
 
         ivNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                service.playNext();
+                playBack.playNext();
             }
         });
 
         ivRepeat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                service.updatingRepeat();
+                playBack.updatingRepeat();
             }
         });
 
         discreteSeekBar.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
             @Override
             public void onProgressChanged(DiscreteSeekBar seekBar, final int i, boolean b) {
-                service.progressChanged(i, b);
+                playBack.progressChanged(i, b);
             }
 
             @Override
@@ -550,7 +611,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     public BroadcastReceiver imageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            service.releaseMediaPlayer();
+            playBack.releaseMediaPlayer();
             Integer pos = intent.getIntExtra("val", 0);
             Log.d(TAG, "onReceive: " + pos);
 //            preparePlayer(pos);
@@ -560,7 +621,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     public BroadcastReceiver terminateReciever = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            service.stopNotificationPlayer();
+            playBack.stopNotificationPlayer();
             Log.d("ClearFromRecentService", "onReceive: Notification Gone");
         }
     };
@@ -577,8 +638,8 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                 Log.d(TAG, "onMenuItemClick: " + item);
                 switch (item.getItemId()) {
                     case R.id.navigation_add_to_playlist:
-                        CustomDialogClass cdd = new CustomDialogClass(MainActivity.this, playlist.get(value), MainActivity.this);
-                        cdd.show();
+//                        CustomDialogClass cdd = new CustomDialogClass(MainActivity.this, playlist.get(value), MainActivity.this);
+//                        cdd.show();
                         Log.d(TAG, "onMenuItemClick: jksahdkjsdhaksjhdaksjdhk");
                         break;
                 }
@@ -660,23 +721,23 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             switch (intent.getAction()) {
                 case NOTIFY_PLAY:
                     Toast.makeText(context, "Play/Pause", Toast.LENGTH_SHORT).show();
-                    manual = true;
-                    service.playPause();
+                    playBack.manual = true;
+                    playBack.playPause();
                     break;
 
                 case NOTIFY_NEXT:
                     Toast.makeText(context, "Next", Toast.LENGTH_SHORT).show();
-                    service.playNext();
+                    playBack.playNext();
                     break;
 
                 case NOTIFY_PREVIOUS:
                     Toast.makeText(context, "Previous", Toast.LENGTH_SHORT).show();
-                    service.playPrevious();
+                    playBack.playPrevious();
                     break;
 
                 case NOTIFY_CLOSE:
                     Toast.makeText(context, "Cancel", Toast.LENGTH_SHORT).show();
-                    service.cancelNotification();
+                    playBack.cancelNotification();
                     break;
             }
             Toast.makeText(context, "Receiver :) ", Toast.LENGTH_SHORT).show();
@@ -685,7 +746,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
     @Override
     public void uploadImage(Bitmap bitmap) {
-        service.imageUpload(bitmap);
+        playBack.imageUpload(bitmap);
     }
 
     /**
@@ -696,51 +757,51 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         Log.d(TAG, "playSong: ---------------------------------------");
 
         //If Service is bounded correctly
-        if (mBound) {
+//        if (mBound) {
             //setting panel to COLLAPSED STATE
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
 
             //Providing playlist to service
-            service.updateplayList(playlist);
+            playBack.updateplayList(playlist);
 
             //Calling service method to start playing song
-            service.createPlayer(value);
+            playBack.createPlayer(value);
 
-        } else {
+//        } else {
 
             //If not bounded correctly
-            Log.d(TAG, "playSong: not binding");
-        }
+//            Log.d(TAG, "playSong: not binding");
+//        }
     }
 
-    /**
-     * Defines callbacks for service binding, passed to bindService()
-     */
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder mService) {
-
-            // We've bound to PlayerService, cast the IBinder and get PlayerService instance
-            PlayerService.PlayerBinder binder = (PlayerService.PlayerBinder) mService;
-            service = binder.getService();
-
-            //Passing activity instance to PlayerService
-            service.getActivtyContext(MainActivity.this);
-            service.setViews();
-
-            //Check value to true
-            mBound = true;
-
-            Log.d(TAG, "onServiceConnected: Binding service");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            mBound = false;
-        }
-    };
+//    /**
+//     * Defines callbacks for service binding, passed to bindService()
+//     *//*
+//    private ServiceConnection mConnection = new ServiceConnection() {
+//
+//        @Override
+//        public void onServiceConnected(ComponentName className,
+//                                       IBinder mService) {
+//
+//            // We've bound to PlayerService, cast the IBinder and get PlayerService instance
+//            PlayerService.PlayerBinder binder = (PlayerService.PlayerBinder) mService;
+//            service = binder.getService();
+//
+//            //Passing activity instance to PlayerService
+//            service.getActivtyContext(MainActivity.this);
+//            service.setViews();
+//
+//            //Check value to true
+//            mBound = true;
+//
+//            Log.d(TAG, "onServiceConnected: Binding service");
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName arg0) {
+//            mBound = false;
+//        }
+//    };*/
 
     /**
      * Creating Intent for service and calling bind service in onStart()
@@ -750,13 +811,16 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         super.onStart();
 
         //Creating Intent for service
-        Intent intent = new Intent(this, PlayerService.class);
+        //Intent intent = new Intent(this, PlayerService.class);
 
         //TODO: If background possible by startService()
         //startService(intent);
 
         //Binding service
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        //bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        playBack = new PlayBack();
+        playBack.getActivtyContext(MainActivity.this);
+        playBack.setViews();
 
         //Termination Service
         startService(new Intent(this, TerminationService.class));
@@ -764,10 +828,10 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
     @Override
     public void onDestroy() {
-        service.releaseMediaPlayer();
-        if (service.mNotificationManager != null) service.mNotificationManager.cancel(service.NOTIFICATION_ID);
-        PlayerService.focus = true;
-        service.repeat = false;
+        playBack.releaseMediaPlayer();
+        if (playBack.mNotificationManager != null) playBack.mNotificationManager.cancel(playBack.NOTIFICATION_ID);
+        PlayBack.focus = true;
+        playBack.repeat = false;
         fragmentCheck = 0;
 //        unregisterReceiver(playerReceiver);
         slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);

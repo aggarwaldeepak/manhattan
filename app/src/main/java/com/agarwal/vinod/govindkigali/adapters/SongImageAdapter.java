@@ -1,25 +1,32 @@
 package com.agarwal.vinod.govindkigali.adapters;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.models.Song;
+import com.agarwal.vinod.govindkigali.playerUtils.PlayBack;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
-import com.agarwal.vinod.govindkigali.playerUtils.PlayerService;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
@@ -33,12 +40,14 @@ public class SongImageAdapter extends RecyclerView.Adapter<SongImageAdapter.Song
 
     Context context;
     ArrayList<Song> playList = new ArrayList<>();
+    Activity activity;
     public static final String TAG = "SIA";
     private PlayerCommunication playerCommunication;
 
-    public SongImageAdapter(Context context, PlayerCommunication playerCommunication) {
+    public SongImageAdapter(Context context, Activity activity, PlayerCommunication playerCommunication) {
         this.context = context;
         this.playerCommunication = playerCommunication;
+        this.activity = activity;
     }
 
     public void updateImage(ArrayList<Song> playList) {
@@ -65,15 +74,21 @@ public class SongImageAdapter extends RecyclerView.Adapter<SongImageAdapter.Song
     class SongImageviewHolder extends RecyclerView.ViewHolder {
 
         ImageView ivImage;
-        TextView tvName;
-
         SongImageviewHolder(View itemView) {
             super(itemView);
             ivImage = itemView.findViewById(R.id.iv_Image);
-            tvName = itemView.findViewById(R.id.tv_song_name);
         }
 
         void bindView(Song song, final Integer pos) {
+
+//            ivImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//
+//            ScreenResolution screenRes = deviceDimensions();
+//            ivImage.setLayoutParams(params);
+//            ivImage.getLayoutParams().height = screenRes.height / 2;
+//            ivImage.getLayoutParams().width = screenRes.width / 2;
+//            params.setMargins(400, 50, 40, 0);
             RequestOptions requestOptions = new RequestOptions();
             requestOptions.placeholder(R.drawable.photo);
             requestOptions.error(R.drawable.photo);
@@ -91,7 +106,7 @@ public class SongImageAdapter extends RecyclerView.Adapter<SongImageAdapter.Song
                             activeNetwork.isConnectedOrConnecting();
                     Log.d(TAG, "onClick: " + isConnected);
                     if (isConnected) {
-                        PlayerService.focus = false;
+                        PlayBack.focus = false;
                         playerCommunication.playSong(playList, pos);
                         Log.d(TAG, "onClick: checking loss first :)");
                     } else {
@@ -100,8 +115,33 @@ public class SongImageAdapter extends RecyclerView.Adapter<SongImageAdapter.Song
                 }
             });
 
-            tvName.setText(song.getTitle());
-
         }
     }
+
+    private class ScreenResolution {
+        int width;
+        int height;
+        private ScreenResolution(int width, int height) {
+            this.width = width;
+            this.height = height;
+        }
+    }
+    @SuppressLint("NewApi")
+    @SuppressWarnings("deprecation")
+    ScreenResolution deviceDimensions() {
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        // getsize() is available from API 13
+        if (currentapiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB_MR2) {
+            Display display = activity.getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            return new ScreenResolution(size.x, size.y);
+        }
+        else {
+            Display display = activity.getWindowManager().getDefaultDisplay();
+            // getWidth() & getHeight() are deprecated
+            return new ScreenResolution(display.getWidth(), display.getHeight());
+        }
+    }
+
 }

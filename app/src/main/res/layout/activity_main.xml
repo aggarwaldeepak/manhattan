@@ -78,51 +78,89 @@
             android:background="#4a4359"
             tools:context="com.agarwal.vinod.govindkigali.MainActivity">
 
-            <include
-                android:id="@+id/include_player"
-                layout="@layout/layout_sm_player" />
-
-            <include
-                android:id="@+id/include_head"
-                layout="@layout/layout_head"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_below="@id/include_player"
-                android:visibility="gone" />
-
             <FrameLayout
+                android:id="@+id/fl_include"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@id/ll_progress"
-                android:layout_below="@id/include_head">
+                android:layout_height="56dp">
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_song_image"
+                <include
+                    android:id="@+id/include_player"
+                    layout="@layout/layout_sm_player" />
+
+                <include
+                    android:id="@+id/include_head"
+                    layout="@layout/layout_head"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    tools:listitem="@layout/layout_image" />
-
-                <ImageView
-                    android:id="@+id/previous"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="start"
-                    android:src="@drawable/ic_navigate_before_grey_500_24dp" />
-
-                <ImageView
-                    android:id="@+id/next"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="end"
-                    android:src="@drawable/ic_navigate_next_grey_500_24dp" />
+                    android:layout_height="56dp"/>
 
             </FrameLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_song_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/layout_image"
+                android:layout_above="@id/ll_player_options"
+                android:layout_below="@id/fl_include"/>
+
+            <LinearLayout
+                android:id="@+id/ll_player_options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_above="@id/ll_progress"
+                android:paddingBottom="40dp">
+
+                <ImageView
+                    android:id="@+id/iv_repeat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_repeat_white_24dp" />
+
+                <ImageView
+                    android:id="@+id/iv_previous"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_skip_previous_grey_500_36dp" />
+
+                <ProgressBar
+                    android:id="@+id/pb_loading_main"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:id="@+id/iv_play"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_play_arrow_white_48dp" />
+
+                <ImageView
+                    android:id="@+id/iv_next"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_skip_next_grey_500_36dp" />
+
+                <ImageView
+                    android:id="@+id/iv_fav"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_favorite_border_white_24dp" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/ll_progress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@id/ll_player_options"
+                android:layout_alignParentBottom="true"
                 android:layout_margin="10dp">
 
                 <TextView
@@ -147,53 +185,6 @@
                     android:text="@string/timeline"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/ll_player_options"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:padding="10dp"
-                android:paddingBottom="40dp">
-
-                <ImageView
-                    android:id="@+id/iv_repeat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_repeat_white_24dp" />
-
-                <ImageView
-                    android:id="@+id/iv_previous"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_skip_previous_grey_500_36dp" />
-
-                <ImageView
-                    android:id="@+id/iv_play"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_play_arrow_white_48dp" />
-
-                <ImageView
-                    android:id="@+id/iv_next"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_skip_next_grey_500_36dp" />
-
-                <ImageView
-                    android:id="@+id/iv_fav"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_favorite_border_white_24dp" />
 
             </LinearLayout>
 

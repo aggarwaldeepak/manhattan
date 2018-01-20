@@ -1,17 +1,19 @@
 package com.agarwal.vinod.govindkigali.playerUtils;
 
-import android.app.Notification;
+/**
+ * Created by darsh on 24/12/17.
+ */
+
 import android.app.NotificationManager;
+import android.app.Service;
 import android.content.Context;
-import android.os.AsyncTask;
+import android.content.Intent;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.RemoteViews;
-import android.widget.Toast;
-
 import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,34 +21,40 @@ import java.io.RandomAccessFile;
 import java.net.URL;
 import java.net.URLConnection;
 
-/**
- * Created by darsh on 24/12/17.
- */
-public class DownloadMusic extends AsyncTask<String, Integer, Void> {
 
-    private Context context;
-    private NotificationCompat.Builder notificationBuilder;
-    public DownloadMusic(Context context){
-        this.context = context;
+/**
+ * Created by darsh on 30/12/17.
+ */
+
+public class DownloadMusic extends Service {
+
+    public DownloadMusic(){
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.d(MainActivity.TAG, "onBind: ");
+        return null;
     }
 
     @Override
-    protected Void doInBackground(String... strings) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(MainActivity.TAG, "onStartCommand: ");
         Log.d(MainActivity.TAG, "doInBackground: Downloading + playing music");
+        String path = intent.getStringExtra("path");
+        String urlString = intent.getStringExtra("url");
         try {
-            RandomAccessFile file = new RandomAccessFile(strings[0], "rw");
-
+            RandomAccessFile file = new RandomAccessFile(path, "rw");
             //TODO: MAKE Activity run even after user kills the app
-
             String CHANNEL_ID = "download govin ki gali";
             Integer id = 50891350;
-            NotificationManager mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID);
+            NotificationManager mNotifyManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext(), CHANNEL_ID);
             notificationBuilder.setContentText("Download in progress")
                     .setSmallIcon(R.mipmap.ic_launcher_round)
                     .setAutoCancel(true);
-
-            URL url = new URL(strings[1]);
+            URL url = new URL(urlString);
             URLConnection conexion = url.openConnection();
             conexion.connect();
             long lenghtOfFile = conexion.getContentLength();
@@ -58,7 +66,6 @@ public class DownloadMusic extends AsyncTask<String, Integer, Void> {
                 total += count;
                 notificationBuilder.setProgress(100, (int)((total*100)/lenghtOfFile), false);
                 Log.d(MainActivity.TAG, "doInBackground: " + (int)((total*100)/lenghtOfFile));
-
                 // Displays the progress bar for the first time.
                 mNotifyManager.notify(id, notificationBuilder.build());
                 file.write(data);
@@ -70,8 +77,16 @@ public class DownloadMusic extends AsyncTask<String, Integer, Void> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return null;
+        return START_NOT_STICKY;
     }
 
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopSelf();
+        Log.d(MainActivity.TAG, "Download Service Destroyed");
+    }
 }
+
