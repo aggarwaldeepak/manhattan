@@ -259,48 +259,7 @@ public class SettingsFragment extends Fragment {
                 }
             }
         });
-        /*// Add the buttons
-        builder.setPositiveButton(R.string.english, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                String languageToLoad = "en"; // your language
-                Locale locale = new Locale(languageToLoad);
-                Locale.setDefault(locale);
-                Configuration config = new Configuration();
-                config.locale = locale;
-                getActivity().getBaseContext().getResources().updateConfiguration(config,
-                        getActivity().getBaseContext().getResources().getDisplayMetrics());
-                prefManager.setLanguage("en");
-                dialog.dismiss();
-                ((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
 
-                getActivity().recreate();
-                Intent i = getActivity().getBaseContext().getPackageManager()
-                        .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
-
-            }
-        });
-        builder.setNegativeButton(R.string.hindi, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
-
-                String languageToLoad = "hi"; // your language
-                Locale locale = new Locale(languageToLoad);
-                Locale.setDefault(locale);
-                Configuration config = new Configuration();
-                config.locale = locale;
-                getActivity().getBaseContext().getResources().updateConfiguration(config,
-                        getActivity().getBaseContext().getResources().getDisplayMetrics());
-                prefManager.setLanguage("hi");
-                dialog.dismiss();
-                ((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
-                Intent i = getActivity().getBaseContext().getPackageManager()
-                        .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
-            }
-        });*/
 
         builder.create().show();
     }

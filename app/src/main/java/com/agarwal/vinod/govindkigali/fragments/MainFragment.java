@@ -56,8 +56,7 @@ public class MainFragment extends Fragment {
         rvPlayList.setItemAnimator(new DefaultItemAnimator() {
             @Override
             public void onAnimationFinished(RecyclerView.ViewHolder viewHolder) {
-                //Log.d(TAG, "onAnimationFinished: Fuck yrself");
-                //Toast.makeText(getContext(), "Fuccckkkkk", Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -67,7 +66,6 @@ public class MainFragment extends Fragment {
                 @Override
                 public void onResponse(Call<ArrayList<Song>> call, Response<ArrayList<Song>> response) {
                     songlist = response.body();
-//                    Log.d(TAG, "onResponse: " + songlist.get(0).getTitle());
                     adapter.updateTracks(response.body());
                 }
 
