@@ -44,6 +44,8 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
     public static ArrayList<String> monthsShort;
     public static final int TYPE_BANNER = 1;
     public static final int TYPE_ENTRY = 2;
+    public static ArrayList<Integer> backgroundImgIds;
+    private int nextImgId = 0;
 
 
     Context context;
@@ -72,6 +74,9 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
         monthsShort = new ArrayList<>(Arrays.asList("Jan" , "Feb" , "March" , "April", "May",
                 "June", "July", "Aug", "Sept", "Oct",
                 "Nov", "Dec"));
+        if(backgroundImgIds == null) {
+            backgroundImgIds = new ArrayList<>(Arrays.asList(R.drawable.bg2,R.drawable.bg3));
+        }
     }
 
     public UpcomingAdapter(Context context, ArrayList<Upcoming> upcomings, Spinner spinner) {
@@ -212,6 +217,11 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
 
     }
 
+    int getNextImgId() {
+        nextImgId = (nextImgId + 1 ) % backgroundImgIds.size();
+        return nextImgId;
+    }
+
     /*public int getStartIndexOfMonth(String month){
         for (int i = 0; i<startIndices.size();++i){
             Pair<Integer,String> curPair = startIndices.get(i);
@@ -223,7 +233,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
 
     public class UpcomingViewHolder extends RecyclerView.ViewHolder {
         TextView tvMonth,tvDayNumber,tvWeekDay,tvVenue,tvTime;
-        ImageView btnOptions;
+        ImageView btnOptions,ivBackground;
         int viewType;
 
         TextView tvBannerHeading;
@@ -241,6 +251,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
                 btnOptions = itemView.findViewById(R.id.btn_options);
             } else if(viewType == TYPE_BANNER) {
                 tvBannerHeading = itemView.findViewById(R.id.tvMonthHead);
+                ivBackground = itemView.findViewById(R.id.ivBackground);
             }
         }
 
@@ -326,6 +337,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
             } else if (viewType == TYPE_BANNER) {
 
                 tvBannerHeading.setText(upcomings.get(position).getmMonth() + " " + upcomings.get(position).getmYear());
+                ivBackground.setImageResource(backgroundImgIds.get(getNextImgId()));
             }
         }
 
