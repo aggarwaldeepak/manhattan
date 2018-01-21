@@ -78,6 +78,7 @@ public class SettingsFragment extends Fragment {
         final PrefManager prefManager = new PrefManager(getContext());
 
         night_mode.setChecked(prefManager.isNightModeEnabled2());
+        language.setChecked(prefManager.isHindiLanguageEnabled());
 
 
         night_mode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -94,7 +95,8 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                prefManager.setHindiLanguage(isChecked);
+                if(isChecked)prefManager.setLanguage(prefManager.HI);
+                else prefManager.setLanguage(prefManager.EN);
                 setLanguage(new PrefManager(getContext()));
             }
         });
@@ -228,26 +230,26 @@ public class SettingsFragment extends Fragment {
 
 
         if (prefManager.isHindiLanguageEnabled()) {
-            String languageToLoad = "hi"; // your language
+            String languageToLoad = prefManager.HI; // your language
             Locale locale = new Locale(languageToLoad);
             Locale.setDefault(locale);
             Configuration config = new Configuration();
             config.locale = locale;
             getActivity().getBaseContext().getResources().updateConfiguration(config,
                     getActivity().getBaseContext().getResources().getDisplayMetrics());
-            prefManager.setLanguage("hi");
+            prefManager.setLanguage(languageToLoad);
             restartSettingsFrag();
 
         } else {
 
-            String languageToLoad = "en"; // your language
+            String languageToLoad = prefManager.EN; // your language
             Locale locale = new Locale(languageToLoad);
             Locale.setDefault(locale);
             Configuration config = new Configuration();
             config.locale = locale;
             getActivity().getBaseContext().getResources().updateConfiguration(config,
                     getActivity().getBaseContext().getResources().getDisplayMetrics());
-            prefManager.setLanguage("en");
+            prefManager.setLanguage(languageToLoad);
             restartSettingsFrag();
 
 

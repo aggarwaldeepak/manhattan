@@ -12,9 +12,11 @@ import java.util.Arrays;
 
 public class PrefManager {
 
+    public final String HI = "hi";
+    public final String EN = "en";
 
-    ArrayList<String> lang = new ArrayList<>(Arrays.asList(
-            "en","hi"
+    public final ArrayList<String> lang = new ArrayList<>(Arrays.asList(
+            EN,HI
     ));
 
     SharedPreferences pref;
@@ -33,7 +35,7 @@ public class PrefManager {
     private static final String NIGHT_MODE = "nightmode";
     private static final String GMAIL_LOGIN  = "gmail_logged_in";
     private static final String MOBILE_REGISTRATION  = "mobile_registration";
-    public static final String HINDI_LANGUAGE = "hindi_language";
+    //public static final String HINDI_LANGUAGE = "hindi_language";
 
     public PrefManager(Context context) {
         this._context = context;
@@ -82,13 +84,13 @@ public class PrefManager {
         editor.commit();
     }
 
-    public void setHindiLanguage(boolean isHindiSelected){
+    /*public void setHindiLanguage(boolean isHindiSelected){
         editor.putBoolean(HINDI_LANGUAGE,isHindiSelected);
         editor.commit();
-    }
+    }*/
 
     public boolean isHindiLanguageEnabled(){
-        return pref.getBoolean(NIGHT_MODE,false);
+        return getUserLanguage().compareTo(HI) == 0;
     }
 
     public boolean isNightModeEnabled2() {
