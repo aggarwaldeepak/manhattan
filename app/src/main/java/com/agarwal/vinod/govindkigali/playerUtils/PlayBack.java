@@ -606,7 +606,13 @@ public class PlayBack implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
 
     void loadImage() {
         activity.adapter.updateImage(playlist);
-        activity.recyclerView.scrollToPosition(value);
+        activity.recyclerView.smoothScrollToPosition(value);
+
+
+    }
+
+    public Song getCurrentSong() {
+        return playlist.get(value);
     }
 
     /**

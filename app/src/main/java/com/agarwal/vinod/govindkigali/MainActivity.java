@@ -599,8 +599,8 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                 Log.d(TAG, "onMenuItemClick: " + item);
                 switch (item.getItemId()) {
                     case R.id.navigation_add_to_playlist:
-//                        CustomDialogClass cdd = new CustomDialogClass(MainActivity.this, playlist.get(value), MainActivity.this);
-//                        cdd.show();
+                        CustomDialogClass cdd = new CustomDialogClass(MainActivity.this, playBack.getCurrentSong(), MainActivity.this);
+                        cdd.show();
                         Log.d(TAG, "onMenuItemClick: jksahdkjsdhaksjhdaksjdhk");
                         break;
                 }

@@ -108,9 +108,9 @@
     <string name="no_directions">Sorry! Can\'t Search for Directions</string>
     <string name="add_to_calender_title">Live Event - Vinod Agarwal</string>
     <string name="create_playlist">Create PlayList</string>
-    <string name="create">CREATE</string>
-    <string name="type_name">Type Name...</string>
-    <string name="cancel">Cancel</string>
+    <string name="create">OK</string>
+    <string name="type_name">Title</string>
+    <string name="cancel">CANCEL</string>
 
 
     <string name="AboutAppDetails_PrivacyPolicy">Lorem ipsum dolor sit amet,
@@ -145,6 +145,7 @@
     <string name="comment">Comment</string>
     <string name="facebook_app_id">238447260026138</string>
     <string name="now_playing">NOW PLAYING</string>
+    <string name="new_playlist">New Playlist</string>
     <!--<string name="default_web_client_id">25611614140-msaag3cb2igdcbt62dsdqgdpdgc3k9qf.apps.googleusercontent.com</string>-->
 
 </resources>

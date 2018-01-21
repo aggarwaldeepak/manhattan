@@ -81,14 +81,12 @@ public class SongImageAdapter extends RecyclerView.Adapter<SongImageAdapter.Song
 
         void bindView(Song song, final Integer pos) {
 
-//            ivImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            ivImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
 //            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 //
-//            ScreenResolution screenRes = deviceDimensions();
-//            ivImage.setLayoutParams(params);
-//            ivImage.getLayoutParams().height = screenRes.height / 2;
-//            ivImage.getLayoutParams().width = screenRes.width / 2;
-//            params.setMargins(400, 50, 40, 0);
+            ScreenResolution screenRes = deviceDimensions();
+            ivImage.getLayoutParams().height = screenRes.height / 2;
+            ivImage.getLayoutParams().width = screenRes.width - 250;
             RequestOptions requestOptions = new RequestOptions();
             requestOptions.placeholder(R.drawable.photo);
             requestOptions.error(R.drawable.photo);
