@@ -23,7 +23,7 @@
                 android:layout_height="80dp"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="5dp"
-                android:src="@drawable/default_profile_pic"
+                android:src="@drawable/profile_pic"
                 app:civ_border_color="#FF000000"
                 app:civ_border_width="1dp" />
 
@@ -174,6 +174,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/id_RateApp"
                     android:layout_gravity="center_vertical">
 
                     <ImageView
@@ -185,7 +186,6 @@
                         android:src="@drawable/rate_us" />
 
                     <TextView
-                        android:id="@+id/id_RateApp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -207,6 +207,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/id_ShareApp"
                     android:layout_gravity="center_vertical">
 
                     <ImageView
@@ -218,7 +219,6 @@
                         android:src="@drawable/share" />
 
                     <TextView
-                        android:id="@+id/id_ShareApp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -240,6 +240,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/id_AboutApp"
                     android:layout_gravity="center_vertical">
 
                     <ImageView
@@ -251,7 +252,6 @@
                         android:src="@drawable/about" />
 
                     <TextView
-                        android:id="@+id/id_AboutApp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -273,13 +273,14 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/id_dedicated_to"
                     android:layout_gravity="center_vertical">
 
                     <ImageView
-                        android:id="@+id/id_dedicated_to"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_gravity="center_vertical"
+                        android:id="@+id/id_dedicated_to_img_v"
                         android:layout_marginLeft="10dp"
                         android:src="@drawable/dedicated" />
 
@@ -288,8 +289,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_toRightOf="@+id/id_dedicated_to_img_v"
                         android:layout_marginLeft="10dp"
-                        android:layout_toRightOf="@+id/id_dedicated_to"
                         android:text="@string/settings_dedicated_to"
                         android:textAlignment="center" />
 

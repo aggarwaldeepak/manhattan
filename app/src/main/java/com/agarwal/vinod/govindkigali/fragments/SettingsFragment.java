@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -54,7 +55,8 @@ public class SettingsFragment extends Fragment {
     }
 
     Switch night_mode, language;
-    TextView rate_app, share_app, about_app, feedback;
+    TextView  feedback;
+    RelativeLayout rate_app, share_app, about_app,dedicated;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
