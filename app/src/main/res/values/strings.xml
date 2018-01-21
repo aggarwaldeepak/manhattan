@@ -135,11 +135,13 @@
     <string name="mail_feedback_subject">Feedback on your app</string>
     <string name="mail_feedback_message">Hi,I would like to give you some feedback:</string>
     <string name="settings_change_language">Hindi</string>
-    <string name="settings_feedback">Feedback</string>
+    <string name="settings_feedback">Suggestions,Request Bhajan,Feedback,Lyrics</string>
     <string name="settings_night_mode">Night Mode</string>
     <string name="settings_rate_app">Rate App</string>
     <string name="settings_share_app">Share app</string>
     <string name="settings_about_app">About App</string>
+    <string name="settings_logout">Logout</string>
+    <string name="settings_dedicated_to">Dedicated To</string>
     <string name="play_lists">Play Lists</string>
     <string name="like">Like</string>
     <string name="comment">Comment</string>

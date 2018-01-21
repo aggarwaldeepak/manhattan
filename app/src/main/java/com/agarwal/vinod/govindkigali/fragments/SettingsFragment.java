@@ -101,12 +101,6 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-//        language.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                setLanguageWithDialog(new PrefManager(getContext()));
-//            }
-//        });
 
         feedback.setOnClickListener(new View.OnClickListener() {
             @Override
