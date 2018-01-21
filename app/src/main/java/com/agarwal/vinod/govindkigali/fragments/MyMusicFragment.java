@@ -38,6 +38,11 @@ public class MyMusicFragment extends Fragment {
         tvPlaylists = myMusicFragment.findViewById(R.id.tv_play_list);
         fragmentManager = getActivity().getSupportFragmentManager();
 
+        fragmentManager.beginTransaction()
+                .replace(R.id.containerRecentlyplayed, new RecentsFragment())
+                .addToBackStack("remove")
+                .commit();
+
         tvFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -60,16 +65,13 @@ public class MyMusicFragment extends Fragment {
             }
         });
 
-        tvRecents.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ++MainActivity.fragmentCheck;
-                fragmentManager.beginTransaction()
-                        .replace(R.id.fg, new RecentsFragment())
-                        .addToBackStack("remove")
-                        .commit();
-            }
-        });
+//        tvRecents.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                ++MainActivity.fragmentCheck;
+//
+//            }
+//        });
 
         return myMusicFragment;
     }

@@ -11,11 +11,21 @@
     <TextView
         android:gravity="bottom"
         android:textColor="@android:color/white"
-        android:background="@android:color/transparent"
+        android:background="@drawable/thought_bottom_background_2"
         android:id="@+id/tvMonthHead"
         tools:text="December"
         android:padding="15dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:layout_width="match_parent"
         android:layout_height="140dp" />
+    <!--<TextView
+        android:gravity="bottom"
+        android:textColor="@android:color/white"
+        android:background="@android:color/transparent"
+        android:id="@+id/tvMonthHead"
+        tools:text="December"
+        android:padding="15dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="match_parent"
+        android:layout_height="140dp" />-->
 </FrameLayout>
