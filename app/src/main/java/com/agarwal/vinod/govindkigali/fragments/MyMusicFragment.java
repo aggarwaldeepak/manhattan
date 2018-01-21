@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
+import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.fragments.mymusic.FavFragment;
 import com.agarwal.vinod.govindkigali.fragments.mymusic.PlayListsFragment;
 import com.agarwal.vinod.govindkigali.fragments.mymusic.RecentsFragment;
@@ -20,7 +21,7 @@ import com.agarwal.vinod.govindkigali.fragments.mymusic.RecentsFragment;
  */
 public class MyMusicFragment extends Fragment {
 
-    TextView tvRecents, tvFav, tvPlaylists;
+    TextView tvRecents, tvFav, tvPlaylists,tvSeeAll;
     FragmentManager fragmentManager;
     public MyMusicFragment() {
         // Required empty public constructor
@@ -36,10 +37,11 @@ public class MyMusicFragment extends Fragment {
         tvFav = myMusicFragment.findViewById(R.id.tv_fav);
         tvRecents = myMusicFragment.findViewById(R.id.tv_recently_played);
         tvPlaylists = myMusicFragment.findViewById(R.id.tv_play_list);
+        tvSeeAll = myMusicFragment.findViewById(R.id.tvSeeAllRecentlyPlayed);
         fragmentManager = getActivity().getSupportFragmentManager();
 
         fragmentManager.beginTransaction()
-                .replace(R.id.containerRecentlyplayed, new RecentsFragment())
+                .replace(R.id.containerRecentlyplayed, getNewRecentsFragment(SongAdapter.HORIZONTAL))
                 .addToBackStack("remove")
                 .commit();
 
@@ -65,15 +67,26 @@ public class MyMusicFragment extends Fragment {
             }
         });
 
-//        tvRecents.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                ++MainActivity.fragmentCheck;
-//
-//            }
-//        });
+        tvSeeAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ++MainActivity.fragmentCheck;
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fg, new RecentsFragment())
+                        .addToBackStack("remove")
+                        .commit();
+            }
+        });
 
         return myMusicFragment;
+    }
+
+    RecentsFragment getNewRecentsFragment(int orientation) {
+        RecentsFragment recentsFragment = new RecentsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(SongAdapter.SHAPE,orientation);
+        recentsFragment.setArguments(bundle);
+        return recentsFragment;
     }
 
 }

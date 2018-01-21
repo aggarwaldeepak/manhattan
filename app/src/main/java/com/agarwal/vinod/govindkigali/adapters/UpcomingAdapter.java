@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -235,7 +236,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
         TextView tvMonth,tvDayNumber,tvWeekDay,tvVenue,tvTime;
         ImageView btnOptions,ivBackground;
         int viewType;
-
+        LinearLayout llRootLayout;
         TextView tvBannerHeading;
 
 
@@ -249,6 +250,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
                 tvVenue = itemView.findViewById(R.id.tv_venue);
                 tvTime = itemView.findViewById(R.id.tv_time);
                 btnOptions = itemView.findViewById(R.id.btn_options);
+                llRootLayout = itemView.findViewById(R.id.llRootLayout);
             } else if(viewType == TYPE_BANNER) {
                 tvBannerHeading = itemView.findViewById(R.id.tvMonthHead);
                 ivBackground = itemView.findViewById(R.id.ivBackground);
@@ -330,6 +332,12 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
                             }
                         });
                         popup.show();
+                    }
+                });
+                llRootLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        btnOptions.performClick();
                     }
                 });
 

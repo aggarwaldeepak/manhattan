@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:padding="10dp"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/llRootLayout">
 
     <LinearLayout
         android:gravity="center"

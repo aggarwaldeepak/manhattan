@@ -62,9 +62,16 @@ public class RecentsFragment extends Fragment {
                 Log.d(TAG, "onCancelled: :(   :(   :(");
             }
         });
-
-        rvRecents.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new SongAdapter(getContext(), new ArrayList<Song>(), (PlayerCommunication) getActivity());
+        int orient = SongAdapter.VERTICAL;
+        if(getArguments() != null) {
+            orient = getArguments().getInt(SongAdapter.SHAPE,SongAdapter.VERTICAL);
+        }
+        if (orient == SongAdapter.HORIZONTAL) {
+            rvRecents.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+        } else {
+            rvRecents.setLayoutManager(new LinearLayoutManager(getContext()));
+        }
+        adapter = new SongAdapter(getContext(), new ArrayList<Song>(), (PlayerCommunication) getActivity(),orient);
         rvRecents.setAdapter(adapter);
 
         return recentsFragment;

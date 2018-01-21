@@ -34,12 +34,25 @@ import java.util.ArrayList;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
 
+    public static final int VERTICAL = 0;
+    public static final int HORIZONTAL = 1;
+    public static final String SHAPE = "SHAPE";
     private ArrayList<Song> playList = new ArrayList<>();
     public ArrayList<Song> playListOnDisplay = new ArrayList<>();
     private String currentQuery;
     private Context context;
     private PlayerCommunication playerCommunication;
     public static final String TAG = "SA";
+    int ORIENTATION;
+
+    public SongAdapter(Context context, ArrayList<Song> playList, PlayerCommunication playerCommunication, int orientation) {
+        this.context = context;
+        this.playList = playList;
+        playListOnDisplay.addAll(playList);
+        currentQuery = "";
+        this.playerCommunication = playerCommunication;
+        this.ORIENTATION = orientation;
+    }
 
     public SongAdapter(Context context, ArrayList<Song> playList, PlayerCommunication playerCommunication) {
         this.context = context;
@@ -47,6 +60,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         playListOnDisplay.addAll(playList);
         currentQuery = "";
         this.playerCommunication = playerCommunication;
+        this.ORIENTATION = VERTICAL;
     }
 
     public void updateTracks(ArrayList<Song> playList) {
@@ -60,7 +74,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     public SongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         assert inflater != null;
-        return new SongViewHolder(inflater.inflate(R.layout.layout_song, parent, false));
+        if(ORIENTATION == HORIZONTAL){
+            return new SongViewHolder(inflater.inflate(R.layout.layout_song_horizontal, parent, false));
+        } else {
+            return new SongViewHolder(inflater.inflate(R.layout.layout_song, parent, false));
+        }
     }
 
     @Override
