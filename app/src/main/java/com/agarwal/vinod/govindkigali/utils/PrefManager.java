@@ -33,6 +33,7 @@ public class PrefManager {
     private static final String NIGHT_MODE = "nightmode";
     private static final String GMAIL_LOGIN  = "gmail_logged_in";
     private static final String MOBILE_REGISTRATION  = "mobile_registration";
+    public static final String HINDI_LANGUAGE = "hindi_language";
 
     public PrefManager(Context context) {
         this._context = context;
@@ -65,6 +66,7 @@ public class PrefManager {
         editor.putInt(USER_LANGUAGE, lang.indexOf(name));
         editor.commit();
     }
+
     public void setLanguage(int id){
         editor.putInt(USER_LANGUAGE, id);
         editor.commit();
@@ -78,6 +80,15 @@ public class PrefManager {
     public void setNightModeEnabled(boolean isNightMode) {
         editor.putBoolean(NIGHT_MODE, isNightMode);
         editor.commit();
+    }
+
+    public void setHindiLanguage(boolean isHindiSelected){
+        editor.putBoolean(HINDI_LANGUAGE,isHindiSelected);
+        editor.commit();
+    }
+
+    public boolean isHindiLanguageEnabled(){
+        return pref.getBoolean(NIGHT_MODE,false);
     }
 
     public boolean isNightModeEnabled2() {

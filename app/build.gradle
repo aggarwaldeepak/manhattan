@@ -54,6 +54,7 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     compile 'com.facebook.android:account-kit-sdk:4.+'
     implementation 'com.github.alxrm:audiowave-progressbar:0.9'
+    compile 'de.hdodenhof:circleimageview:2.2.0'
 }
 
 

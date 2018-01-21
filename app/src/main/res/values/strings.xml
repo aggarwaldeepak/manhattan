@@ -134,7 +134,7 @@
     <string name="mail_feedback_email">feedback@example.com</string>
     <string name="mail_feedback_subject">Feedback on your app</string>
     <string name="mail_feedback_message">Hi,I would like to give you some feedback:</string>
-    <string name="settings_change_language">Change Language</string>
+    <string name="settings_change_language">Hindi</string>
     <string name="settings_feedback">Feedback</string>
     <string name="settings_night_mode">Night Mode</string>
     <string name="settings_rate_app">Rate App</string>

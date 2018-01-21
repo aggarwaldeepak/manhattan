@@ -45,7 +45,6 @@ import java.util.Locale;
 public class SettingsFragment extends Fragment {
 
 
-
     DatabaseReference feedRefrence = FirebaseDatabase.getInstance().getReference("feed");
     public static final String TAG = "SETT";
 
@@ -54,8 +53,8 @@ public class SettingsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    Switch night_mode;
-    TextView rate_app, share_app, about_app, feedback, language;
+    Switch night_mode, language;
+    TextView rate_app, share_app, about_app, feedback;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
@@ -90,6 +89,22 @@ public class SettingsFragment extends Fragment {
 
             }
         });
+
+        language.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                prefManager.setHindiLanguage(isChecked);
+                setLanguage(new PrefManager(getContext()));
+            }
+        });
+
+//        language.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                setLanguageWithDialog(new PrefManager(getContext()));
+//            }
+//        });
 
         feedback.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,14 +212,8 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-        language.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setLanguageWithDialog(new PrefManager(getContext()));
-            }
-        });
 
-        ((TextView)settingsFragment.findViewById(R.id.id_signin)).setOnClickListener(new View.OnClickListener() {
+        ((TextView) settingsFragment.findViewById(R.id.id_signin)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getContext(), SignInScreen.class));
@@ -215,59 +224,41 @@ public class SettingsFragment extends Fragment {
 
     }
 
-    public void setLanguageWithDialog(final PrefManager prefManager) {
-        final CharSequence[] items = {getString(R.string.english), getString(R.string.hindi)};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setCancelable(true);
-        builder.setTitle(R.string.languages);
-        builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0: {
-                        String languageToLoad = "en"; // your language
-                        Locale locale = new Locale(languageToLoad);
-                        Locale.setDefault(locale);
-                        Configuration config = new Configuration();
-                        config.locale = locale;
-                        getActivity().getBaseContext().getResources().updateConfiguration(config,
-                                getActivity().getBaseContext().getResources().getDisplayMetrics());
-                        prefManager.setLanguage("en");
-                        dialog.dismiss();
-                        //((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
-                        restartSettingsFrag();
-
-                        break;
-                    }
-                    case 1: {
-                        // User cancelled the dialog
-
-                        String languageToLoad = "hi"; // your language
-                        Locale locale = new Locale(languageToLoad);
-                        Locale.setDefault(locale);
-                        Configuration config = new Configuration();
-                        config.locale = locale;
-                        getActivity().getBaseContext().getResources().updateConfiguration(config,
-                                getActivity().getBaseContext().getResources().getDisplayMetrics());
-                        prefManager.setLanguage("hi");
-                        dialog.dismiss();
-                       //((BottomNavigationView) getActivity().findViewById(R.id.navigation)).setSelectedItemId(R.id.navigation_play);
-                        restartSettingsFrag();
-                        break;
-
-                    }
-                }
-            }
-        });
+    public void setLanguage(PrefManager prefManager) {
 
 
-        builder.create().show();
+        if (prefManager.isHindiLanguageEnabled()) {
+            String languageToLoad = "hi"; // your language
+            Locale locale = new Locale(languageToLoad);
+            Locale.setDefault(locale);
+            Configuration config = new Configuration();
+            config.locale = locale;
+            getActivity().getBaseContext().getResources().updateConfiguration(config,
+                    getActivity().getBaseContext().getResources().getDisplayMetrics());
+            prefManager.setLanguage("hi");
+            restartSettingsFrag();
+
+        } else {
+
+            String languageToLoad = "en"; // your language
+            Locale locale = new Locale(languageToLoad);
+            Locale.setDefault(locale);
+            Configuration config = new Configuration();
+            config.locale = locale;
+            getActivity().getBaseContext().getResources().updateConfiguration(config,
+                    getActivity().getBaseContext().getResources().getDisplayMetrics());
+            prefManager.setLanguage("en");
+            restartSettingsFrag();
+
+
+        }
     }
 
-    void restartSettingsFrag(){
+
+    void restartSettingsFrag() {
 
         Intent i = getActivity().getBaseContext().getPackageManager()
-                .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
+                .getLaunchIntentForPackage(getActivity().getBaseContext().getPackageName());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         i.putExtra(MainActivity.FRAGMENT_TO_LAUNCH, MainActivity.SETTING_FRAGMENT);
