@@ -74,19 +74,25 @@ public class SongImageAdapter extends RecyclerView.Adapter<SongImageAdapter.Song
     class SongImageviewHolder extends RecyclerView.ViewHolder {
 
         ImageView ivImage;
+        LinearLayout llImageContainer;
+        TextView tvSongName;
+
         SongImageviewHolder(View itemView) {
             super(itemView);
             ivImage = itemView.findViewById(R.id.iv_Image);
+            llImageContainer = itemView.findViewById(R.id.ll_image_container);
+            tvSongName = itemView.findViewById(R.id.tv_song_name);
         }
 
         void bindView(Song song, final Integer pos) {
 
+            tvSongName.setText(song.getTitle());
             ivImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
 //            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 //
             ScreenResolution screenRes = deviceDimensions();
             ivImage.getLayoutParams().height = screenRes.height / 2;
-            ivImage.getLayoutParams().width = screenRes.width - 250;
+            llImageContainer.getLayoutParams().width = screenRes.width - 250;
             RequestOptions requestOptions = new RequestOptions();
             requestOptions.placeholder(R.drawable.photo);
             requestOptions.error(R.drawable.photo);

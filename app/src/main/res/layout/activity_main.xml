@@ -49,23 +49,10 @@
                 android:layout_height="match_parent"
                 android:paddingTop="?attr/actionBarSize">
 
-                <!--<FrameLayout-->
-                <!--android:id="@+id/fg_main"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent">-->
-
-                <!--<android.support.v7.widget.RecyclerView-->
-                <!--android:id="@+id/rv_playlist"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--tools:listitem="@layout/layout_song"/>-->
-
                 <FrameLayout
                     android:id="@+id/fg"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
-
-                <!--</FrameLayout>-->
 
             </FrameLayout>
 

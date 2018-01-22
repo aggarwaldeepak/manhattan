@@ -73,12 +73,15 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     @Override
     public SongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        if(ORIENTATION == HORIZONTAL){
-            return new SongViewHolder(inflater.inflate(R.layout.layout_song_horizontal, parent, false));
-        } else {
-            return new SongViewHolder(inflater.inflate(R.layout.layout_song, parent, false));
+        SongViewHolder holder = null;
+        if (inflater != null){
+            if (ORIENTATION == HORIZONTAL) {
+                holder =  new SongViewHolder(inflater.inflate(R.layout.layout_song_horizontal, parent, false));
+            } else {
+                holder =  new SongViewHolder(inflater.inflate(R.layout.layout_song, parent, false));
+            }
         }
+        return holder;
     }
 
     @Override

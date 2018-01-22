@@ -450,7 +450,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             public boolean onQueryTextChange(String newText) {
                 Log.d("Yooo", "onQueryTextSubmit: " + newText);
                 if (mainFragment != null) {
-                    mainFragment.setSongAdapterFilter(newText);
+//                    mainFragment.setSongAdapterFilter(newText);
                 }
                 return true;
             }
@@ -462,7 +462,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             @Override
             public boolean onClose() {
                 if (mainFragment != null) {
-                    mainFragment.setSongAdapterFilter("");
+//                    mainFragment.setSongAdapterFilter("");
                 }
                 return true;
             }

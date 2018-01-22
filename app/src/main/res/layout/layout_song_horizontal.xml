@@ -23,9 +23,8 @@
             android:id="@+id/tv_name"
             android:padding="5dp"
             android:maxLines="2"
-            android:layout_weight="1"
             android:layout_width="140dp"
-            android:layout_height="0dp" />
+            android:layout_height="60dp" />
 
     </LinearLayout>
 
