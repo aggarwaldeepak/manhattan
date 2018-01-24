@@ -35,7 +35,7 @@ public class PrefManager {
     private static final String NIGHT_MODE = "nightmode";
     private static final String GMAIL_LOGIN  = "gmail_logged_in";
     private static final String MOBILE_REGISTRATION  = "mobile_registration";
-    //public static final String HINDI_LANGUAGE = "hindi_language";
+    public static final String USER_MOBILE_NUMBER = "user_mobile_number";
 
     public PrefManager(Context context) {
         this._context = context;
@@ -63,6 +63,16 @@ public class PrefManager {
     public String getUserName(){
         return  pref.getString(USER_NAME, null);
     }
+
+    public void setUserMobileNumber(String number){
+        editor.putString(USER_MOBILE_NUMBER,number);
+        editor.commit();
+    }
+
+    public  String getUserMobileNumber(){
+        return pref.getString(USER_MOBILE_NUMBER,null);
+    }
+
 
     public void setLanguage(String name){
         editor.putInt(USER_LANGUAGE, lang.indexOf(name));

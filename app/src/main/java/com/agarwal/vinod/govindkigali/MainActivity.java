@@ -58,6 +58,11 @@ import com.agarwal.vinod.govindkigali.utils.CustomDialogClass;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
 import com.agarwal.vinod.govindkigali.utils.TerminationService;
 import com.agarwal.vinod.govindkigali.utils.Util;
+import com.facebook.accountkit.Account;
+import com.facebook.accountkit.AccountKit;
+import com.facebook.accountkit.AccountKitCallback;
+import com.facebook.accountkit.AccountKitError;
+import com.facebook.accountkit.PhoneNumber;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
@@ -674,6 +679,31 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     protected void onResume() {
         overridePendingTransition(0, 0);
         super.onResume();
+        final PrefManager prefManager = new PrefManager(this);
+
+        AccountKit.getCurrentAccount(new AccountKitCallback<Account>() {
+            @Override
+            public void onSuccess(final Account account) {
+                /*
+                final TextView userId = (TextView) findViewById(R.id.user_id);
+                userId.setText(account.getId());
+                final TextView phoneNumber = (TextView) findViewById(R.id.user_phone);
+                final PhoneNumber number = account.getPhoneNumber();
+                phoneNumber.setText(number == null ? null : number.toString());
+                final TextView email = (TextView) findViewById(R.id.user_email);
+                email.setText(account.getEmail());*/
+
+                Log.d(TAG, "onSuccess: "+account.getEmail());
+                prefManager.setUserName(account.getEmail());
+                prefManager.setUserMobileNumber(account.getPhoneNumber() == null ? null : account.getPhoneNumber().toString());
+
+            }
+
+            @Override
+            public void onError(final AccountKitError error) {
+            }
+        });
+
     }
 
     public BroadcastReceiver playerReceiver = new BroadcastReceiver() {

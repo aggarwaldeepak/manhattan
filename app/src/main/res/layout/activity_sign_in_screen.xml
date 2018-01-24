@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Login By SMS"
-        android:onClick="onSMSLoginFlow"/>
+        android:onClick="onSMSLoginFlow"
+        />
 
     <Button
         android:layout_width="match_parent"

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,9 +26,9 @@ import android.widget.TextView;
 import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.activities.AboutApp;
-import com.agarwal.vinod.govindkigali.activities.AboutAppDetails;
 import com.agarwal.vinod.govindkigali.activities.SignInScreen;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
+import com.facebook.accountkit.AccountKit;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -46,18 +47,14 @@ public class SettingsFragment extends Fragment {
     }
 
     Switch night_mode, language;
-    TextView  feedback;
+    TextView  feedback , login , user_name , user_email , user_phone_number;
     RelativeLayout rate_app, share_app, about_app,dedicated;
+    CardView logout;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-//        final PrefManager prefManager = new PrefManager(getContext());
-//        if (prefManager.getTheme().equals("dark"))
-//            getContext().setTheme(R.style.AppThemeNormalDark);
-//        else if (prefManager.getTheme().equals("black"))
-//            getContext().setTheme(R.style.AppThemeNormalBlack);
+
 
         final View settingsFragment = inflater.inflate(R.layout.fragment_settings, container, false);
 
@@ -68,11 +65,49 @@ public class SettingsFragment extends Fragment {
         share_app = settingsFragment.findViewById(R.id.id_ShareApp);
         about_app = settingsFragment.findViewById(R.id.id_AboutApp);
         dedicated = settingsFragment.findViewById(R.id.id_dedicated_to);
-
+        login = settingsFragment.findViewById(R.id.id_signin);
+        user_name = settingsFragment.findViewById(R.id.user_name);
+        user_email = settingsFragment.findViewById(R.id.user_email);
+        user_phone_number = settingsFragment.findViewById(R.id.user_phone);
+        logout = settingsFragment.findViewById(R.id.id_log_out);
         final PrefManager prefManager = new PrefManager(getContext());
 
         night_mode.setChecked(prefManager.isNightModeEnabled2());
         language.setChecked(prefManager.isHindiLanguageEnabled());
+
+        if(prefManager.getUserName() != null){
+            logout.setVisibility(View.VISIBLE);
+            login.setVisibility(View.INVISIBLE);
+            user_name.setVisibility(View.VISIBLE);
+            user_name.setText(prefManager.getUserName());
+        }
+
+        if(prefManager.getUserMobileNumber()!=null){
+            logout.setVisibility(View.VISIBLE);
+            login.setVisibility(View.INVISIBLE);
+            user_phone_number.setVisibility(View.VISIBLE);
+            user_phone_number.setText(prefManager.getUserMobileNumber());
+        }
+
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), SignInScreen.class));
+            }
+        });
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AccountKit.logOut();
+                getActivity().finish();
+                user_name.setVisibility(View.INVISIBLE);
+                user_phone_number.setVisibility(View.INVISIBLE);
+                login.setVisibility(View.VISIBLE);
+                prefManager.setUserMobileNumber(null);
+                prefManager.setUserName(null);
+            }
+        });
 
 
         night_mode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -209,13 +244,6 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-
-        ((TextView) settingsFragment.findViewById(R.id.id_signin)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getContext(), SignInScreen.class));
-            }
-        });
 
         return settingsFragment;
 

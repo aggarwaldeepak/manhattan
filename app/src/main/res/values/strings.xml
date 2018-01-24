@@ -154,4 +154,18 @@
     <string name="dedicated_screen_phrase1">Goving Ki Gali is the easiest way to dive in
        devotion</string>
     <string name="dedicated_screen_phrase2">with Shri Vinod Agarwal</string>
+
+    <string name="permissions_get_accounts_message">
+        Grant permission to read your email address from your device to pre-fill.
+    </string>
+    <string name="permissions_get_accounts_title">Read Email Address</string>
+    <string name="permissions_read_phone_state_message">
+        Grant permission to read your phone number from your device to pre-fill.
+    </string>
+    <string name="permissions_read_phone_state_title">Read Phone Number</string>
+    <string name="permissions_receive_sms_message">
+        Grant permission to read your SMS code from your device to pre-fill.
+    </string>
+    <string name="permissions_receive_sms_title">Read SMS Code</string>
+>>>>>>> changes in settings screen layout
 </resources>

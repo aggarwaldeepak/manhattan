@@ -12,55 +12,73 @@
         android:orientation="vertical"
         tools:context="com.agarwal.vinod.govindkigali.fragments.SettingsFragment">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:orientation="horizontal">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile_image"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center_vertical"
-                android:layout_margin="5dp"
-                android:src="@drawable/profile_pic"
-                app:civ_border_color="#FF000000"
-                app:civ_border_width="1dp" />
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="100dp"-->
+            <!--android:orientation="horizontal">-->
 
             <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp">
+                android:layout_width="match_parent"
+                android:layout_height="120dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:src="@drawable/profile_pic"
+                    app:civ_border_color="#FF000000"
+                    app:civ_border_width="1dp" />
 
                 <TextView
-                    android:id="@+id/User_Name"
+                    android:id="@+id/id_signin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/profile_image"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="20dp"
+                    android:text="Sign in"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/profile_image"
                     android:text="Himanshu Singhal"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginLeft="10dp"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="visible" />
 
                 <TextView
                     android:id="@+id/user_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/User_Name"
+                    android:layout_below="@+id/user_name"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/profile_image"
                     android:text="himanshu.singhal116@gmail.com"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:visibility="visible" />
 
                 <TextView
-                    android:id="@+id/id_signin"
-                    android:layout_width="match_parent"
+                    android:id="@+id/user_phone"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/email_text_view"
-                    android:layout_gravity="center"
-                    android:layout_toRightOf="@+id/user_email"
-                    android:text="Sign in"
-                    android:textAlignment="center" />
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/profile_image"
+                    android:textSize="14sp"
+                    android:visibility="invisible" />
+
             </RelativeLayout>
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -69,7 +87,7 @@
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/setting_item_height"
+                android:layout_height="@dimen/subscribe_button_height"
                 android:layout_margin="5dp"
                 app:cardBackgroundColor="@color/colorPrimary">
 
@@ -95,8 +113,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/settings_change_language"
-                    android:textSize="18sp" />
+                    android:text="@string/settings_change_language" />
 
                 <Switch
                     android:id="@+id/id_Language"
@@ -119,8 +136,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/settings_night_mode"
-                    android:textSize="18sp" />
+                    android:text="@string/settings_night_mode" />
 
                 <Switch
                     android:id="@+id/id_NightMode"
@@ -172,9 +188,9 @@
                 app:cardElevation="1dp">
 
                 <RelativeLayout
+                    android:id="@+id/id_RateApp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/id_RateApp"
                     android:layout_gravity="center_vertical">
 
                     <ImageView
@@ -205,9 +221,9 @@
                 app:cardElevation="1dp">
 
                 <RelativeLayout
+                    android:id="@+id/id_ShareApp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/id_ShareApp"
                     android:layout_gravity="center_vertical">
 
                     <ImageView
@@ -238,9 +254,9 @@
                 app:cardElevation="1dp">
 
                 <RelativeLayout
+                    android:id="@+id/id_AboutApp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/id_AboutApp"
                     android:layout_gravity="center_vertical">
 
                     <ImageView
@@ -271,16 +287,16 @@
                 app:cardElevation="1dp">
 
                 <RelativeLayout
+                    android:id="@+id/id_dedicated_to"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/id_dedicated_to"
                     android:layout_gravity="center_vertical">
 
                     <ImageView
+                        android:id="@+id/id_dedicated_to_img_v"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_gravity="center_vertical"
-                        android:id="@+id/id_dedicated_to_img_v"
                         android:layout_marginLeft="10dp"
                         android:src="@drawable/dedicated" />
 
@@ -289,8 +305,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_toRightOf="@+id/id_dedicated_to_img_v"
                         android:layout_marginLeft="10dp"
+                        android:layout_toRightOf="@+id/id_dedicated_to_img_v"
                         android:text="@string/settings_dedicated_to"
                         android:textAlignment="center" />
 
@@ -301,10 +317,11 @@
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/setting_item_height"
+                android:visibility="invisible"
+                android:id="@+id/id_log_out"
                 android:layout_margin="1dp">
 
                 <TextView
-                    android:id="@+id/id_log_out"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

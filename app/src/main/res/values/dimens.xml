@@ -4,4 +4,5 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="pager_margin">-60dp</dimen>
     <dimen name="setting_item_height">60dp</dimen>
+    <dimen name="subscribe_button_height">40dp</dimen>
 </resources>
