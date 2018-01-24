@@ -1,24 +1,16 @@
 package com.agarwal.vinod.govindkigali.fragments;
 
-import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StatFs;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatDelegate;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,11 +24,10 @@ import android.widget.TextView;
 
 import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
+import com.agarwal.vinod.govindkigali.activities.AboutApp;
 import com.agarwal.vinod.govindkigali.activities.AboutAppDetails;
-import com.agarwal.vinod.govindkigali.activities.AuthenticationScreen;
 import com.agarwal.vinod.govindkigali.activities.SignInScreen;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
-import com.agarwal.vinod.govindkigali.utils.Util;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -76,6 +67,7 @@ public class SettingsFragment extends Fragment {
         rate_app = settingsFragment.findViewById(R.id.id_RateApp);
         share_app = settingsFragment.findViewById(R.id.id_ShareApp);
         about_app = settingsFragment.findViewById(R.id.id_AboutApp);
+        dedicated = settingsFragment.findViewById(R.id.id_dedicated_to);
 
         final PrefManager prefManager = new PrefManager(getContext());
 
@@ -100,6 +92,13 @@ public class SettingsFragment extends Fragment {
                 if(isChecked)prefManager.setLanguage(prefManager.HI);
                 else prefManager.setLanguage(prefManager.EN);
                 setLanguage(new PrefManager(getContext()));
+            }
+        });
+
+        dedicated.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                startActivity(new Intent(getContext(), AboutApp.class));
             }
         });
 
@@ -206,7 +205,7 @@ public class SettingsFragment extends Fragment {
         about_app.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), AboutAppDetails.class));
+                startActivity(new Intent(getContext(), AboutApp.class));
             }
         });
 
