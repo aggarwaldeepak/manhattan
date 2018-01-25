@@ -1,23 +1,18 @@
 package com.agarwal.vinod.govindkigali;
 
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Bitmap;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
@@ -50,7 +45,6 @@ import com.agarwal.vinod.govindkigali.fragments.SettingsFragment;
 import com.agarwal.vinod.govindkigali.fragments.ThoughtFragment;
 import com.agarwal.vinod.govindkigali.fragments.UpcomingFragment;
 import com.agarwal.vinod.govindkigali.models.Song;
-import com.agarwal.vinod.govindkigali.playerUtils.DownloadMusic;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayBack;
 import com.agarwal.vinod.govindkigali.utils.BottomNavigationViewHelper;
@@ -62,12 +56,16 @@ import com.facebook.accountkit.Account;
 import com.facebook.accountkit.AccountKit;
 import com.facebook.accountkit.AccountKitCallback;
 import com.facebook.accountkit.AccountKitError;
-import com.facebook.accountkit.PhoneNumber;
+import com.lapism.searchview.SearchAdapter;
+import com.lapism.searchview.SearchHistoryTable;
+import com.lapism.searchview.SearchItem;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static android.view.View.GONE;
@@ -75,6 +73,7 @@ import static com.agarwal.vinod.govindkigali.playerUtils.PlayBack.NOTIFY_CLOSE;
 import static com.agarwal.vinod.govindkigali.playerUtils.PlayBack.NOTIFY_NEXT;
 import static com.agarwal.vinod.govindkigali.playerUtils.PlayBack.NOTIFY_PLAY;
 import static com.agarwal.vinod.govindkigali.playerUtils.PlayBack.NOTIFY_PREVIOUS;
+import static com.lapism.searchview.SearchView.Version.MENU_ITEM;
 
 public class MainActivity extends AppCompatActivity implements PlayerCommunication {
 
@@ -84,7 +83,8 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     Spinner spinnerToolbar;
     View includeHead, includePlayer;
     public SlidingUpPanelLayout slidingUpPanelLayout;
-    SearchView searchView;
+    //SearchView searchViewButton;
+    com.lapism.searchview.SearchView searchView;
     RelativeLayout rlPlayer;
     FrameLayout flPlayerOptions;
     public PlayBack playBack;
@@ -182,6 +182,10 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         includeHead = findViewById(R.id.include_head);
         includePlayer = findViewById(R.id.include_player);
         navigation = findViewById(R.id.navigation);
+        searchView = findViewById(R.id.searchView);
+
+        setUpSearch(new ArrayList<Song>());
+
 
         setTitle(
                 Util.getLocalizedResources(MainActivity.this,
@@ -401,6 +405,66 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
     }
 
+    public void setUpSearch(ArrayList<Song> songs) {
+        if(searchView == null)searchView = findViewById(R.id.searchView);
+        if(searchView == null)return;
+        if(songs == null) songs = new ArrayList<>();
+        //final SearchHistoryTable mHistoryDatabase = new SearchHistoryTable(this);
+        searchView.setVersion(MENU_ITEM);
+        searchView.setHint(R.string.search_hint);
+        searchView.setOnQueryTextListener(new com.lapism.searchview.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //mHistoryDatabase.addItem(new SearchItem(query));
+                return false;
+            }
+        });
+        final List<SearchItem> suggestionsList = new ArrayList<>();
+        for (Song i : songs) {
+            suggestionsList.add(new SearchItem(i.getTitle()));
+        }
+
+        SearchAdapter searchAdapter = new SearchAdapter(this, suggestionsList);
+        final ArrayList<Song> finalSongs = songs;
+        searchAdapter.setOnSearchItemClickListener(new SearchAdapter.OnSearchItemClickListener() {
+            @Override
+            public void onSearchItemClick(View view, int position, String text) {
+                //mHistoryDatabase.addItem(new SearchItem(text));
+                Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show();
+                finalSongs.get(position); //TODO
+                ConnectivityManager cm =
+                        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                assert cm != null;
+                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                final boolean isConnected = activeNetwork != null &&
+                        activeNetwork.isConnectedOrConnecting();
+                Log.d(TAG, "onClick: " + isConnected);
+                if (isConnected) {
+                    PlayBack.focus = false;
+                    playSong(finalSongs, getPos(finalSongs, text));
+                    Log.d(TAG, "onClick: checking loss first :)");
+                } else {
+                    Toast.makeText(MainActivity.this, "Internet not available!!", Toast.LENGTH_SHORT).show();
+                }
+                searchView.close(true);
+            }
+
+            int getPos(ArrayList<Song> songs, String text){
+                for (int i = 0; i < songs.size();i++) {
+                    if(songs.get(i).getTitle().compareTo(text) == 0) return i;
+                }
+                return 0;
+            }
+        });
+        searchView.setAdapter(searchAdapter);
+    }
+
     private void launchFragmentFromBundle() {
         String action = getIntent().getExtras().getString(FRAGMENT_TO_LAUNCH);
         if(action!=null && action.equals(SETTING_FRAGMENT)) {
@@ -436,18 +500,25 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        //searchViewButton = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        /*searchViewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchView.open(true);
+            }
+        });*/
+        /*searchViewButton = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchViewButton.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
 
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d("Yooo", "onQueryTextSubmit: " + query);
-                searchView.clearFocus();
-                /*if(mainFragment != null) {
+                searchViewButton.clearFocus();
+                *//*if(mainFragment != null) {
                     mainFragment.setSongAdapterFilter(query);
-                }*/
+                }*//*
                 return true;
             }
 
@@ -463,7 +534,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
         });
 
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+        searchViewButton.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
                 if (mainFragment != null) {
@@ -471,7 +542,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                 }
                 return true;
             }
-        });
+        });*/
         return true;
     }
 
@@ -481,6 +552,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             /*case R.id.action_notifications:
                 break;*/
             case R.id.action_search:
+                searchView.open(true);
                 break;
         }
 
@@ -489,9 +561,9 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
     @Override
     public void onBackPressed() {
-        if (!searchView.isIconified()) {
-            searchView.setIconified(true);
-        } else if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+        /*if (!searchViewButton.isIconified()) {
+            searchViewButton.setIconified(true);
+        } else*/ if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         } else if (fragmentCheck > 0) {
             --fragmentCheck;

@@ -22,9 +22,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+
+
             <android.support.design.widget.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
@@ -40,6 +46,14 @@
                         android:layout_height="wrap_content"
                         />
                 </android.support.v7.widget.Toolbar>
+                    <com.lapism.searchview.SearchView
+                        app:search_theme="play_store"
+                        app:search_version_margins="menu_item"
+                        app:search_shadow="false"
+                        android:id="@+id/searchView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </FrameLayout>
 
             </android.support.design.widget.AppBarLayout>
 

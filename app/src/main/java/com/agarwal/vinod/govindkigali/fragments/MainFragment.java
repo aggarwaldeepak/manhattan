@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.api.SongService;
@@ -26,6 +28,8 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.lapism.searchview.SearchView.Version.MENU_ITEM;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,6 +52,8 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View mainFragment = inflater.inflate(R.layout.fragment_main, container, false);
+
+        //setUpSearch();
 
         rvPlayList1 = mainFragment.findViewById(R.id.rv_playlist_1);
         rvPlayList2 = mainFragment.findViewById(R.id.rv_playlist_2);
@@ -96,6 +102,13 @@ public class MainFragment extends Fragment {
         return mainFragment;
     }
 
+    /*private void setUpSearch() {
+        com.lapism.searchview.SearchView searchView = getActivity().findViewById(R.id.searchView);
+        if(searchView == null)return;
+        searchView.setVersion(MENU_ITEM);
+        searchView.open(true);
+    }*/
+
     private void setTracksToAdapter(ArrayList<Song> body) {
         ArrayList<Song> sankirtan = new ArrayList<>();
         ArrayList<Song> recent = new ArrayList<>();
@@ -121,6 +134,9 @@ public class MainFragment extends Fragment {
         adapter1.updateTracks(sankirtan);
         adapter2.updateTracks(recent);
         adapter3.updateTracks(popular);
+        if(getActivity() instanceof MainActivity) {
+            ((MainActivity)getActivity()).setUpSearch(body);
+        }
     }
 
 //    public void setSongAdapterFilter(String text){

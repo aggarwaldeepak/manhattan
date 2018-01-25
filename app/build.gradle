@@ -55,6 +55,8 @@ dependencies {
     compile 'com.facebook.android:account-kit-sdk:4.30.0'
     implementation 'com.github.alxrm:audiowave-progressbar:0.9'
     compile 'de.hdodenhof:circleimageview:2.2.0'
+    implementation 'com.lapism:searchview:5.0.0-alpha7'
+    implementation 'com.google.android:flexbox:0.3.1'
 }
 
 
