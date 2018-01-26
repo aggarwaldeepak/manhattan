@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">मैनहट्टन</string>
+    <string name="app_name_release">गोविंद की गली</string>
+    <!--<string name="app_name_debug">@string/app_name_release</string>-->
+    <string name="app_name_debug">गोविंद की गली</string>
+    <string name="app_name_debug_firefinch">मैनहट्टन - Debug - Firefinch</string>
     <string name="app_name_2">गोविंद की गली</string>
     <string name="title_play">बजाओ</string>
     <string name="title_thought">विचार</string>

@@ -4,7 +4,10 @@
     <string name="ACCOUNT_KIT_CLIENT_TOKEN">139f4b7b56b1628dca098ef2cbff2f61</string>
     <string name="ak_login_protocol_scheme">ak712603695594982</string>
 
-    <string name="app_name">Manhattan</string>
+    <string name="app_name_release">Govind ki Gali</string>
+    <string name="app_name_debug">Govind ki Gali</string>
+    <!--<string name="app_name_debug">@string/app_name_release</string>-->
+    <string name="app_name_debug_firefinch">Manhattan - Debug - Firefinch</string>
     <string name="app_name_2">Govind ki Gali</string>
     <string name="title_play">Play</string>
     <string name="title_thought">Thought</string>
