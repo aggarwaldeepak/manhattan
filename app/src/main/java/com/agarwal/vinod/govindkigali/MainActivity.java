@@ -154,6 +154,13 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         toolbar.setTitleTextColor(Color.parseColor("#ffffff"));
         setSupportActionBar(toolbar);
 
+        playBack = new PlayBack();
+        playBack.getActivtyContext(MainActivity.this);
+        playBack.setViews();
+
+        //Termination Service
+        startService(new Intent(this, TerminationService.class));
+
         //providing ids to views
         spinnerToolbar = toolbar.findViewById(R.id.spinner_toolbar);
         spinnerToolbar.setVisibility(View.INVISIBLE);
@@ -865,29 +872,6 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 //            mBound = false;
 //        }
 //    };*/
-
-    /**
-     * Creating Intent for service and calling bind service in onStart()
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        //Creating Intent for service
-        //Intent intent = new Intent(this, PlayerService.class);
-
-        //TODO: If background possible by startService()
-        //startService(intent);
-
-        //Binding service
-        //bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        playBack = new PlayBack();
-        playBack.getActivtyContext(MainActivity.this);
-        playBack.setViews();
-
-        //Termination Service
-        startService(new Intent(this, TerminationService.class));
-    }
 
     @Override
     public void onDestroy() {

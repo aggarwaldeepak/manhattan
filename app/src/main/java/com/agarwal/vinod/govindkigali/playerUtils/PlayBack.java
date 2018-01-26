@@ -570,6 +570,7 @@ public class PlayBack implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
             notification.bigContentView = expandedView;
         }
 
+        Log.d("mNotificationManager", "generateNotification: =================================");
         mNotificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
 
         assert mNotificationManager != null;
