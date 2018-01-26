@@ -132,11 +132,13 @@ public class PlayBack implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     }
 
     public String getUrl() {
-        return playlist.get(value).getStream_url() + client_id;
+//        return playlist.get(value).getStream_url() + client_id;
+        return null;
     }
 
     public String getId() {
-        return playlist.get(value).getId();
+//        return playlist.get(value).getId();
+        return null;
     }
 
     /**
@@ -160,10 +162,10 @@ public class PlayBack implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
             focus = true;
 
             //for recent songs
-            recentRef.child(playlist.get(pos).getId()).setValue(playlist.get(pos));
+            recentRef.child(playlist.get(pos).getAlbum().getId()).setValue(playlist.get(pos));
 
             //for fav songs
-            setFav(playlist.get(pos).getId());
+            setFav(playlist.get(pos).getAlbum().getId());
 
             //setting if repeat or not
             setRepeat();
@@ -173,13 +175,14 @@ public class PlayBack implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
 
             //Setting time to player
             String time = calculateTime(playlist.get(pos).getDuration() / 1000);
+//            String time = playlist.get(pos).getDuration();
             activity.tvEnd.setText(time);
             Log.d(MainActivity.TAG, "preparePlayer: " + time);
 
             //Assigning title of sing to textview
-            activity.tvName.setText(playlist.get(pos).getTitle());
-            simpleContentView.setTextViewText(R.id.tv_not_name, playlist.get(pos).getTitle());
-            expandedView.setTextViewText(R.id.tv_not_name, playlist.get(pos).getTitle());
+            activity.tvName.setText(playlist.get(pos).getAlbum().getName_en());
+            simpleContentView.setTextViewText(R.id.tv_not_name, playlist.get(pos).getAlbum().getName_en());
+            expandedView.setTextViewText(R.id.tv_not_name, playlist.get(pos).getAlbum().getName_en());
 
             //Setting max value to seekbar
             activity.discreteSeekBar.setMax(playlist.get(pos).getDuration() / 1000);
@@ -282,7 +285,7 @@ public class PlayBack implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
      * Method to provide data source to mediaplayer
      */
     public void provideDataSource(MediaPlayer mediaPlayer, Integer pos) throws IOException {
-        mediaPlayer.setDataSource(playlist.get(pos).getStream_url() + client_id);
+//        mediaPlayer.setDataSource(playlist.get(pos).getStream_url() + client_id);
         mediaPlayer.prepareAsync();
     }
 
@@ -533,11 +536,11 @@ public class PlayBack implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         if (isConnected) {
             if (!fav) {
                 fav = true;
-                favRef.child(playlist.get(value).getId()).setValue(playlist.get(value));
+//                favRef.child(playlist.get(value).getId()).setValue(playlist.get(value));
                 activity.ivFav.setImageResource(R.drawable.ic_favorite_white_24dp);
             } else {
                 fav = false;
-                favRef.child(playlist.get(value).getId()).removeValue();
+//                favRef.child(playlist.get(value).getId()).removeValue();
                 activity.ivFav.setImageResource(R.drawable.ic_favorite_border_white_24dp);
             }
         } else {

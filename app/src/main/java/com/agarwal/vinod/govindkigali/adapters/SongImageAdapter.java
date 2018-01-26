@@ -86,7 +86,7 @@ public class SongImageAdapter extends RecyclerView.Adapter<SongImageAdapter.Song
 
         void bindView(Song song, final Integer pos) {
 
-            tvSongName.setText(song.getTitle());
+//            tvSongName.setText(song.getTitle());
             ivImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
 //            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 //
@@ -97,7 +97,7 @@ public class SongImageAdapter extends RecyclerView.Adapter<SongImageAdapter.Song
             requestOptions.placeholder(R.drawable.photo);
             requestOptions.error(R.drawable.photo);
             requestOptions.centerCrop();
-            Glide.with(context).load(song.getArtwork_url()).apply(requestOptions).into(ivImage);
+//            Glide.with(context).load(song.getArtwork_url()).apply(requestOptions).into(ivImage);
 
             ivImage.setOnClickListener(new View.OnClickListener() {
                 @Override

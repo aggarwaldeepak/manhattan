@@ -16,7 +16,7 @@ public class SongService {
     public static API getSongApi() {
         if (api == null) {
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("https://api.soundcloud.com/")
+                    .baseUrl("http://52.66.100.48/cdn/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 

@@ -3,78 +3,50 @@ package com.agarwal.vinod.govindkigali.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 /**
  * Created by darsh on 11/12/17.
  */
 
 public class Song {
 
-    @SerializedName("title")
+    @SerializedName("album")
     @Expose
-    private String title;
+    private Album album;
 
-    @SerializedName("id")
+    @SerializedName("song")
     @Expose
-    private String id;
+    private String song;
 
-    @SerializedName("description")
+    @SerializedName("artwork_song")
     @Expose
-    private String description;
-
-    @SerializedName("stream_url")
-    @Expose
-    private String stream_url;
-
-    @SerializedName("download_url")
-    @Expose
-    private String download_url;
-
-    @SerializedName("artwork_url")
-    @Expose
-    private String artwork_url;
+    private String artwork_song;
 
     @SerializedName("duration")
     @Expose
-    private Integer duration;
+    private String duration;
 
-    public Song() {
-    }
-
-    public Song(String title, String id, String description, String stream_url, String download_url, String artwork_url, Integer duration) {
-        this.title = title;
-        this.id = id;
-        this.description = description;
-        this.stream_url = stream_url;
-        this.download_url = download_url;
-        this.artwork_url = artwork_url;
+    public Song(Album album, String song, String artwork_song, String duration) {
+        this.album = album;
+        this.song = song;
+        this.artwork_song = artwork_song;
         this.duration = duration;
     }
 
-    public String getTitle() {
-        return title;
+    public Album getAlbum() {
+        return album;
     }
 
-    public String getId() {
-        return id;
+    public String getSong() {
+        return song;
     }
 
-    public String getDescription() {
-        return description;
+    public String getArtwork_song() {
+        return artwork_song;
     }
 
-    public String getStream_url() {
-        return stream_url;
-    }
-
-    public String getDownload_url() {
-        return download_url;
-    }
-
-    public String getArtwork_url() {
-        return artwork_url;
-    }
-
-    public Integer getDuration() {
+    public String getDuration() {
         return duration;
     }
 }

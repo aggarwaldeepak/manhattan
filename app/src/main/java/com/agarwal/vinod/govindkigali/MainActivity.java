@@ -433,7 +433,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         });
         final List<SearchItem> suggestionsList = new ArrayList<>();
         for (Song i : songs) {
-            suggestionsList.add(new SearchItem(i.getTitle()));
+//            suggestionsList.add(new SearchItem(i.getTitle()));
         }
 
         SearchAdapter searchAdapter = new SearchAdapter(this, suggestionsList);
@@ -464,7 +464,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
             int getPos(ArrayList<Song> songs, String text){
                 for (int i = 0; i < songs.size();i++) {
-                    if(songs.get(i).getTitle().compareTo(text) == 0) return i;
+//                    if(songs.get(i).getTitle().compareTo(text) == 0) return i;
                 }
                 return 0;
             }
@@ -833,7 +833,9 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         //If Service is bounded correctly
 //        if (mBound) {
             //setting panel to COLLAPSED STATE
+        if (slidingUpPanelLayout.getPanelState() != SlidingUpPanelLayout.PanelState.EXPANDED) {
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        }
 
             //Providing playlist to service
             playBack.updateplayList(playlist);

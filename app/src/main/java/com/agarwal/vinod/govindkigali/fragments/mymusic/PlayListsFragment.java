@@ -64,7 +64,7 @@ public class PlayListsFragment extends Fragment {
         });
 
         rvPlayList.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new PopListAdapter(getContext(), new Song(), false, getActivity());
+//        adapter = new PopListAdapter(getContext(), new Song(), false, getActivity());
         rvPlayList.setAdapter(adapter);
 
         return listFragment;

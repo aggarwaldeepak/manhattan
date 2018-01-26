@@ -2,6 +2,7 @@ package com.agarwal.vinod.govindkigali.fragments;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.api.SongService;
+import com.agarwal.vinod.govindkigali.models.Result;
 import com.agarwal.vinod.govindkigali.models.Song;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
 import com.google.firebase.database.DatabaseReference;
@@ -48,7 +50,7 @@ public class MainFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View mainFragment = inflater.inflate(R.layout.fragment_main, container, false);
@@ -83,16 +85,19 @@ public class MainFragment extends Fragment {
 
         if (songlist.size() == 0) {
             Log.d(TAG, "onCreateView: ======== Empty");
-            SongService.getSongApi().getTracks().enqueue(new Callback<ArrayList<Song>>() {
+            SongService.getSongApi().getTracks().enqueue(new Callback<Result>() {
                 @Override
-                public void onResponse(Call<ArrayList<Song>> call, Response<ArrayList<Song>> response) {
-                    songlist = response.body();
-                    setTracksToAdapter(response.body());
+                public void onResponse(Call<Result> call, Response<Result> response) {
+                    Result result = response.body();
+                    songlist = result.getSongs();
+                    Log.d(TAG, "onResponse: COMPLETED");
+                    setTracksToAdapter(songlist);
                 }
 
                 @Override
-                public void onFailure(Call<ArrayList<Song>> call, Throwable t) {
+                public void onFailure(Call<Result> call, Throwable t) {
                     t.printStackTrace();
+                    Log.d(TAG, "onFailure: FAILED");
                 }
             });
         } else {
@@ -110,27 +115,34 @@ public class MainFragment extends Fragment {
     }*/
 
     private void setTracksToAdapter(ArrayList<Song> body) {
+
+        Log.d(TAG, "setTracksToAdapter: " + body);
         ArrayList<Song> sankirtan = new ArrayList<>();
         ArrayList<Song> recent = new ArrayList<>();
         ArrayList<Song> popular = new ArrayList<>();
+//
+//        int j = 0;
+//        int cnt = body.size() / 3;
+//        for (int i = 0; i < 2; ++i) {
+//            while (j < cnt) {
+//                if (i == 0) {
+//                    sankirtan.add(body.get(j));
+//                } else {
+//                    recent.add(body.get(j));
+//                }
+//                ++j;
+//            }
+//            cnt += cnt;
+//        }
+//        while (j < body.size()) {
+//            popular.add(body.get(j));
+//            ++j;
+//        }
 
-        int j = 0;
-        int cnt = body.size() / 3;
-        for (int i = 0; i < 2; ++i) {
-            while (j < cnt) {
-                if (i == 0) {
-                    sankirtan.add(body.get(j));
-                } else {
-                    recent.add(body.get(j));
-                }
-                ++j;
-            }
-            cnt += cnt;
-        }
-        while (j < body.size()) {
-            popular.add(body.get(j));
-            ++j;
-        }
+        sankirtan = body;
+        recent = body;
+        popular = body;
+
         adapter1.updateTracks(sankirtan);
         adapter2.updateTracks(recent);
         adapter3.updateTracks(popular);

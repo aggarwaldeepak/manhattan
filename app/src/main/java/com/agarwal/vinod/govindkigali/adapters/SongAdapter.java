@@ -105,11 +105,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
             text = text.toLowerCase();
             for(Song item: playList){
 //                if(item.getTitle().toLowerCase().contains(text) || item.getDescription().toLowerCase().contains(text)){
-                if(item.getTitle().toLowerCase().contains(text)){
-                    playListOnDisplay.add(item);
+//                if(item.getTitle().toLowerCase().contains(text)){
+//                    playListOnDisplay.add(item);
 //                    notifyItemInserted(playListOnDisplay.size() - 1);
 
-                }
+//                }
             }
         }
         notifyDataSetChanged();
@@ -136,13 +136,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         }
 
         void bindView(final Song song, final int pos) {
-            tvName.setText(song.getTitle());
+            tvName.setText(song.getAlbum().getName_en());
 
             RequestOptions requestOptions = new RequestOptions();
             requestOptions.placeholder(R.drawable.photo);
             requestOptions.error(R.drawable.photo);
             requestOptions.centerCrop();
-            Glide.with(context).load(song.getArtwork_url()).apply(requestOptions).into(ivImage);
+            Glide.with(context).load(song.getArtwork_song()).apply(requestOptions).into(ivImage);
 
             llSong.setOnClickListener(new View.OnClickListener() {
                 @Override
