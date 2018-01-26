@@ -808,6 +808,10 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                 case NOTIFY_CLOSE:
                     Toast.makeText(context, "Cancel", Toast.LENGTH_SHORT).show();
                     playBack.cancelNotification();
+                    playBack.manual = true;
+                    playBack.notif = false;
+                    playBack.playpause = false;
+                    playBack.playPause();
                     break;
             }
             Toast.makeText(context, "Receiver :) ", Toast.LENGTH_SHORT).show();

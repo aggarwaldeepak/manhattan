@@ -61,7 +61,8 @@ public class PlayBack implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     private Integer value = 0;
     public static Boolean focus = true;
     public Boolean manual = true;
-    private Boolean playpause = false;
+    public Boolean notif = true;
+    public Boolean playpause = false;
     public Boolean repeat = false;
     private Boolean fav = true;
     private Integer curVolume;
@@ -394,8 +395,10 @@ public class PlayBack implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
                 activity.ivPlay.setImageResource(R.drawable.ic_play_arrow_white_48dp);
                 simpleContentView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
                 expandedView.setImageViewResource(R.id.btnPlay, R.drawable.ic_play_arrow_white_48dp);
-                if (mNotificationManager != null) {
+                if (mNotificationManager != null && notif) {
                     mNotificationManager.notify(NOTIFICATION_ID, notification);
+                } else {
+                    notif = true;
                 }
                 if (manual) {
                     audioManager.abandonAudioFocus(audioFocusChangeListener);
