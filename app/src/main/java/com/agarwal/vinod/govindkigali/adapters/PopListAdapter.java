@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,11 +69,13 @@ public class PopListAdapter extends RecyclerView.Adapter<PopListAdapter.PopListV
     class PopListViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvName;
+        ImageView imageView;
         LinearLayout llSong;
         PopListViewHolder(View itemView) {
             super(itemView);
 
             tvName = itemView.findViewById(R.id.tv_name);
+            imageView = itemView.findViewById(R.id.iv_image);
             llSong = itemView.findViewById(R.id.ll_song);
         }
 
@@ -83,11 +86,12 @@ public class PopListAdapter extends RecyclerView.Adapter<PopListAdapter.PopListV
                 llSong.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-//                        FirebaseDatabase.getInstance().getReference("pop").child(name).child(song.getId()).setValue(song);
+                        FirebaseDatabase.getInstance().getReference("pop").child(name).child(song.getAlbum().getId()).setValue(song);
                         Toast.makeText(context, "Song added to " + name, Toast.LENGTH_SHORT).show();
                     }
                 });
             } else {
+                imageView.setImageResource(R.drawable.ic_playlist_play_black_24dp);
                 llSong.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

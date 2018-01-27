@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
     //SearchView searchViewButton;
     com.lapism.searchview.SearchView searchView;
     RelativeLayout rlPlayer;
+    private boolean checkFragment = false;
     FrameLayout flPlayerOptions;
     public PlayBack playBack;
     public ProgressBar pbLoading, pbProgress, pbLoadingMain;
@@ -108,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             switch (item.getItemId()) {
                 case R.id.navigation_play:
                     hideIt();
+                    checkFragment = false;
                     mainFragment = new MainFragment();
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fg, mainFragment)
@@ -115,24 +117,30 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
                     return true;
                 case R.id.navigation_thought:
                     hideIt();
+                    checkFragment = false;
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fg, new ThoughtFragment())
                             .commit();
                     return true;
                 case R.id.navigation_upcoming:
                     hideIt();
+                    checkFragment = false;
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fg, new UpcomingFragment())
                             .commit();
                     return true;
                 case R.id.navigation_my_music:
                     hideIt();
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fg, new MyMusicFragment())
-                            .commit();
+                    if (!checkFragment) {
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fg, new MyMusicFragment())
+                                .commit();
+                    }
+                    checkFragment = true;
                     return true;
                 case R.id.navigation_settings:
                     hideIt();
+                    checkFragment = false;
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fg, new SettingsFragment())
                             .commit();

@@ -53,7 +53,12 @@ public class PlayListsFragment extends Fragment {
                     List.add(name);
                     Log.d(TAG, "onDataChange: " + popSnapshot.getKey());
                 }
-                adapter.updateList(List);
+                if (List != null) {
+                    adapter.updateList(List);
+                } else {
+                    List.add("No Playlist To Display");
+                    adapter.updateList(List);
+                }
                 Log.d(TAG, "onDataChange: :)   :)   :)" + dataSnapshot.getChildren());
             }
 
@@ -64,7 +69,7 @@ public class PlayListsFragment extends Fragment {
         });
 
         rvPlayList.setLayoutManager(new LinearLayoutManager(getContext()));
-//        adapter = new PopListAdapter(getContext(), new Song(), false, getActivity());
+        adapter = new PopListAdapter(getContext(), new Song(), false, getActivity());
         rvPlayList.setAdapter(adapter);
 
         return listFragment;

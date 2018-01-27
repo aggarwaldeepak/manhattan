@@ -21,6 +21,8 @@ public class Album {
     @Expose
     private String name_hi;
 
+    public Album() {}
+
     public Album(String id, String name_en, String name_hi) {
         this.id = id;
         this.name_en = name_en;

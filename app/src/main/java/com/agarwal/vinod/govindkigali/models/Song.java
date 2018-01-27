@@ -27,6 +27,8 @@ public class Song {
     @Expose
     private String duration;
 
+    public Song() {}
+
     public Song(Album album, String song, String artwork_song, String duration) {
         this.album = album;
         this.song = song;

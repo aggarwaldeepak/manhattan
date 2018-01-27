@@ -132,7 +132,7 @@ public class CustomDialogClass extends Dialog implements View.OnClickListener {
                         if (dataSnapshot.child(id).exists()) {
                             Toast.makeText(context, "PLay List Already Exits", Toast.LENGTH_SHORT).show();
                         } else {
-//                            popReference.child(etListName.getText().toString()).child(song.getId()).setValue(song);
+                            popReference.child(etListName.getText().toString()).child(song.getAlbum().getId()).setValue(song);
                             Toast.makeText(context, "Song Added to " + etListName.getText().toString(), Toast.LENGTH_SHORT).show();
                             dismiss();
                         }

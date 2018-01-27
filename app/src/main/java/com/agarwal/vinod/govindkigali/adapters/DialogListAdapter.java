@@ -80,7 +80,7 @@ public class DialogListAdapter extends RecyclerView.Adapter<DialogListAdapter.Di
             llSong.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    FirebaseDatabase.getInstance().getReference("pop").child(name).child(song.getId()).setValue(song);
+                    FirebaseDatabase.getInstance().getReference("pop").child(name).child(song.getAlbum().getId()).setValue(song);
                     Toast.makeText(context, "Song added to " + name, Toast.LENGTH_SHORT).show();
                     activity.dismiss();
                 }

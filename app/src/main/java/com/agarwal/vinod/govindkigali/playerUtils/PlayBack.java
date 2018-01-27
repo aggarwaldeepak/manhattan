@@ -68,7 +68,6 @@ public class PlayBack implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     private Integer curVolume;
     private String CHANNEL_ID = "player_goving_ki_gali";
     public Integer NOTIFICATION_ID = 50891387;
-    private String client_id = "?client_id=DQskPX1pntALRzMp4HSxya3Mc0AO66Ro";
     public static final String TAG = "PS";
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
     DatabaseReference favRef = reference.child("fav");
@@ -132,13 +131,11 @@ public class PlayBack implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     }
 
     public String getUrl() {
-//        return playlist.get(value).getStream_url() + client_id;
-        return null;
+        return playlist.get(value).getSong();
     }
 
     public String getId() {
-//        return playlist.get(value).getId();
-        return null;
+        return playlist.get(value).getAlbum().getId();
     }
 
     /**
@@ -174,7 +171,15 @@ public class PlayBack implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
             loadImage();
 
             //Setting time to player
-            String time = calculateTime(playlist.get(pos).getDuration() / 1000);
+            Integer temp ;
+            if (playlist.get(pos).getAlbum().getId().equals("1")) {
+                temp = 3993;
+            } else if (playlist.get(pos).getAlbum().getId().equals("2")) {
+                temp = 4313;
+            } else {
+                temp = 798;
+            }
+            String time = calculateTime(temp);
 //            String time = playlist.get(pos).getDuration();
             activity.tvEnd.setText(time);
             Log.d(MainActivity.TAG, "preparePlayer: " + time);
@@ -185,8 +190,8 @@ public class PlayBack implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
             expandedView.setTextViewText(R.id.tv_not_name, playlist.get(pos).getAlbum().getName_en());
 
             //Setting max value to seekbar
-            activity.discreteSeekBar.setMax(playlist.get(pos).getDuration() / 1000);
-            activity.pbProgress.setMax(playlist.get(pos).getDuration() / 1000);
+            activity.discreteSeekBar.setMax(temp);
+            activity.pbProgress.setMax(temp);
 
             //Initializing media player object
             mediaPlayer = new MediaPlayer();
@@ -285,7 +290,7 @@ public class PlayBack implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
      * Method to provide data source to mediaplayer
      */
     public void provideDataSource(MediaPlayer mediaPlayer, Integer pos) throws IOException {
-//        mediaPlayer.setDataSource(playlist.get(pos).getStream_url() + client_id);
+        mediaPlayer.setDataSource(playlist.get(pos).getSong());
         mediaPlayer.prepareAsync();
     }
 
@@ -536,11 +541,11 @@ public class PlayBack implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         if (isConnected) {
             if (!fav) {
                 fav = true;
-//                favRef.child(playlist.get(value).getId()).setValue(playlist.get(value));
+                favRef.child(playlist.get(value).getAlbum().getId()).setValue(playlist.get(value));
                 activity.ivFav.setImageResource(R.drawable.ic_favorite_white_24dp);
             } else {
                 fav = false;
-//                favRef.child(playlist.get(value).getId()).removeValue();
+                favRef.child(playlist.get(value).getAlbum().getId()).removeValue();
                 activity.ivFav.setImageResource(R.drawable.ic_favorite_border_white_24dp);
             }
         } else {
