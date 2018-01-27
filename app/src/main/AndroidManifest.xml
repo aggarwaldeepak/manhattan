@@ -55,7 +55,6 @@
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:screenOrientation="portrait" />
         <activity android:name=".activities.YouTubePlayer" />
-        <activity android:name=".activities.AboutAppDetails" />
         <!-- <service android:name=".MainActivity$PlayerIntentService"/> -->
         <!-- <receiver android:name=".MainActivity$PlayerReceiver"/> -->
         <activity android:name=".activities.AuthenticationScreen">
@@ -77,7 +76,7 @@
 
         <activity
             android:name=".activities.AboutApp"
-            android:theme="@style/Theme.AppCompat.Light"/>
+            android:theme="@style/Theme.AppCompat.Light" />
         <activity
             android:name=".activities.PrivacyPolicy"
             android:theme="@style/Theme.AppCompat.Light" />
@@ -86,6 +85,9 @@
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
             android:name=".activities.TermsNConditions"
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity
+            android:name=".activities.DedicatedTo"
             android:theme="@style/Theme.AppCompat.Light"></activity>
     </application>
 

@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.agarwal.vinod.govindkigali.MainActivity;
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.activities.AboutApp;
+import com.agarwal.vinod.govindkigali.activities.DedicatedTo;
 import com.agarwal.vinod.govindkigali.activities.SignInScreen;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
 import com.facebook.accountkit.AccountKit;
@@ -133,7 +134,7 @@ public class SettingsFragment extends Fragment {
         dedicated.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                startActivity(new Intent(getContext(), AboutApp.class));
+                startActivity(new Intent(getContext(), DedicatedTo.class));
             }
         });
 

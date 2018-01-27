@@ -171,8 +171,8 @@
     </string>
     <string name="permissions_receive_sms_title">Read SMS Code</string>
     <string name="search_hint">Enter Song Name</string>
-    
-    
+
+
     <string name="DefaultTextForAboutApp">Lorem ipsum dolor sit amet, tantas iisque mediocrem usu ut.
         Feugait inimicus recteque an vix, has habeo dicant explicari an, has stet nostrud nominati no.
         Possim aliquam sadipscing te mei, an laoreet sensibus his, altera delicata accommodare in pri.
@@ -181,5 +181,9 @@
         Veri nobis labitur mea eu. Vel no persius admodum invidunt, cu sed graeci moderatius,
         putant recteque referrentur ex nec. His possit detraxit at, purto vocibus instructior has ei,
         et odio regione vim</string>
+
+    <string name="dedicated_to_text">His Divine Love and Grace  His Divine Love and Grace Divine Love and Grace
+        His Divine Love and Grace  His Divine Love and Grace  His Divine Love and Grace  His Divine Love and Grace
+        His Divine Love and Grace  His Divine Love and Grace  His Divine Love and Grace  His  </string>
 </resources>
 

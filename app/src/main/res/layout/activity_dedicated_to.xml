@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.agarwal.vinod.govindkigali.activities.DedicatedTo">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/id_mic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/mic" />
+
+            <TextView
+                android:id="@+id/id_GovindKiGali"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/id_mic"
+                android:layout_centerHorizontal="true"
+                android:text="~~Govind Ki Gali~~"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/id_dedicated_to_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/id_GovindKiGali"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="DEDICATED TO" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/gurudev_image"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_below="@id/id_dedicated_to_title"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/gurudev_mukund"
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="1dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/gurudev_image"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="Gurudev Shri Mukund Hari Ji Maharaj"
+                android:textSize="18sp"
+                android:textStyle="italic" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:text="@string/dedicated_to_text" />
+
+    </LinearLayout>
+
+</LinearLayout>
