@@ -67,7 +67,7 @@
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
-        <activity android:name=".activities.FacebookActivity"></activity>
+        <activity android:name=".activities.FacebookActivity" />
         <activity android:name=".activities.SignInScreen" />
         <activity android:name=".activities.MobileAuthenticationScreen" />
 
@@ -75,7 +75,18 @@
         <service android:name=".playerUtils.DownloadMusic" />
         <service android:name=".utils.TerminationService" />
 
-        <activity android:name=".activities.AboutApp"></activity>
+        <activity
+            android:name=".activities.AboutApp"
+            android:theme="@style/Theme.AppCompat.Light"/>
+        <activity
+            android:name=".activities.PrivacyPolicy"
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity
+            android:name=".activities.OpenSourceLibraries"
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity
+            android:name=".activities.TermsNConditions"
+            android:theme="@style/Theme.AppCompat.Light"></activity>
     </application>
 
 </manifest>

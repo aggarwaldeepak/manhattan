@@ -47,6 +47,4 @@
         <item name="android:windowBackground">@color/windowBackgroundBlack</item>
     </style>
 
-
-
 </resources>

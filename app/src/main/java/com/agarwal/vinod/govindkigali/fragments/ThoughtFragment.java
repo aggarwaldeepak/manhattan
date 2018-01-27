@@ -28,6 +28,7 @@ public class ThoughtFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
        View view = inflater.inflate(R.layout.fragment_thought, container, false);
+       getActivity().setTitle("Thoughts");
        viewPager = view.findViewById(R.id.viewPagerThought);
        viewPager.setAdapter(new ThoughtAdapter(getContext()));
        return view;

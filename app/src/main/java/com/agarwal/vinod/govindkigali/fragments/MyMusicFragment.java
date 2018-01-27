@@ -33,7 +33,7 @@ public class MyMusicFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View myMusicFragment = inflater.inflate(R.layout.fragment_mymusic, container, false);
-
+        getActivity().setTitle("My Music");
         tvFav = myMusicFragment.findViewById(R.id.tv_fav);
         tvRecents = myMusicFragment.findViewById(R.id.tv_recently_played);
         tvPlaylists = myMusicFragment.findViewById(R.id.tv_play_list);

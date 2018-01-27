@@ -54,7 +54,7 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View mainFragment = inflater.inflate(R.layout.fragment_main, container, false);
-
+        getActivity().setTitle("Govind Ki Gali");
         //setUpSearch();
 
         rvPlayList1 = mainFragment.findViewById(R.id.rv_playlist_1);

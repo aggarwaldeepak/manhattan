@@ -57,7 +57,7 @@ public class SettingsFragment extends Fragment {
 
 
         final View settingsFragment = inflater.inflate(R.layout.fragment_settings, container, false);
-
+        getActivity().setTitle("Settings");
         night_mode = settingsFragment.findViewById(R.id.id_NightMode);
         language = settingsFragment.findViewById(R.id.id_Language);
         feedback = settingsFragment.findViewById(R.id.id_Feedback);
