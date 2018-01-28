@@ -444,11 +444,13 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
         String lang = new PrefManager(MainActivity.this).getUserLanguage();
 
         for (Song i : songs) {
-            if (lang.compareTo(PrefManager.HI) == 0) {
+            /*if (lang.compareTo(PrefManager.HI) == 0) {
                 suggestionsList.add(new SearchItem(i.getAlbum().getName_hi()));
             } else {
                 suggestionsList.add(new SearchItem(i.getAlbum().getName_en()));
-            }
+            }*/
+            suggestionsList.add(new SearchItem(i.getAlbum().getName_hi()));
+            suggestionsList.add(new SearchItem(i.getAlbum().getName_en()));
         }
 
         SearchAdapter searchAdapter = new SearchAdapter(this, suggestionsList);

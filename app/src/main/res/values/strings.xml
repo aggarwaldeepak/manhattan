@@ -54,7 +54,7 @@
     </string-array>
 
     <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
+    <string name="pref_header_data_sync">Data And sync</string>
 
     <string name="pref_title_sync_frequency">Sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
@@ -154,8 +154,7 @@
     <string name="see_all">SEE ALL</string>
     <!--<string name="default_web_client_id">25611614140-msaag3cb2igdcbt62dsdqgdpdgc3k9qf.apps.googleusercontent.com</string>-->
 
-    <string name="dedicated_screen_phrase1">Goving Ki Gali is the easiest way to dive in
-       devotion</string>
+    <string name="dedicated_screen_phrase1">Goving Ki Gali is the easiest way to dive in devotion</string>
     <string name="dedicated_screen_phrase2">with Shri Vinod Agarwal</string>
 
     <string name="permissions_get_accounts_message">
@@ -185,5 +184,6 @@
     <string name="dedicated_to_text">His Divine Love and Grace  His Divine Love and Grace Divine Love and Grace
         His Divine Love and Grace  His Divine Love and Grace  His Divine Love and Grace  His Divine Love and Grace
         His Divine Love and Grace  His Divine Love and Grace  His Divine Love and Grace  His  </string>
+    <string name="now_playing">NOW PLAYING</string>
 </resources>
 

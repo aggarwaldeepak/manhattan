@@ -31,7 +31,26 @@
     <string name="settings_change_language">भाषा बदलें</string>
     <string name="recently_played">हाल ही में बजाए ह्यू गीत</string>
     <string name="favourites">आपके पसंदीदा संगीत</string>
-    <string name="see_all">SEE ALL</string>
-    <string name="search_hint">Enter Song Name</string>
+    <string name="see_all">सभी देखें</string>
+    <string name="search_hint">गीत का नाम लिखें</string>
+    <string name="settings_logout">लोग आउट</string>
+    <string name="settings_dedicated_to">समर्पित</string>
+    <string name="like">पसंद</string>
+    <string name="comment">टिप्पणी</string>
+    <string name="now_playing">अभी जो संगीत बज रहा है</string>
+    <string name="new_playlist">नई प्लेलिस्ट</string>
+    <string name="dedicated_screen_phrase1">गोविंद की गली भक्ति में गोता लगाने का सबसे आसान तरीका है</string>
+    <string name="dedicated_screen_phrase2">श्री विनोद अग्रवाल के साथ</string>
+    <string name="permissions_get_accounts_title">ईमेल पढ़ें</string>
+    <string name="permissions_read_phone_state_title">फ़ोन नंबर पढ़ें</string>
+    <string name="permissions_receive_sms_title">एसएमएस पढ़ें</string>
+    <string name="mail_feedback_message">नमस्ते, मैं आपको कुछ फ़ीडबैक देना चाहुंगा</string>
+    <string name="mail_feedback_subject">एप पर फ़ीडबैक</string>
+    <string name="title_send_feedback">प्रतिक्रिया भेजें</string>
+    <string name="create">ठीक</string>
+    <string name="add_to_calender_title">लाइव इवेंट - विनोद अग्रवाल</string>
+    <string name="create_playlist">प्लेलिस्ट बनायें</string>
+    <string name="type_name">शीर्षक</string>
+    <string name="subscribe">सब्सक्राइब</string>
 
 </resources>
