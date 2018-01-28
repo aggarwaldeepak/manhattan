@@ -27,6 +27,7 @@ import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.models.Song;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayBack;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
+import com.agarwal.vinod.govindkigali.utils.PrefManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
@@ -86,7 +87,12 @@ public class SongImageAdapter extends RecyclerView.Adapter<SongImageAdapter.Song
 
         void bindView(Song song, final Integer pos) {
 
-            tvSongName.setText(song.getAlbum().getName_en());
+            if (new PrefManager(context).isHindiLanguageEnabled()) {
+                tvSongName.setText(song.getAlbum().getName_hi());
+            } else {
+                tvSongName.setText(song.getAlbum().getName_en());
+            }
+
             ivImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
 //            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 //

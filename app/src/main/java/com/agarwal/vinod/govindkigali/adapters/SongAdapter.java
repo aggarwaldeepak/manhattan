@@ -136,7 +136,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         }
 
         void bindView(final Song song, final int pos) {
-            tvName.setText(song.getAlbum().getName_en());
+            if (new PrefManager(context).isHindiLanguageEnabled()) {
+                tvName.setText(song.getAlbum().getName_hi());
+            } else {
+                tvName.setText(song.getAlbum().getName_en());
+            }
 
             RequestOptions requestOptions = new RequestOptions();
             requestOptions.placeholder(R.drawable.photo);
