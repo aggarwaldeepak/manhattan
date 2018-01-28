@@ -52,5 +52,7 @@
     <string name="create_playlist">प्लेलिस्ट बनायें</string>
     <string name="type_name">शीर्षक</string>
     <string name="subscribe">सब्सक्राइब</string>
+    <string name="my_music_frag_title">मेरे संगीत</string>
+    <string name="thought_frag_title">आज का विचार</string>
 
 </resources>

@@ -15,6 +15,10 @@ import com.agarwal.vinod.govindkigali.adapters.SongAdapter;
 import com.agarwal.vinod.govindkigali.fragments.mymusic.FavFragment;
 import com.agarwal.vinod.govindkigali.fragments.mymusic.PlayListsFragment;
 import com.agarwal.vinod.govindkigali.fragments.mymusic.RecentsFragment;
+import com.agarwal.vinod.govindkigali.utils.PrefManager;
+import com.agarwal.vinod.govindkigali.utils.Util;
+
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,7 +37,18 @@ public class MyMusicFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View myMusicFragment = inflater.inflate(R.layout.fragment_mymusic, container, false);
-        getActivity().setTitle("My Music");
+
+        try{
+            getActivity().setTitle(
+                    Util.getLocalizedResources(getContext(),
+                            new Locale(new PrefManager(getContext()).getUserLanguage()))
+                            .getString(R.string.my_music_frag_title)
+            );
+        } catch (Exception e){
+            getActivity().setTitle(getString(R.string.app_name));
+        }
+
+
         tvFav = myMusicFragment.findViewById(R.id.tv_fav);
         tvRecents = myMusicFragment.findViewById(R.id.tv_recently_played);
         tvPlaylists = myMusicFragment.findViewById(R.id.tv_play_list);

@@ -29,6 +29,7 @@ import com.agarwal.vinod.govindkigali.activities.AboutApp;
 import com.agarwal.vinod.govindkigali.activities.DedicatedTo;
 import com.agarwal.vinod.govindkigali.activities.SignInScreen;
 import com.agarwal.vinod.govindkigali.utils.PrefManager;
+import com.agarwal.vinod.govindkigali.utils.Util;
 import com.facebook.accountkit.AccountKit;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -58,7 +59,19 @@ public class SettingsFragment extends Fragment {
 
 
         final View settingsFragment = inflater.inflate(R.layout.fragment_settings, container, false);
-        getActivity().setTitle("Settings");
+
+
+        try{
+            getActivity().setTitle(
+                    Util.getLocalizedResources(getContext(),
+                            new Locale(new PrefManager(getContext()).getUserLanguage()))
+                            .getString(R.string.title_settings)
+            );
+        } catch (Exception e){
+            getActivity().setTitle(getString(R.string.app_name));
+        }
+
+
         night_mode = settingsFragment.findViewById(R.id.id_NightMode);
         language = settingsFragment.findViewById(R.id.id_Language);
         feedback = settingsFragment.findViewById(R.id.id_Feedback);

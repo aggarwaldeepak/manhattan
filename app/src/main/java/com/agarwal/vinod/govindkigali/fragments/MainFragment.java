@@ -22,10 +22,13 @@ import com.agarwal.vinod.govindkigali.api.SongService;
 import com.agarwal.vinod.govindkigali.models.Result;
 import com.agarwal.vinod.govindkigali.models.Song;
 import com.agarwal.vinod.govindkigali.playerUtils.PlayerCommunication;
+import com.agarwal.vinod.govindkigali.utils.PrefManager;
+import com.agarwal.vinod.govindkigali.utils.Util;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -54,7 +57,15 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View mainFragment = inflater.inflate(R.layout.fragment_main, container, false);
-        getActivity().setTitle("Govind Ki Gali");
+        try{
+        getActivity().setTitle(
+                Util.getLocalizedResources(getContext(),
+                        new Locale(new PrefManager(getContext()).getUserLanguage()))
+                        .getString(R.string.app_name)
+        );
+        } catch (Exception e){
+            getActivity().setTitle(getString(R.string.app_name));
+        }
         //setUpSearch();
 
         rvPlayList1 = mainFragment.findViewById(R.id.rv_playlist_1);
