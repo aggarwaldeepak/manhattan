@@ -79,6 +79,7 @@
             android:layout_gravity="center"
             android:layout_margin="5dp"
             android:padding="5dp"
+            android:visibility="invisible"
             android:text="@string/dedicated_to_text" />
 
     </LinearLayout>
