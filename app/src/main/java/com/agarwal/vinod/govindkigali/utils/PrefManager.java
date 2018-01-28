@@ -12,8 +12,8 @@ import java.util.Arrays;
 
 public class PrefManager {
 
-    public final String HI = "hi";
-    public final String EN = "en";
+    public static final String HI = "hi";
+    public static final String EN = "en";
 
     public final ArrayList<String> lang = new ArrayList<>(Arrays.asList(
             EN,HI

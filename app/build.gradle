@@ -2,12 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
-        config {
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
-            storeFile file('/home/anirudh/.android/debug.keystore')
-            storePassword 'android'
-        }
     }
     compileSdkVersion 27
     defaultConfig {
@@ -24,17 +18,14 @@ android {
         disable 'MissingTranslation'
     }
     buildTypes {
-
         debug {
             resValue "string", "app_name", "@string/app_name_debug"
         }
-
         firefinch {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             applicationIdSuffix ".fire"
             versionNameSuffix "-fire"
-            signingConfig signingConfigs.config
             resValue "string", "app_name", "@string/app_name_debug_firefinch"
             debuggable true
         }

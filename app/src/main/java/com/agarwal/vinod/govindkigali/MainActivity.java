@@ -440,8 +440,15 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
             }
         });
         final List<SearchItem> suggestionsList = new ArrayList<>();
+
+        String lang = new PrefManager(MainActivity.this).getUserLanguage();
+
         for (Song i : songs) {
-//            suggestionsList.add(new SearchItem(i.getTitle()));
+            if (lang.compareTo(PrefManager.HI) == 0) {
+                suggestionsList.add(new SearchItem(i.getAlbum().getName_hi()));
+            } else {
+                suggestionsList.add(new SearchItem(i.getAlbum().getName_en()));
+            }
         }
 
         SearchAdapter searchAdapter = new SearchAdapter(this, suggestionsList);
@@ -472,7 +479,8 @@ public class MainActivity extends AppCompatActivity implements PlayerCommunicati
 
             int getPos(ArrayList<Song> songs, String text){
                 for (int i = 0; i < songs.size();i++) {
-//                    if(songs.get(i).getTitle().compareTo(text) == 0) return i;
+                    if(songs.get(i).getAlbum().getName_en().compareTo(text) == 0) return i;
+                    if(songs.get(i).getAlbum().getName_hi().compareTo(text) == 0) return i;
                 }
                 return 0;
             }
