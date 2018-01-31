@@ -26,7 +26,7 @@
                     android:layout_width="65dp"
                     android:layout_height="65dp"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
                     android:layout_marginTop="5dp"
                     android:src="@drawable/profile_pic"
                     app:civ_border_color="#FF000000"
@@ -38,8 +38,8 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/profile_image"
                     android:layout_marginTop="5dp"
-                    android:layout_marginLeft="20dp"
-                    android:text="Sign in"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/common_signin_button_text"
                     android:textAlignment="center" />
 
                 <TextView
@@ -47,7 +47,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/profile_image"
-                    android:text="Himanshu Singhal"
+                    android:text="@string/deepak_agarwal"
                     android:layout_marginTop="40dp"
                     android:layout_marginLeft="10dp"
                     android:textSize="18sp"
@@ -95,7 +95,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="SUBSCRIBE"
+                    android:text="@string/subscribe"
                     android:textColor="#ffffff"
                     android:textSize="18sp"
                     android:textStyle="bold" />

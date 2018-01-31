@@ -187,5 +187,10 @@
     <string name="my_music_frag_title">My Music</string>
     <string name="thought_frag_title">Thought of the day</string>
     <string name="thought_example">This is a thought.</string>
+    <string name="send_feedback">Send Us Some Feedback!</string>
+    <string name="send_fedback_btn">Send Feedback</string>
+    <string name="deepak_agarwal">Deepak Agarwal</string>
+    <string name="dedicated_to">Dedicated To</string>
+    <string name="gurudev_shri_mukund_hari_ji_maharaj">Gurudev Shri Mukund Hari Ji Maharaj</string>
 </resources>
 

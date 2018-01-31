@@ -41,7 +41,7 @@
                 android:layout_below="@id/id_GovindKiGali"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:text="DEDICATED TO" />
+                android:text="@string/dedicated_to" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/gurudev_image"
@@ -60,7 +60,7 @@
                 android:layout_below="@id/gurudev_image"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:text="Gurudev Shri Mukund Hari Ji Maharaj"
+                android:text="@string/gurudev_shri_mukund_hari_ji_maharaj"
                 android:textSize="18sp"
                 android:textStyle="italic" />
 

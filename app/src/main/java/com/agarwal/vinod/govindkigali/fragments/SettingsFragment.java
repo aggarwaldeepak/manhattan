@@ -163,10 +163,10 @@ public class SettingsFragment extends Fragment {
 //                intent.setPackage("com.google.android.gm");
 //                startActivity(Intent.createChooser(intent, getString(R.string.title_send_feedback)));
                 AlertDialog.Builder b = new AlertDialog.Builder(getContext());
-                b.setTitle("Send Us Some Feedback!");
+                b.setTitle(R.string.send_feedback);
                 final EditText input = new EditText(getContext());
                 b.setView(input);
-                b.setPositiveButton("Send Feedback", new DialogInterface.OnClickListener() {
+                b.setPositiveButton(R.string.send_fedback_btn, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String result = input.getText().toString();
@@ -198,7 +198,7 @@ public class SettingsFragment extends Fragment {
                         feedRefrence.child(id).child("Model (and Product): ").setValue(deviceModel);
                     }
                 });
-                b.setNegativeButton("CANCEL", null);
+                b.setNegativeButton(R.string.cancel, null);
                 b.show();
             }
         });
