@@ -36,9 +36,13 @@ public class Upcoming {
     @Expose
     String mTime;
 
-    @SerializedName("Venue")
+    @SerializedName("Venue_en")
     @Expose
     String mVenue;
+
+    @SerializedName("Venue_hi")
+    @Expose
+    String mVenueHI;
 
     @SerializedName("Year")
     @Expose
@@ -51,6 +55,7 @@ public class Upcoming {
         this.mMonth = mMonth;
         this.mTime = "";
         this.mVenue = "";
+        this.mVenueHI = "";
         this.mYear = mYear;
         /*monthsLong = new ArrayList<>(Arrays.asList("January" , "February" , "March" , "April", "May",
                 "June", "July", "August", "September", "October",
@@ -60,12 +65,13 @@ public class Upcoming {
                 "Nov", "Dec"));*/
     }
 
-    public Upcoming(int mDate, String mDay, String mMonth, String mTime, String mVenue, int mYear) {
+    public Upcoming(int mDate, String mDay, String mMonth, String mTime, String mVenue, String mVenueHI, int mYear) {
         this.mDate = mDate;
         this.mDay = mDay;
         this.mMonth = mMonth;
         this.mTime = mTime;
         this.mVenue = mVenue;
+        this.mVenueHI = mVenueHI;
         this.mYear = mYear;
         /*monthsLong = new ArrayList<>(Arrays.asList("January" , "February" , "March" , "April", "May",
                 "June", "July", "August", "September", "October",
@@ -117,6 +123,10 @@ public class Upcoming {
 
     public String getmVenue() {
         return mVenue;
+    }
+
+    public String getmVenueHI() {
+        return mVenueHI;
     }
 
     public int getmYear() {

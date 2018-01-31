@@ -17,8 +17,11 @@ public interface API {
     @GET("songs/")
     Call<Result> getTracks();
 
-    @GET("bins/7wsaj")
+    @GET("bins/clo31")
     Call<ArrayList<Upcoming>> getUpcomings();
+
+    @GET("bins/7wsaj")
+    Call<ArrayList<Upcoming>> getUpcomingsWithoutHINDI();
 
     @GET("bins/uz8qr")
     Call<ArrayList<Upcoming>> getUpcomingsOldOrig();

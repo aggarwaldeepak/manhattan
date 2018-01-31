@@ -186,5 +186,6 @@
     <string name="now_playing">NOW PLAYING</string>
     <string name="my_music_frag_title">My Music</string>
     <string name="thought_frag_title">Thought of the day</string>
+    <string name="thought_example">This is a thought.</string>
 </resources>
 

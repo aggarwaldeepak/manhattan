@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.agarwal.vinod.govindkigali.R;
 import com.agarwal.vinod.govindkigali.models.Upcoming;
+import com.agarwal.vinod.govindkigali.utils.PrefManager;
 import com.agarwal.vinod.govindkigali.utils.Util;
 
 import java.io.UnsupportedEncodingException;
@@ -43,6 +44,8 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
     public static ArrayList<String> weekDaysShort;
     public static ArrayList<String> monthsLong;
     public static ArrayList<String> monthsShort;
+    public static ArrayList<String> weekDaysLongHI;
+    public static ArrayList<String> monthsLongHI;
     public static final int TYPE_BANNER = 1;
     public static final int TYPE_ENTRY = 2;
     public static ArrayList<Integer> backgroundImgIds;
@@ -53,6 +56,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
     Spinner spinner;
     ArrayList<Upcoming> upcomings;
     ArrayList<Integer> upcomingType;
+    PrefManager prefManager;
     //ArrayList<Pair<Integer, String> > startIndices;
     public UpcomingAdapter(Context context, ArrayList<Upcoming> upcomings) {
         this.context = context;
@@ -75,9 +79,22 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
         monthsShort = new ArrayList<>(Arrays.asList("Jan" , "Feb" , "March" , "April", "May",
                 "June", "July", "Aug", "Sept", "Oct",
                 "Nov", "Dec"));
+        if(weekDaysLongHI == null)
+            weekDaysLongHI = new ArrayList<>(Arrays.asList(
+                    "रविवार", "सोमवार", "मंगलवार",
+                    "बुधवार", "गुरुवार",
+                    "शुक्रवार", "शनिवार"));
+        if(monthsLongHI == null)
+            monthsLongHI = new ArrayList<>(Arrays.asList(
+                    "जनवरी" , "फ़रवरी" , "मार्च" ,
+                    "अप्रैल", "मई",
+                    "जून", "जुलाई", "अगस्त",
+                    "सितंबर", "अक्टूबर",
+                    "नवंबर", "दिसंबर"));
         if(backgroundImgIds == null) {
             backgroundImgIds = new ArrayList<>(Arrays.asList(R.drawable.bg2,R.drawable.bg3));
         }
+        prefManager = new PrefManager(context);
     }
 
     public UpcomingAdapter(Context context, ArrayList<Upcoming> upcomings, Spinner spinner) {
@@ -261,6 +278,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
             if (viewType == TYPE_ENTRY) {
                 //int position = viewPosToArrayListPos(pos);
                 final String venue = upcomings.get(position).getmVenue();
+                final String venueHI = upcomings.get(position).getmVenueHI();
                 final String time = upcomings.get(position).getmTime();
                 final int day = upcomings.get(position).getmDate();
                 final String month = upcomings.get(position).getmMonth();
@@ -269,13 +287,39 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
                 tvDayNumber.setText(String.valueOf(upcomings.get(position).getmDate()));
 
                 Log.d("DAY", "bindView: " + position + upcomings.get(position).getmDay());
-                tvWeekDay.setText(
-                        weekDaysShort.get(weekDaysLong.indexOf(upcomings.get(position).getmDay()))
+
+                if (prefManager.getUserLanguage().equals(PrefManager.HI)) {
+                    tvWeekDay.setText(weekDaysLongHI.get(weekDaysLong.indexOf(upcomings.get(position).getmDay())));
+                    tvMonth.setText(monthsLongHI.get(monthsLong.indexOf(month)));
+                    tvVenue.setText(venueHI);
+                } else {
+                    tvWeekDay.setText(weekDaysShort.get(weekDaysLong.indexOf(upcomings.get(position).getmDay())));
+                    tvMonth.setText(monthsShort.get(monthsLong.indexOf(month)));
+                    tvVenue.setText(venue);
+                }
+                /*tvWeekDay.setText(
+                        (prefManager.getUserLanguage().equals(PrefManager.HI)
+                                ?
+                                weekDaysLongHI.get(weekDaysLong.indexOf(upcomings.get(position).getmDay()))
+                                :
+                                weekDaysShort.get(weekDaysLong.indexOf(upcomings.get(position).getmDay()))
+                        )
+                        //weekDaysShort.get(weekDaysLong.indexOf(upcomings.get(position).getmDay()))
                 );
                 tvMonth.setText(
-                        monthsShort.get(monthsLong.indexOf(month))
+                        (prefManager.getUserLanguage().equals(PrefManager.HI)
+                                ?
+                                monthsLongHI.get(monthsLong.indexOf(month))
+                                :
+                                monthsShort.get(monthsLong.indexOf(month))
+                        )
                 );
-                tvVenue.setText(venue);
+                monthsShort.get(monthsLong.indexOf(month))
+                if (prefManager.getUserLanguage().equals(PrefManager.HI)) {
+                    tvVenue.setText(venueHI);
+                } else {
+                    tvVenue.setText(venue);
+                }*/
                 tvTime.setText(time);
                 btnOptions.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -344,7 +388,18 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
 
             } else if (viewType == TYPE_BANNER) {
 
-                tvBannerHeading.setText(upcomings.get(position).getmMonth() + " " + upcomings.get(position).getmYear());
+                String bannerMonth;
+                int bannerYear;
+                if(prefManager.getUserLanguage().equals(PrefManager.HI)) {
+                    bannerMonth = monthsLongHI.get(monthsLong.indexOf(
+                            upcomings.get(position).getmMonth()
+                    ));
+                } else {
+                    bannerMonth = upcomings.get(position).getmMonth();
+                }
+                bannerYear = upcomings.get(position).getmYear();
+
+                tvBannerHeading.setText(bannerMonth + " " + bannerYear);
                 ivBackground.setImageResource(backgroundImgIds.get(getNextImgId()));
             }
         }

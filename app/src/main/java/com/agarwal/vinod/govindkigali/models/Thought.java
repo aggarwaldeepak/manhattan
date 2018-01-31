@@ -28,7 +28,7 @@ public class Thought {
     }
 
     public String getText() {
-        return text;
+        return text.replaceAll("_n_","\n");
     }
 
     public void setText(String text) {

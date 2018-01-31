@@ -27,13 +27,22 @@ public class UpcomingSpinnerAdapter extends BaseAdapter implements SpinnerAdapte
 
     Context context;
     RecyclerView recyclerView;
+    PrefManager prefManager;
     public static final ArrayList<String> months = new ArrayList<>(Arrays.asList("January" , "February" , "March" , "April", "May",
             "June", "July", "August", "September", "October",
             "November", "December"));
 
+    public static final ArrayList<String> monthsHI = new ArrayList<>(Arrays.asList(
+            "जनवरी" , "फ़रवरी" , "मार्च" ,
+            "अप्रैल", "मई",
+            "जून", "जुलाई", "अगस्त",
+            "सितंबर", "अक्टूबर",
+            "नवंबर", "दिसंबर"));
+
     public UpcomingSpinnerAdapter(Context context, RecyclerView recyclerView) {
         this.context = context;
         this.recyclerView = recyclerView;
+        prefManager = new PrefManager(this.context);
     }
 
     @Override
@@ -58,7 +67,11 @@ public class UpcomingSpinnerAdapter extends BaseAdapter implements SpinnerAdapte
         }
 
         TextView tv = (TextView) view;
-        tv.setText(months.get(i));
+        if (prefManager.getUserLanguage().equals(PrefManager.HI)) {
+            tv.setText(monthsHI.get(i));
+        } else {
+            tv.setText(months.get(i));
+        }
         tv.setPadding(
                 convertPixelsToDp2(30f,context),
                 convertPixelsToDp2(15f,context),
